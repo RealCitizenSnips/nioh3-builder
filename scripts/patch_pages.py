@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import base64, subprocess, sys
+import base64, shutil, subprocess, sys
 
 root = Path(".")
 html = root / "index.html"
@@ -34,15 +34,20 @@ b64 = root / "title-banner.b64"
 if b64.exists():
     (root / "title-banner.jpg").write_bytes(base64.b64decode(b64.read_text().strip()))
 
+src = root / "icon-180.png"
+dst = root / "icon-home.png"
+Image = None
 try:
     from PIL import Image
 except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow", "-q"])
-    from PIL import Image
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "pillow"])
+        from PIL import Image
+    except Exception:
+        Image = None
 
-src_path = root / "icon-180.png"
-if src_path.exists():
-    im = Image.open(src_path).convert("RGB")
+if Image and src.exists():
+    im = Image.open(src).convert("RGB")
     w, h = im.size
     px = im.load()
     l, top, r, btm = w, h, 0, 0
@@ -57,7 +62,9 @@ if src_path.exists():
         side = max(cut.size)
         canvas = Image.new("RGB", (side, side), (8, 8, 8))
         canvas.paste(cut, ((side - cut.size[0]) // 2, (side - cut.size[1]) // 2))
-        canvas.resize((180, 180), Image.Resampling.LANCZOS).save(root / "icon-home.png", "PNG")
+        canvas.resize((180, 180), Image.Resampling.LANCZOS).save(dst, "PNG")
     else:
-        im.resize((180, 180), Image.Resampling.LANCZOS).save(root / "icon-home.png", "PNG")
+        im.resize((180, 180), Image.Resampling.LANCZOS).save(dst, "PNG")
+elif src.exists():
+    shutil.copy(src, dst)
 print("patched")
