@@ -2,33 +2,3137 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nioh 3 Builder">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d2b4a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg">
 <title>Nioh 3 Equipment Builder</title>
 <style>
-body{margin:0;background:#000;color:#f5f5f7;font:16px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;padding:28px 18px;max-width:560px}
-a{color:#0a84ff}
-.card{background:#1c1c1e;border-radius:16px;padding:16px;margin:12px 0}
-ol{padding-left:1.2em}
+
+:root{
+  --bg:#000;
+  --card:rgba(28,28,30,.92);
+  --ink:#f5f5f7;
+  --muted:#8e8e93;
+  --line:rgba(255,255,255,.08);
+  --cal:#ffd60a;
+  --accent:#0a84ff;
+  --bad:#ff453a;
+  --ok:#30d158;
+  --fill:#1c1c1e;
+  --btn:#2c2c2e;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+body{margin:0;font:16px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;color:var(--ink);padding:16px 14px 56px;max-width:760px;margin-left:auto;margin-right:auto;transition:background .25s}
+body.form-ninja{background:#0a3a78}
+body.form-samurai{background:#4a1212}
+h1{font-size:1.45rem;font-weight:700;letter-spacing:-.03em;margin:0 0 12px}
+.ver{font-size:.72rem;font-weight:600;letter-spacing:.04em;color:var(--muted);margin-left:8px;vertical-align:middle}
+.card{background:var(--card);border:0;border-radius:16px;padding:12px 12px 8px;margin:0 0 10px;backdrop-filter:saturate(1.4) blur(20px);overflow:visible;position:relative}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.filter-grid>div{text-align:center}
+.filter-grid .filters{justify-content:center;flex-direction:column;align-items:center}
+.hide{display:none!important}
+.counts-wrap{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.counts-left,.counts-right{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.counts-right{margin-left:auto;justify-content:flex-end}
+.card.equip{z-index:6}
+.card.gs{z-index:8;overflow:visible}
+.card.gs:has(.dd.open){z-index:60}
+.card.equip:has(.dd.open){z-index:60}
+.card.loadout{z-index:1}
+h2{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.slot{display:flex;flex-direction:column;gap:6px;margin:0;padding:10px 0;border-bottom:1px solid var(--line)}
+.slot:last-child{border-bottom:0}
+.slot>span{color:var(--muted);font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.slot .ctrls{display:flex;flex-direction:column;gap:8px}
+button,select{font:inherit}
+.mini{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mini label{font-size:.8rem;color:var(--muted);display:flex;gap:6px;align-items:center}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{background:var(--btn);border:0;border-radius:999px;padding:4px 10px;font-size:.75rem;color:var(--muted)}
+.pill.on{background:#2c2c2e;color:var(--ink)}
+.pill.set-kato{color:#7ec8e3!important}
+.pill.set-iga{color:#9ad27a!important}
+.pill.set-fuma{color:#c9a0e8!important}
+.pill.set-onzoshi{color:#e3b36a!important}
+.pill.set-lastNinja{color:#e08a8a!important}
+.pill.set-kusaMaster{color:#8fd0c0!important}
+.pill.set-heizo{color:#d0c07a!important}
+.pill.set-blessed{color:#8ab4e8!important}
+.pill.set-gallant{color:#d4a0c0!important}
+.pill.set-kobo{color:#b8d48a!important}
+.pill.set-exalted{color:#e0c070!important}
+.pill.set-priest{color:#c8c0a8!important}
+.pill.set-sage{color:#a8c8b8!important}
+.pill.set-demonHorde{color:#d08070!important}
+.pill.set-moon{color:#a0b8e0!important}
+.pill.set-brave{color:#d09060!important}
+.pill.set-crimson{color:#e07070!important}
+.pill.set-eccentric{color:#c0a070!important}
+.pill.set-firstCap{color:#90c0d0!important}
+.pill.set-goi{color:#b090d0!important}
+.pill.set-hachiryo{color:#d0b070!important}
+.pill.set-monk{color:#90c090!important}
+.pill.set-brother{color:#d0a080!important}
+.pill.set-swallow{color:#e8c07a!important}
+.pill.set-woe,.dd-name.set-woe{color:#d4c06a!important}
+.pill.set-tatenashi,.dd-name.set-tatenashi{color:#c8b090!important}
+.pill.set-kamakura,.dd-name.set-kamakura{color:#90b8d0!important}
+.pill.set-shuri,.dd-name.set-shuri{color:#b09070!important}
+.pill.set-buddha,.dd-name.set-buddha{color:#e0d0a0!important}
+.pill.set-minamoto,.dd-name.set-minamoto{color:#80c0c8!important}
+.pill.set-hollyhock,.dd-name.set-hollyhock{color:#e090b0!important}
+.pill.set-righteous,.dd-name.set-righteous{color:#a0d090!important}
+.pill.set-lilac,.dd-name.set-lilac{color:#c090d8!important}
+.pill.set-tigerKai,.dd-name.set-tigerKai{color:#e07040!important}
+.pill.set-tamura,.dd-name.set-tamura{color:#d0a060!important}
+.pill.set-malefactor,.dd-name.set-malefactor{color:#c06070!important}
+.pill.set-kintaro,.dd-name.set-kintaro{color:#e0b050!important}
+.pill.set-retreat,.dd-name.set-retreat{color:#70b0a0!important}
+.pill.set-peerless,.dd-name.set-peerless{color:#90c0a8!important}
+.pill.set-swordmaster,.dd-name.set-swordmaster{color:#c0c090!important}
+.pill.set-wayfarer,.dd-name.set-wayfarer{color:#a8b8c8!important}
+.pill.set-gunner,.dd-name.set-gunner{color:#8aa0b8!important}
+.wt-lab{font-size:.68rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.pill.set-grace{color:#8ee08a!important}
+.ag-A{color:#5ac8fa!important;background:#0a2a44}
+.ag-B{color:#30d158!important;background:#0d2a18}
+.ag-C{color:#ffd60a!important;background:#2c2610}
+.ag-D{color:#ff453a!important;background:#3a1212}
+.bonus{padding:8px 0;border-bottom:1px solid var(--line);font-size:.86rem;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.bonus .bmain{flex:1;min-width:0}
+.bonus .next{color:var(--muted);font-size:.72rem;text-align:right;flex:0 0 38%;line-height:1.3}
+.coregrid{display:grid;grid-template-columns:1fr 1fr;column-gap:10px}
+.coregrid .bonus{padding:6px 0;font-size:.78rem;align-items:center}
+.coregrid .bmain{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.coregrid .bval{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--btn);color:#d1d1d6;border-radius:6px;padding:2px 6px;margin-right:6px}
+.warn{color:var(--bad);font-size:.85rem;margin:4px 0}
+.note{color:var(--muted);font-size:.8rem}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th,td{text-align:left;padding:8px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters label{margin:0;font-size:.72rem;background:var(--btn);border-radius:999px;padding:6px 8px;color:var(--ink);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.filters input{accent-color:var(--accent)}
+.sticky{position:sticky;top:0;z-index:20;background:transparent;padding:8px 0 10px;margin:0 0 4px}
+.live{font-size:.86rem}
+.dd{position:relative}
+.dd-btn{width:100%;text-align:left;background:var(--btn);color:var(--ink);border:0;border-radius:12px;padding:12px 14px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.dd-btn:disabled{opacity:.5}
+.dd-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;max-height:340px;overflow:auto;-webkit-overflow-scrolling:touch;background:#1c1c1e;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.dd.open{z-index:80}
+.dd.open .dd-list{display:block;z-index:81}
+.dd-item{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.dd-item:last-child{border-bottom:0}
+.dd-item:active,.dd-item:hover{background:#2c2c2e}
+.dd-name{font-weight:600;margin:0 0 3px}
+.dd-set{font-size:.8rem;font-weight:600;margin:0 0 4px}
+.dd-tiers{margin:0;padding:0 0 0 16px;color:var(--muted);font-size:.78rem}
+.dd-tiers li{margin:1px 0}
+.dd-tiers li.on{color:#f5f5f7;background:rgba(48,209,88,.22);border-radius:6px;padding:2px 8px;margin:2px 0 2px -8px;font-weight:600}
+.wt{color:var(--muted);font-size:.72rem;font-weight:500;margin-left:auto;flex:0 0 auto;white-space:nowrap}
+.dd-name{display:flex;align-items:center;gap:8px}
+.wchip{width:auto;padding:7px 12px;font-size:.78rem;border-radius:999px;background:var(--btn);color:var(--ink);border:0}
+.wchip.on{background:#0a3a78;color:#fff}
+.statrow{display:grid;grid-template-columns:52px 28px 1fr 28px 96px;gap:6px;align-items:center;margin:0 0 6px}
+.statrow input[type=range]{width:100%;accent-color:var(--accent)}
+.statrow input[type=tel],.lvrow input{width:52px;text-align:right;background:var(--btn);color:var(--ink);border:0;border-radius:8px;padding:6px 4px;font-size:16px}
+.statrow .lab{color:var(--muted);font-size:.8rem;text-align:right}
+.pm{width:28px;height:28px;border:0;border-radius:8px;background:var(--btn);color:var(--ink);padding:0;cursor:pointer}
+.lvrow{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px;font-size:.82rem;color:var(--muted)}
+.lvrow input,#lv-in{width:3.2em;min-width:0;padding:6px 4px;text-align:center}
+.needok{color:var(--ok)}
+.needbad{color:var(--bad)}
+.needhint{grid-column:1/-1;font-size:.68rem;color:var(--muted);margin:-2px 0 6px;text-align:right}
+.needhint.bad{color:var(--bad)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 4px}
+.tools button{background:var(--btn);color:var(--ink);border:0;border-radius:999px;padding:8px 12px;font-size:.78rem}
+.wbar{height:8px;border-radius:99px;background:#2c2c2e;overflow:hidden;margin-top:6px}
+.wbar>span{display:block;height:100%;background:var(--ok)}
+.wbar.c>span{background:#ffd60a}
+.wbar.d>span{background:var(--bad)}
+.locked{padding:2px 0;font-size:.82rem;color:var(--muted)}
+.wico{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle;flex:0 0 22px}
+.wico svg{width:12px;height:12px;fill:currentColor}
+.dd-btn,.dd-name{display:flex;align-items:center}
+.set-kato{color:#7ec8e3}
+.set-iga{color:#9ad27a}
+.set-fuma{color:#c9a0e8}
+.set-onzoshi{color:#e3b36a}
+.set-lastNinja{color:#e08a8a}
+.set-kusaMaster{color:#8fd0c0}
+.set-heizo{color:#d0c07a}
+.set-blessed{color:#8ab4e8}
+.set-gallant{color:#d4a0c0}
+.set-kobo{color:#b8d48a}
+.set-exalted{color:#e0c070}
+.set-priest{color:#c8c0a8}
+.set-sage{color:#a8c8b8}
+.set-demonHorde{color:#d08070}
+.set-moon{color:#a0b8e0}
+.set-brave{color:#d09060}
+.set-crimson{color:#e07070}
+.set-eccentric{color:#c0a070}
+.set-firstCap{color:#90c0d0}
+.set-goi{color:#b090d0}
+.set-hachiryo{color:#d0b070}
+.set-monk{color:#90c090}
+.set-brother{color:#d0a080}
+.set-swallow{color:#e8c07a}
+.set-grace{color:#8ee08a}
+.set-none{color:var(--ink)}
+
 </style>
 </head>
 <body>
-<h1 style="font-size:1.35rem">Nioh 3 Builder</h1>
-<p>The repo is live. One more file is needed on GitHub so this page becomes the real builder.</p>
+<h1>Nioh 3 Equipment Builder <span class="ver">v0.8.1</span></h1>
+<p id="boot-msg" class="note">Gear lists work in Files. For live Overall Stats on iPhone: Mail this file to yourself → open the attachment → Share → Safari. No Mac needed.</p>
+<noscript><p class="warn">JavaScript is required. Open this .html file in Safari or Chrome.</p></noscript>
+
 <div class="card">
-<ol>
-<li>On your phone or computer, download <code>nioh3-set-builder.html</code> from the Grok chat.</li>
-<li>Open <a href="https://github.com/RealCitizenSnips/nioh3-builder">the repo</a>.</li>
-<li>Tap <b>Add file → Upload files</b>.</li>
-<li>Upload that file, then rename it to <code>index.html</code> (replace this page).</li>
-<li>Repo → <b>Settings → Pages</b> → Source: <b>GitHub Actions</b>.</li>
-<li>Wait about a minute, then open:<br><a href="https://realcitizensnips.github.io/nioh3-builder/">https://realcitizensnips.github.io/nioh3-builder/</a></li>
-<li>In <b>Safari</b>: Share → Add to Home Screen.</li>
-</ol>
+  <h2>Filters</h2>
+  <div class="filter-grid">
+    <div>
+      <h2>Styles</h2>
+      <div class="filters">
+        <label><input type="checkbox" class="flt-style" value="ninja"> Ninja</label>
+        <label><input type="checkbox" class="flt-style" value="samurai"> Samurai</label>
+      </div>
+    </div>
+    <div>
+      <h2>Equipment</h2>
+      <div class="filters">
+        <label><input type="checkbox" class="flt-kind" value="set" checked> With Set Bonus</label>
+        <label><input type="checkbox" class="flt-kind" value="nonset" checked> With Grace</label>
+      </div>
+    </div>
+    <div>
+      <h2>Show / Hide</h2>
+      <div class="filters">
+        <label><input type="checkbox" id="flt-combine"> Combined Stats</label>
+        <label><input type="checkbox" id="flt-gs" checked> Guardian Spirit</label>
+      </div>
+    </div>
+  </div>
 </div>
-<p style="color:#8e8e93">After that, new versions can be pushed to this same repo.</p>
+
+<div class="card" id="char-card">
+  <h2>Character Level</h2>
+
+  <div class="lvrow" id="char-level">Level <input type="tel" inputmode="numeric" pattern="[0-9]*" id="lv-in" value="200">, Remaining Points 199 &nbsp; Max. Level 300</div>
+  <div class="tools">
+    <button type="button" id="btn-copy">Copy summary</button>
+    <button type="button" id="btn-clear">Empty all gear</button>
+    <button type="button" id="btn-save">Save loadout</button>
+    <button type="button" id="btn-load">Load Loadout</button>
+  </div>
+  <div id="char-stats">
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="con">
+      <button type="button" class="pm" data-pm="con" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="con">
+      <button type="button" class="pm" data-pm="con" data-d="1">+</button>
+      <span class="lab">Constitution</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="hrt">
+      <button type="button" class="pm" data-pm="hrt" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="hrt">
+      <button type="button" class="pm" data-pm="hrt" data-d="1">+</button>
+      <span class="lab">Heart</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="sta">
+      <button type="button" class="pm" data-pm="sta" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="sta">
+      <button type="button" class="pm" data-pm="sta" data-d="1">+</button>
+      <span class="lab">Stamina</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="str">
+      <button type="button" class="pm" data-pm="str" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="str">
+      <button type="button" class="pm" data-pm="str" data-d="1">+</button>
+      <span class="lab">Strength</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="skl">
+      <button type="button" class="pm" data-pm="skl" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="skl">
+      <button type="button" class="pm" data-pm="skl" data-d="1">+</button>
+      <span class="lab">Skill</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="int">
+      <button type="button" class="pm" data-pm="int" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="int">
+      <button type="button" class="pm" data-pm="int" data-d="1">+</button>
+      <span class="lab">Intellect</span></div>
+    <div class="statrow">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" value="5" data-stn="mag">
+      <button type="button" class="pm" data-pm="mag" data-d="-1">−</button>
+      <input type="range" min="5" max="99" value="5" data-st="mag">
+      <button type="button" class="pm" data-pm="mag" data-d="1">+</button>
+      <span class="lab">Magic</span></div>
+  </div>
+
+</div>
+
+
+
+
+<div class="sticky">
+<div class="card" style="margin:0">
+  <h2>Overall Stats</h2>
+  <div class="counts-wrap"><div class="counts-left" id="counts"></div><div class="counts-right" id="weightpills"></div></div>
+  <div id="warns"></div>
+  <div class="live" id="bonuses"></div>
+</div>
+</div>
+<div class="card equip" id="equip-card"><h2>Equipment</h2><div id="slots">
+<div class="slot"><span>Head</span><div class="ctrls"><select class="dd-btn" data-static="head"><option>— empty —</option>
+<option>Flying Kato's Mask</option>
+<option>Iga Jonin Headband</option>
+<option>Fuma Chief's Mask</option>
+<option>Fuma Ninja Plated Headband</option>
+<option>Shinobi Hood</option>
+<option>Shinobi Faceplate</option>
+<option>Ferryman's Hood</option>
+<option>Blessed Sleeve Hat</option>
+<option>High Priest's Headgear</option>
+<option>Sage's Hat</option>
+<option>Kamari Hood</option>
+<option>Heir's Shinobi Headband</option>
+<option>Heizo's Faceplate</option>
+<option>Hellfire Ninja Faceguard</option>
+<option>Hellfrost Ninja Faceguard</option>
+<option>Last Ninja's Faceguard</option>
+<option>Kusarigama Master Faceplate</option>
+<option>Gallant Thief's Faceplate</option>
+<option>Thief's Plated Headband</option>
+<option>Shadowstep Headband</option>
+<option>Oniwaban Headband</option>
+<option>Ninja Marksman's Faceplate</option>
+<option>Sohaya Mask</option>
+<option>Kobo Daishi's Hat</option>
+<option>Light Yamatai Helmet</option>
+<option>Night Shade Mask</option>
+<option>Tengu Mask</option>
+<option>Black Fox Mask</option>
+<option>Female Demon Mask</option>
+<option>Old Sage Mask</option>
+<option>Demon God Mask</option>
+<option>Archer's Hat</option>
+<option>Brave Demon Hunter's Helmet</option>
+<option>Crimson General's Helmet</option>
+<option>Eccentric's Helmet</option>
+<option>First Captain's Headband</option>
+<option>Footsoldier's Hat</option>
+<option>Goichimonshu Helmet</option>
+<option>Great Hachiryo Helmet</option>
+<option>Guardian Monk's Hat</option>
+<option>Heirloom Helmet</option>
+<option>Hellfire Warrior Helmet</option>
+<option>Moonprayer Helmet</option>
+<option>Swallowtail Helmet</option>
+<option>Tatenashi Helmet</option>
+<option>Warrior of the East Helmet</option>
+<option>Warrior of the West Helmet</option></select></div></div>
+<div class="slot"><span>Chest</span><div class="ctrls"><select class="dd-btn" data-static="chest"><option>— empty —</option>
+<option>Flying Kato's Robes</option>
+<option>Iga Jonin Cuirass</option>
+<option>Fuma Chief's Robes</option>
+<option>Fuma Ninja Robe</option>
+<option>Onzoshi Cuirass</option>
+<option>Shinobi Robes</option>
+<option>Ferryman's Robes</option>
+<option>Blessed Sleeve Cuirass</option>
+<option>High Priest's Hunting Garb</option>
+<option>Sage's Robe</option>
+<option>Kamari Vest</option>
+<option>Heir's Shinobi Garment</option>
+<option>Heizo's Cuirass</option>
+<option>Hellfire Ninja Garment</option>
+<option>Hellfrost Ninja Garment</option>
+<option>Last Ninja's Cuirass</option>
+<option>Kusarigama Master Cuirass</option>
+<option>Gallant Thief's Cuirass</option>
+<option>Thief's Cuirass</option>
+<option>Shadowstep Vest</option>
+<option>Oniwaban Cuirass</option>
+<option>Ninja Marksman's Cuirass</option>
+<option>Sohaya Cuirass</option>
+<option>Kobo Daishi's Stole</option>
+<option>Robe of the Exalted</option>
+<option>Brother's Vest</option>
+<option>Light Yamatai Cuirass</option>
+<option>Onmyo Hunting Garb</option>
+<option>Onmyo Mage's Garb</option>
+<option>Yamabushi Robes</option>
+<option>Archer's Robe</option>
+<option>Brave Demon Hunter's Cuirass</option>
+<option>Crimson General's Cuirass</option>
+<option>Eccentric's Cuirass</option>
+<option>First Captain's Haori</option>
+<option>Footsoldier's Cuirass</option>
+<option>Goichimonshu Cuirass</option>
+<option>Great Hachiryo Cuirass</option>
+<option>Guardian Monk's Robes</option>
+<option>Heir's Cuirass</option>
+<option>Heirloom Cuirass</option>
+<option>Hellfire Warrior Cuirass</option>
+<option>Moonprayer Cuirass</option>
+<option>Swallowtail Cuirass</option>
+<option>Tatenashi Cuirass</option>
+<option>Warrior of the East Cuirass</option>
+<option>Warrior of the West Cuirass</option></select></div></div>
+<div class="slot"><span>Arms</span><div class="ctrls"><select class="dd-btn" data-static="arms"><option>— empty —</option>
+<option>Flying Kato's Gauntlets</option>
+<option>Iga Jonin Gauntlets</option>
+<option>Fuma Chief's Gauntlets</option>
+<option>Fuma Ninja Gauntlets</option>
+<option>Onzoshi Gauntlets</option>
+<option>Shinobi Bracers</option>
+<option>Ferryman's Bracers</option>
+<option>Blessed Sleeve Gauntlets</option>
+<option>High Priest's Bracers</option>
+<option>Gloves of the Exalted</option>
+<option>Kamari Sleeves</option>
+<option>Heir's Shinobi Gauntlets</option>
+<option>Heizo's Gauntlets</option>
+<option>Hellfire Ninja Gauntlets</option>
+<option>Hellfrost Ninja Gauntlets</option>
+<option>Last Ninja's Gauntlets</option>
+<option>Kusarigama Master Gauntlets</option>
+<option>Gallant Thief's Gauntlets</option>
+<option>Thief's Gauntlets</option>
+<option>Shadowstep Bracers</option>
+<option>Oniwaban Gauntlets</option>
+<option>Ninja Marksman's Gauntlets</option>
+<option>Sohaya Gauntlets</option>
+<option>Kobo Daishi's Sleevelets</option>
+<option>Light Yamatai Gauntlets</option>
+<option>Archer's Gauntlets</option>
+<option>Brave Demon Hunter's Gauntlets</option>
+<option>Crimson General's Gauntlets</option>
+<option>Eccentric's Gauntlets</option>
+<option>First Captain's Sleevelets</option>
+<option>Footsoldier's Gauntlets</option>
+<option>Goichimonshu Gauntlets</option>
+<option>Great Hachiryo Gauntlets</option>
+<option>Guardian Monk's Sleevelets</option>
+<option>Heir's Gauntlets</option>
+<option>Heirloom Gauntlets</option>
+<option>Tatenashi Gauntlets</option></select></div></div>
+<div class="slot"><span>Waist</span><div class="ctrls"><select class="dd-btn" data-static="waist"><option>— empty —</option>
+<option>Flying Kato's Waistguard</option>
+<option>Iga Jonin Waistguard</option>
+<option>Fuma Chief's Waistguard</option>
+<option>Fuma Ninja Hakama</option>
+<option>Onzoshi Hakama</option>
+<option>Shinobi Hakama</option>
+<option>Ferryman's Hakama</option>
+<option>Blessed Sleeve Waistguard</option>
+<option>High Priest's Hakama</option>
+<option>Sage's Hakama</option>
+<option>Trousers of the Exalted</option>
+<option>Brother's Hakama</option>
+<option>Kamari Hakama</option>
+<option>Heir's Shinobi Waistguard</option>
+<option>Heizo's Waistguard</option>
+<option>Hellfire Ninja Waistguard</option>
+<option>Hellfrost Ninja Waistguard</option>
+<option>Last Ninja's Waistguard</option>
+<option>Kusarigama Master Waistguard</option>
+<option>Gallant Thief's Waistguard</option>
+<option>Thief's Waistguard</option>
+<option>Shadowstep Waistguard</option>
+<option>Oniwaban Waistguard</option>
+<option>Ninja Marksman's Waistguard</option>
+<option>Sohaya Waistguard</option>
+<option>Kobo Daishi's Hakama</option>
+<option>Light Yamatai Trousers</option>
+<option>Archer's Hakama</option>
+<option>Brave Demon Hunter's Waistguard</option>
+<option>Crimson General's Waistguard</option>
+<option>Eccentric's Waistguard</option>
+<option>First Captain's Hakama</option>
+<option>Footsoldier's Waistguard</option>
+<option>Goichimonshu Waistguard</option>
+<option>Great Hachiryo Waistguard</option>
+<option>Guardian Monk's Hakama</option>
+<option>Heir's Waistguard</option>
+<option>Heirloom Waistguard</option>
+<option>Tatenashi Waistguard</option></select></div></div>
+<div class="slot"><span>Feet</span><div class="ctrls"><select class="dd-btn" data-static="feet"><option>— empty —</option>
+<option>Flying Kato's Greaves</option>
+<option>Iga Jonin Greaves</option>
+<option>Fuma Chief's Greaves</option>
+<option>Fuma Ninja Greaves</option>
+<option>Onzoshi Greaves</option>
+<option>Shinobi Gaiters</option>
+<option>Ferryman's Greaves</option>
+<option>Blessed Sleeve Greaves</option>
+<option>High Priest's Shoes</option>
+<option>Boots of the Exalted</option>
+<option>Brother's Sandals</option>
+<option>Kamari Gaiters</option>
+<option>Heir's Shinobi Greaves</option>
+<option>Heizo's Greaves</option>
+<option>Hellfire Ninja Greaves</option>
+<option>Hellfrost Ninja Greaves</option>
+<option>Last Ninja's Greaves</option>
+<option>Kusarigama Master Greaves</option>
+<option>Gallant Thief's Greaves</option>
+<option>Thief's Greaves</option>
+<option>Shadowstep Greaves</option>
+<option>Oniwaban Greaves</option>
+<option>Ninja Marksman's Greaves</option>
+<option>Sohaya Greaves</option>
+<option>Kobo Daishi's Gaiters</option>
+<option>Light Yamatai Greaves</option>
+<option>Archer's Straw Sandals</option>
+<option>Brave Demon Hunter's Greaves</option>
+<option>Crimson General's Greaves</option>
+<option>Eccentric's Greaves</option>
+<option>First Captain's Sandals</option>
+<option>Footsoldier's Greaves</option>
+<option>Goichimonshu Greaves</option>
+<option>Great Hachiryo Greaves</option>
+<option>Guardian Monk's Gaiters</option>
+<option>Heir's Greaves</option>
+<option>Heirloom Greaves</option>
+<option>Tatenashi Greaves</option></select></div></div>
+<div class="slot"><span>Weapon 1</span><div class="ctrls"><select class="dd-btn" data-static="w1"><option>— empty —</option>
+<option>Ebony Tonfa</option>
+<option>Infernal Tonfa</option>
+<option>Iron Tonfa</option>
+<option>Last Ninja's Tonfa</option>
+<option>Lord's Tonfa</option>
+<option>Lost Kingdom Tonfa</option>
+<option>Martial Artist's Tonfa</option>
+<option>Ninja's Tonfa</option>
+<option>Pagoda Tonfa</option>
+<option>Quaking Tonfa</option>
+<option>Retainer's Tonfa</option>
+<option>Rosewood Tonfa</option>
+<option>Royal Tonfa</option>
+<option>Seventh Sword Tonfa</option>
+<option>Sarutobi's Gunsticks</option>
+<option>Twin Dragon Tonfa</option>
+<option>Vajra Tonfa</option>
+<option>White Bone Spirit Tonfa</option>
+<option>Basket Blade and Boar Cutter</option>
+<option>Crucible Saws</option>
+<option>Go-No-Yoshihiro Twin Swords</option>
+<option>Great Kanehira Sword and Nightingale</option>
+<option>Infernal Dual Ninja Swords</option>
+<option>Little Crow and Quickdraw</option>
+<option>Magoroku Kanemoto Dual Katanas</option>
+<option>Mino Dual Uchigatana</option>
+<option>Nosada Dual Katana</option>
+<option>Seki Dual Uchigatana</option>
+<option>Seki Kaneyoshi Dual Tachi</option>
+<option>Shichisei and Heishishorin</option>
+<option>Soshu Dual Uchigatana</option>
+<option>Soshu Masamune Dual Katana</option>
+<option>Weathered Bone and Bleached Twig</option>
+<option>Yamanba's Knives</option>
+<option>Chief's Talons</option>
+<option>Chunin's Talons</option>
+<option>Frost Blossom Talons</option>
+<option>Fuma Talons</option>
+<option>Fuma Chief's Talons</option>
+<option>Genin's Talons</option>
+<option>Hachiya Talons</option>
+<option>Infernal Talons</option>
+<option>Jonin's Talons</option>
+<option>Martial Artist's Talons</option>
+<option>Nokizaru Talons</option>
+<option>Raging Fire Talons</option>
+<option>Simple Talons</option>
+<option>Taifu Talons</option>
+<option>Thief's Talons</option>
+<option>Thunderous Talons</option>
+<option>Togakushi Talons</option>
+<option>Tsuchigumo Talons</option>
+<option>Vermilion Talons</option>
+<option>Yamabushi Talons</option>
+<option>White Lotus Talons</option>
+<option>Billhook Kusarigama</option>
+<option>Black Bamboo Kusarigama</option>
+<option>Crescent Moon Kusarigama</option>
+<option>Custom Kusarigama</option>
+<option>Demon Fang Kusarigama</option>
+<option>Demon Horde Kusarigama</option>
+<option>Fuma Kusarigama</option>
+<option>Genin's Kusarigama</option>
+<option>Hooked Kusarigama</option>
+<option>Infernal Kusarigama</option>
+<option>Jonin's Kusarigama</option>
+<option>Mitsuyo Kusarigama</option>
+<option>Nightstorm Kusarigama</option>
+<option>Rakshasa Kusarigama</option>
+<option>Rotten Rope Cutter</option>
+<option>Shishido Kusarigama</option>
+<option>Snowmelt Kusarigama</option>
+<option>Spy's Kusarigama</option>
+<option>Thunder God Kusarigama</option>
+<option>Togakushi Kusarigama</option>
+<option>Will-o'-Wisp Blade</option>
+<option>Yasha's Kusarigama</option>
+<option>Atagi Sadamune</option>
+<option>Bizen Ichimonji</option>
+<option>Bizen Uchigatana</option>
+<option>Demontear Sword</option>
+<option>Heshikiri Hasebe</option>
+<option>Infernal Ninja Sword</option>
+<option>Jikkyu Mitsutada</option>
+<option>Juzumaru Tsunetsugu</option>
+<option>Kiku Ichimonji</option>
+<option>Kobizen Tomonari</option>
+<option>Mikazuki Munechika (Ninja)</option>
+<option>Mino Uchigatana</option>
+<option>Ornamental Blade (Ninja)</option>
+<option>Raikiri</option>
+<option>Senjuin Uchigatana</option>
+<option>Swift Hawk</option>
+<option>Tokagemaru (Ninja)</option>
+<option>Usumidori (Ninja)</option>
+<option>Yamato Uchigatana</option>
+<option>Barbarian's Hatchets</option>
+<option>Black Rain and Thunder</option>
+<option>Brigand's Hatchets</option>
+<option>Echoing Thunder</option>
+<option>Gyosha Hatchets</option>
+<option>Haguro Ninja Hatchets</option>
+<option>Heizo's Hatchets</option>
+<option>Hero's Hatchets</option>
+<option>Iceberg</option>
+<option>Infernal Hatchets</option>
+<option>Martial Artist's Hatchets</option>
+<option>Mountain Bandit Hatchets</option>
+<option>Ninja's Hatchets</option>
+<option>Radiant Flame</option>
+<option>Shugendo Hermit Hatchets</option>
+<option>Togakushi Ninja Hatchets</option>
+<option>Wave Cutter Hatchets</option>
+<option>Wind Demon Hatchets</option>
+<option>Zenki and Goki</option>
+<option>Benkei's Splitstaff</option>
+<option>Chunin's Splitstaff</option>
+<option>Dragon King Splitstaff</option>
+<option>Elite Warrior's Splitstaff</option>
+<option>Evil-Crusher Splitstaff</option>
+<option>Flashfire Splitstaff</option>
+<option>Genin's Splitstaff</option>
+<option>Head Ninja's Splitstaff</option>
+<option>Heroic Monk's Splitstaff</option>
+<option>Himiko's Staff</option>
+<option>Hunter's Splitstaff</option>
+<option>Infernal Splitstaff</option>
+<option>Itinerant Monk's Splitstaff</option>
+<option>Jonin's Splitstaff</option>
+<option>Kobo Daishi's Khakkhara</option>
+<option>Mikoshi's Khakkhara</option>
+<option>Sage's Khakkhara</option>
+<option>Seven Scalp Splitstaff</option>
+<option>Tempest Splitstaff</option>
+<option>Tengu's Khakkhara</option>
+<option>Vajra Splitstaff</option>
+<option>Warrior Monk's Splitstaff</option>
+<option>Zen Splitstaff</option>
+<option>Demon Cutter</option>
+<option>Demon Arm Cestuses</option>
+<option>Crimson General's Nagamaki</option>
+<option>Vermillion Spear</option>
+<option>Kasha Kiyomitsu</option>
+<option>Goichimonshu Dual Swords</option>
+<option>Brother's Dual Katana</option>
+<option>Infernal Katana</option>
+<option>Infernal Dual Swords</option>
+<option>Infernal Spear</option>
+<option>Infernal Odachi</option>
+<option>Infernal Axe</option>
+<option>Infernal Switchglaive</option>
+<option>Infernal Cestuses</option>
+<option>Hoko & Shield</option>
+<option>Infernal Hoko & Shield</option>
+<option>Ninja Hoko & Shield</option>
+<option>Infernal Ninja Hoko & Shield</option></select></div></div>
+<div class="slot"><span>Weapon 2</span><div class="ctrls"><select class="dd-btn" data-static="w2"><option>— empty —</option>
+<option>Ebony Tonfa</option>
+<option>Infernal Tonfa</option>
+<option>Iron Tonfa</option>
+<option>Last Ninja's Tonfa</option>
+<option>Lord's Tonfa</option>
+<option>Lost Kingdom Tonfa</option>
+<option>Martial Artist's Tonfa</option>
+<option>Ninja's Tonfa</option>
+<option>Pagoda Tonfa</option>
+<option>Quaking Tonfa</option>
+<option>Retainer's Tonfa</option>
+<option>Rosewood Tonfa</option>
+<option>Royal Tonfa</option>
+<option>Seventh Sword Tonfa</option>
+<option>Sarutobi's Gunsticks</option>
+<option>Twin Dragon Tonfa</option>
+<option>Vajra Tonfa</option>
+<option>White Bone Spirit Tonfa</option>
+<option>Basket Blade and Boar Cutter</option>
+<option>Crucible Saws</option>
+<option>Go-No-Yoshihiro Twin Swords</option>
+<option>Great Kanehira Sword and Nightingale</option>
+<option>Infernal Dual Ninja Swords</option>
+<option>Little Crow and Quickdraw</option>
+<option>Magoroku Kanemoto Dual Katanas</option>
+<option>Mino Dual Uchigatana</option>
+<option>Nosada Dual Katana</option>
+<option>Seki Dual Uchigatana</option>
+<option>Seki Kaneyoshi Dual Tachi</option>
+<option>Shichisei and Heishishorin</option>
+<option>Soshu Dual Uchigatana</option>
+<option>Soshu Masamune Dual Katana</option>
+<option>Weathered Bone and Bleached Twig</option>
+<option>Yamanba's Knives</option>
+<option>Chief's Talons</option>
+<option>Chunin's Talons</option>
+<option>Frost Blossom Talons</option>
+<option>Fuma Talons</option>
+<option>Fuma Chief's Talons</option>
+<option>Genin's Talons</option>
+<option>Hachiya Talons</option>
+<option>Infernal Talons</option>
+<option>Jonin's Talons</option>
+<option>Martial Artist's Talons</option>
+<option>Nokizaru Talons</option>
+<option>Raging Fire Talons</option>
+<option>Simple Talons</option>
+<option>Taifu Talons</option>
+<option>Thief's Talons</option>
+<option>Thunderous Talons</option>
+<option>Togakushi Talons</option>
+<option>Tsuchigumo Talons</option>
+<option>Vermilion Talons</option>
+<option>Yamabushi Talons</option>
+<option>White Lotus Talons</option>
+<option>Billhook Kusarigama</option>
+<option>Black Bamboo Kusarigama</option>
+<option>Crescent Moon Kusarigama</option>
+<option>Custom Kusarigama</option>
+<option>Demon Fang Kusarigama</option>
+<option>Demon Horde Kusarigama</option>
+<option>Fuma Kusarigama</option>
+<option>Genin's Kusarigama</option>
+<option>Hooked Kusarigama</option>
+<option>Infernal Kusarigama</option>
+<option>Jonin's Kusarigama</option>
+<option>Mitsuyo Kusarigama</option>
+<option>Nightstorm Kusarigama</option>
+<option>Rakshasa Kusarigama</option>
+<option>Rotten Rope Cutter</option>
+<option>Shishido Kusarigama</option>
+<option>Snowmelt Kusarigama</option>
+<option>Spy's Kusarigama</option>
+<option>Thunder God Kusarigama</option>
+<option>Togakushi Kusarigama</option>
+<option>Will-o'-Wisp Blade</option>
+<option>Yasha's Kusarigama</option>
+<option>Atagi Sadamune</option>
+<option>Bizen Ichimonji</option>
+<option>Bizen Uchigatana</option>
+<option>Demontear Sword</option>
+<option>Heshikiri Hasebe</option>
+<option>Infernal Ninja Sword</option>
+<option>Jikkyu Mitsutada</option>
+<option>Juzumaru Tsunetsugu</option>
+<option>Kiku Ichimonji</option>
+<option>Kobizen Tomonari</option>
+<option>Mikazuki Munechika (Ninja)</option>
+<option>Mino Uchigatana</option>
+<option>Ornamental Blade (Ninja)</option>
+<option>Raikiri</option>
+<option>Senjuin Uchigatana</option>
+<option>Swift Hawk</option>
+<option>Tokagemaru (Ninja)</option>
+<option>Usumidori (Ninja)</option>
+<option>Yamato Uchigatana</option>
+<option>Barbarian's Hatchets</option>
+<option>Black Rain and Thunder</option>
+<option>Brigand's Hatchets</option>
+<option>Echoing Thunder</option>
+<option>Gyosha Hatchets</option>
+<option>Haguro Ninja Hatchets</option>
+<option>Heizo's Hatchets</option>
+<option>Hero's Hatchets</option>
+<option>Iceberg</option>
+<option>Infernal Hatchets</option>
+<option>Martial Artist's Hatchets</option>
+<option>Mountain Bandit Hatchets</option>
+<option>Ninja's Hatchets</option>
+<option>Radiant Flame</option>
+<option>Shugendo Hermit Hatchets</option>
+<option>Togakushi Ninja Hatchets</option>
+<option>Wave Cutter Hatchets</option>
+<option>Wind Demon Hatchets</option>
+<option>Zenki and Goki</option>
+<option>Benkei's Splitstaff</option>
+<option>Chunin's Splitstaff</option>
+<option>Dragon King Splitstaff</option>
+<option>Elite Warrior's Splitstaff</option>
+<option>Evil-Crusher Splitstaff</option>
+<option>Flashfire Splitstaff</option>
+<option>Genin's Splitstaff</option>
+<option>Head Ninja's Splitstaff</option>
+<option>Heroic Monk's Splitstaff</option>
+<option>Himiko's Staff</option>
+<option>Hunter's Splitstaff</option>
+<option>Infernal Splitstaff</option>
+<option>Itinerant Monk's Splitstaff</option>
+<option>Jonin's Splitstaff</option>
+<option>Kobo Daishi's Khakkhara</option>
+<option>Mikoshi's Khakkhara</option>
+<option>Sage's Khakkhara</option>
+<option>Seven Scalp Splitstaff</option>
+<option>Tempest Splitstaff</option>
+<option>Tengu's Khakkhara</option>
+<option>Vajra Splitstaff</option>
+<option>Warrior Monk's Splitstaff</option>
+<option>Zen Splitstaff</option>
+<option>Demon Cutter</option>
+<option>Demon Arm Cestuses</option>
+<option>Crimson General's Nagamaki</option>
+<option>Vermillion Spear</option>
+<option>Kasha Kiyomitsu</option>
+<option>Goichimonshu Dual Swords</option>
+<option>Brother's Dual Katana</option>
+<option>Infernal Katana</option>
+<option>Infernal Dual Swords</option>
+<option>Infernal Spear</option>
+<option>Infernal Odachi</option>
+<option>Infernal Axe</option>
+<option>Infernal Switchglaive</option>
+<option>Infernal Cestuses</option>
+<option>Hoko & Shield</option>
+<option>Infernal Hoko & Shield</option>
+<option>Ninja Hoko & Shield</option>
+<option>Infernal Ninja Hoko & Shield</option></select></div></div>
+<div class="slot"><span>Ranged</span><div class="ctrls"><select class="dd-btn" data-static="bow"><option>— empty —</option>
+<option>Borehole Bow</option>
+<option>Chinzei Hachiro's Bow</option>
+<option>Crimson General's Bow</option>
+<option>Fan-Piercing Bow</option>
+<option>Five-Man Bow</option>
+<option>Longbow</option>
+<option>Lord Kamakura's Bow</option>
+<option>Marksman's Bow</option>
+<option>Raishodo</option>
+<option>Ryomen Sukuna's Bow</option>
+<option>Seer's Bow</option>
+<option>Wisteria Longbow</option>
+<option>Hino Rifle</option>
+<option>Inadome Matchlock</option>
+<option>Kunitomo Rifle</option>
+<option>Negoro Rifle</option>
+<option>Sakai Rifle</option>
+<option>Tanegashima Matchlock</option>
+<option>Crimson Hand Cannon</option>
+<option>Dragon's Roar</option>
+<option>Hand Cannon</option>
+<option>Lightning Cannon</option>
+<option>Thronecrusher Cannon</option>
+<option>Yoryu Cannon</option></select></div></div>
+<div class="slot"><span>Acc 1</span><div class="ctrls"><select class="dd-btn" data-static="acc1"><option>— empty —</option>
+<option>Yasakani Magatama</option>
+<option>Fan</option>
+<option>Fan (Critical)</option>
+<option>Fan (Unscathed)</option>
+<option>Pipe</option>
+<option>Semiore Flute (Evade)</option>
+<option>Semiore Flute (Deflect)</option>
+<option>Shaman Queen's Necklace</option>
+<option>Kobo Daishi's Beads</option>
+<option>Kunimatsu's Inkstone Box</option>
+<option>Magatama</option>
+<option>Magatama (Critical)</option>
+<option>Magatama (Unscathed)</option>
+<option>Omamori</option>
+<option>Fire Omamori</option>
+<option>Water Omamori</option>
+<option>Lightning Omamori</option>
+<option>Poison Omamori</option>
+<option>Paralysis Omamori</option>
+<option>Brothers' Omamori</option>
+<option>Gourd</option>
+<option>Abacus</option>
+<option>Comb</option>
+<option>Writing Set</option>
+<option>Japanese Scissors</option>
+<option>Prayer Beads</option>
+<option>Prayer Beads (Amrita)</option>
+<option>Prayer Beads (Amrita Absorption)</option>
+<option>Medicine Case (Item Drop Rate)</option>
+<option>Medicine Case (Untouched Elixirs)</option>
+<option>Medicine Case (Medicine Efficacy)</option>
+<option>Divination Board</option>
+<option>Dragon Whistle</option>
+<option>Hand Mirror</option>
+<option>Two Leaves</option>
+<option>Water Dragon</option>
+<option>White Camelia Hairpin</option>
+<option>Shingen's Fan</option></select></div></div>
+<div class="slot"><span>Acc 2</span><div class="ctrls"><select class="dd-btn" data-static="acc2"><option>— empty —</option>
+<option>Yasakani Magatama</option>
+<option>Fan</option>
+<option>Fan (Critical)</option>
+<option>Fan (Unscathed)</option>
+<option>Pipe</option>
+<option>Semiore Flute (Evade)</option>
+<option>Semiore Flute (Deflect)</option>
+<option>Shaman Queen's Necklace</option>
+<option>Kobo Daishi's Beads</option>
+<option>Kunimatsu's Inkstone Box</option>
+<option>Magatama</option>
+<option>Magatama (Critical)</option>
+<option>Magatama (Unscathed)</option>
+<option>Omamori</option>
+<option>Fire Omamori</option>
+<option>Water Omamori</option>
+<option>Lightning Omamori</option>
+<option>Poison Omamori</option>
+<option>Paralysis Omamori</option>
+<option>Brothers' Omamori</option>
+<option>Gourd</option>
+<option>Abacus</option>
+<option>Comb</option>
+<option>Writing Set</option>
+<option>Japanese Scissors</option>
+<option>Prayer Beads</option>
+<option>Prayer Beads (Amrita)</option>
+<option>Prayer Beads (Amrita Absorption)</option>
+<option>Medicine Case (Item Drop Rate)</option>
+<option>Medicine Case (Untouched Elixirs)</option>
+<option>Medicine Case (Medicine Efficacy)</option>
+<option>Divination Board</option>
+<option>Dragon Whistle</option>
+<option>Hand Mirror</option>
+<option>Two Leaves</option>
+<option>Water Dragon</option>
+<option>White Camelia Hairpin</option>
+<option>Shingen's Fan</option></select></div></div>
+</div></div>
+
+<div class="card gs" id="gs-card" hidden>
+  <h2>Guardian Spirit</h2>
+  <div class="slot">
+    <span>Spirit</span>
+    <div class="ctrls">
+      <div class="dd" data-kind="gs" data-slot="gs">
+        <button type="button" class="dd-btn" id="gs-btn">— none —</button>
+        <div class="dd-list" id="gs-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const P = (name, set, style="ninja") => ({name, set, style});
+const PIECES = {
+head: [
+  P("— empty —", null, "any"),
+  P("Flying Kato's Mask", "kato"),
+  P("Iga Jonin Headband", "iga"),
+  P("Fuma Chief's Mask", "fuma"),
+  P("Fuma Ninja Plated Headband", "fumaNinja"),
+  P("Shinobi Hood", "shinobi"),
+  P("Shinobi Faceplate", "shinobi"),
+  P("Ferryman's Hood", "ferryman"),
+  P("Blessed Sleeve Hat", "blessed"),
+  P("High Priest's Headgear", "priest"),
+  P("Sage's Hat", "sage"),
+  P("Kamari Hood", "kamari"),
+  P("Heir's Shinobi Headband", "heirShinobi"),
+  P("Heizo's Faceplate", "heizo"),
+  P("Hellfire Ninja Faceguard", "hellfireN"),
+  P("Hellfrost Ninja Faceguard", "hellfrostN"),
+  P("Last Ninja's Faceguard", "lastNinja"),
+  P("Kusarigama Master Faceplate", "kusaMaster"),
+  P("Gallant Thief's Faceplate", "gallant"),
+  P("Thief's Plated Headband", "thief"),
+  P("Shadowstep Headband", "shadowstep"),
+  P("Oniwaban Headband", "oniwaban"),
+  P("Ninja Marksman's Faceplate", "nMarksman"),
+  P("Sohaya Mask", "sohaya"),
+  P("Kobo Daishi's Hat", "kobo"),
+  P("Light Yamatai Helmet", "yamataiL"),
+  P("Night Shade Mask", "none"),
+  P("Tengu Mask", "none"),
+  P("Black Fox Mask", "none"),
+  P("Female Demon Mask", "none"),
+  P("Old Sage Mask", "none"),
+  P("Demon God Mask", "none"),
+  P("Archer's Hat", "archer", "samurai"),
+  P("Brave Demon Hunter's Helmet", "brave", "samurai"),
+  P("Crimson General's Helmet", "crimson", "samurai"),
+  P("Eccentric's Helmet", "eccentric", "samurai"),
+  P("First Captain's Headband", "firstCap", "samurai"),
+  P("Footsoldier's Hat", "foot", "samurai"),
+  P("Goichimonshu Helmet", "goi", "samurai"),
+  P("Great Hachiryo Helmet", "hachiryo", "samurai"),
+  P("Guardian Monk's Hat", "monk", "samurai"),
+  P("Heirloom Helmet", "heirloom", "samurai"),
+  P("Hellfire Warrior Helmet", "hellfireW", "samurai"),
+  P("Moonprayer Helmet", "moon", "samurai"),
+  P("Swallowtail Helmet", "swallow", "samurai"),
+  P("Tatenashi Helmet", "tatenashi", "samurai"),
+  P("Warrior of the East Helmet", "woe", "samurai"),
+  P("Lord Kamakura's Eboshi", "kamakura", "samurai"),
+  P("Shuri-no-suke's Helmet", "shuri", "samurai"),
+  P("Sincere Buddha's Helmet", "buddha", "samurai"),
+  P("Minamoto Helmet", "minamoto", "samurai"),
+  P("Ronin's Faceplate", "none", "samurai"),
+  P("Samurai General's Helmet", "none", "samurai"),
+  P("Gunner's Hat", "none", "samurai"),
+  P("Shinsengumi Headband", "none", "samurai"),
+  P("Swordmaster's Hat", "none", "samurai"),
+  P("Wayfarer's Hat", "none", "samurai"),
+  P("Hellfrost Warrior Helmet", "none", "samurai"),
+  P("Lilac Helmet", "none", "samurai"),
+  P("Kintaro's Headband", "none", "samurai"),
+  P("Tiger of Kai Helmet", "none", "samurai")
+],
+chest: [
+  P("— empty —", null, "any"),
+  P("Flying Kato's Robes", "kato"),
+  P("Iga Jonin Cuirass", "iga"),
+  P("Fuma Chief's Robes", "fuma"),
+  P("Fuma Ninja Robe", "fumaNinja"),
+  P("Onzoshi Cuirass", "onzoshi"),
+  P("Shinobi Robes", "shinobi"),
+  P("Ferryman's Robes", "ferryman"),
+  P("Blessed Sleeve Cuirass", "blessed"),
+  P("High Priest's Hunting Garb", "priest"),
+  P("Sage's Robe", "sage"),
+  P("Kamari Vest", "kamari"),
+  P("Heir's Shinobi Garment", "heirShinobi"),
+  P("Heizo's Cuirass", "heizo"),
+  P("Hellfire Ninja Garment", "hellfireN"),
+  P("Hellfrost Ninja Garment", "hellfrostN"),
+  P("Last Ninja's Cuirass", "lastNinja"),
+  P("Kusarigama Master Cuirass", "kusaMaster"),
+  P("Gallant Thief's Cuirass", "gallant"),
+  P("Thief's Cuirass", "thief"),
+  P("Shadowstep Vest", "shadowstep"),
+  P("Oniwaban Cuirass", "oniwaban"),
+  P("Ninja Marksman's Cuirass", "nMarksman"),
+  P("Sohaya Cuirass", "sohaya"),
+  P("Kobo Daishi's Stole", "kobo"),
+  P("Robe of the Exalted", "exalted"),
+  P("Brother's Vest", "brother"),
+  P("Light Yamatai Cuirass", "yamataiL"),
+  P("Onmyo Hunting Garb", "onmyoHunt"),
+  P("Onmyo Mage's Garb", "onmyoMage"),
+  P("Yamabushi Robes", "yamabushi"),
+  P("Archer's Robe", "archer", "samurai"),
+  P("Brave Demon Hunter's Cuirass", "brave", "samurai"),
+  P("Crimson General's Cuirass", "crimson", "samurai"),
+  P("Eccentric's Cuirass", "eccentric", "samurai"),
+  P("First Captain's Haori", "firstCap", "samurai"),
+  P("Footsoldier's Cuirass", "foot", "samurai"),
+  P("Goichimonshu Cuirass", "goi", "samurai"),
+  P("Great Hachiryo Cuirass", "hachiryo", "samurai"),
+  P("Guardian Monk's Robes", "monk", "samurai"),
+  P("Heir's Cuirass", "heir", "samurai"),
+  P("Heirloom Cuirass", "heirloom", "samurai"),
+  P("Hellfire Warrior Cuirass", "hellfireW", "samurai"),
+  P("Moonprayer Cuirass", "moon", "samurai"),
+  P("Swallowtail Cuirass", "swallow", "samurai"),
+  P("Tatenashi Cuirass", "tatenashi", "samurai"),
+  P("Warrior of the East Cuirass", "woe", "samurai"),
+  P("Lord Kamakura's Cuirass", "kamakura", "samurai"),
+  P("Shuri-no-suke's Cuirass", "shuri", "samurai"),
+  P("Sincere Buddha's Cuirass", "buddha", "samurai"),
+  P("Minamoto Cuirass", "minamoto", "samurai"),
+  P("Ronin's Cuirass", "none", "samurai"),
+  P("Samurai General's Cuirass", "none", "samurai"),
+  P("Gunner's Vest", "none", "samurai"),
+  P("Shinsengumi Haori", "none", "samurai"),
+  P("Swordmaster's Robe", "none", "samurai"),
+  P("Wayfarer's Vest", "none", "samurai"),
+  P("Hellfrost Warrior Cuirass", "none", "samurai"),
+  P("Lilac Cuirass", "none", "samurai"),
+  P("Kintaro's Cuirass", "none", "samurai"),
+  P("Tiger of Kai Cuirass", "none", "samurai")
+],
+arms: [
+  P("— empty —", null, "any"),
+  P("Flying Kato's Gauntlets", "kato"),
+  P("Iga Jonin Gauntlets", "iga"),
+  P("Fuma Chief's Gauntlets", "fuma"),
+  P("Fuma Ninja Gauntlets", "fumaNinja"),
+  P("Onzoshi Gauntlets", "onzoshi"),
+  P("Shinobi Bracers", "shinobi"),
+  P("Ferryman's Bracers", "ferryman"),
+  P("Blessed Sleeve Gauntlets", "blessed"),
+  P("High Priest's Bracers", "priest"),
+  P("Gloves of the Exalted", "exalted"),
+  P("Kamari Sleeves", "kamari"),
+  P("Heir's Shinobi Gauntlets", "heirShinobi"),
+  P("Heizo's Gauntlets", "heizo"),
+  P("Hellfire Ninja Gauntlets", "hellfireN"),
+  P("Hellfrost Ninja Gauntlets", "hellfrostN"),
+  P("Last Ninja's Gauntlets", "lastNinja"),
+  P("Kusarigama Master Gauntlets", "kusaMaster"),
+  P("Gallant Thief's Gauntlets", "gallant"),
+  P("Thief's Gauntlets", "thief"),
+  P("Shadowstep Bracers", "shadowstep"),
+  P("Oniwaban Gauntlets", "oniwaban"),
+  P("Ninja Marksman's Gauntlets", "nMarksman"),
+  P("Sohaya Gauntlets", "sohaya"),
+  P("Kobo Daishi's Sleevelets", "kobo"),
+  P("Light Yamatai Gauntlets", "yamataiL"),
+  P("Archer's Gauntlets", "archer", "samurai"),
+  P("Brave Demon Hunter's Gauntlets", "brave", "samurai"),
+  P("Crimson General's Gauntlets", "crimson", "samurai"),
+  P("Eccentric's Gauntlets", "eccentric", "samurai"),
+  P("First Captain's Sleevelets", "firstCap", "samurai"),
+  P("Footsoldier's Gauntlets", "foot", "samurai"),
+  P("Goichimonshu Gauntlets", "goi", "samurai"),
+  P("Great Hachiryo Gauntlets", "hachiryo", "samurai"),
+  P("Guardian Monk's Sleevelets", "monk", "samurai"),
+  P("Heir's Gauntlets", "heir", "samurai"),
+  P("Heirloom Gauntlets", "heirloom", "samurai"),
+  P("Tatenashi Gauntlets", "tatenashi", "samurai"),
+  P("Warrior of the East Gauntlets", "woe", "samurai"),
+  P("Lord Kamakura's Gauntlets", "kamakura", "samurai"),
+  P("Shuri-no-suke's Gauntlets", "shuri", "samurai"),
+  P("Sincere Buddha's Gauntlets", "buddha", "samurai"),
+  P("Minamoto Gauntlets", "minamoto", "samurai"),
+  P("Ronin's Gauntlets", "none", "samurai"),
+  P("Samurai General's Gauntlets", "none", "samurai"),
+  P("Gunner's Gauntlets", "none", "samurai"),
+  P("Shinsengumi Sleevelets", "none", "samurai"),
+  P("Swordmaster's Sleevelets", "none", "samurai"),
+  P("Wayfarer's Gauntlets", "none", "samurai"),
+  P("Hellfrost Warrior Gauntlets", "none", "samurai"),
+  P("Lilac Gauntlets", "none", "samurai"),
+  P("Kintaro's Gauntlets", "none", "samurai"),
+  P("Tiger of Kai Gauntlets", "none", "samurai")
+],
+waist: [
+  P("— empty —", null, "any"),
+  P("Flying Kato's Waistguard", "kato"),
+  P("Iga Jonin Waistguard", "iga"),
+  P("Fuma Chief's Waistguard", "fuma"),
+  P("Fuma Ninja Hakama", "fumaNinja"),
+  P("Onzoshi Hakama", "onzoshi"),
+  P("Shinobi Hakama", "shinobi"),
+  P("Ferryman's Hakama", "ferryman"),
+  P("Blessed Sleeve Waistguard", "blessed"),
+  P("High Priest's Hakama", "priest"),
+  P("Sage's Hakama", "sage"),
+  P("Trousers of the Exalted", "exalted"),
+  P("Brother's Hakama", "brother"),
+  P("Kamari Hakama", "kamari"),
+  P("Heir's Shinobi Waistguard", "heirShinobi"),
+  P("Heizo's Waistguard", "heizo"),
+  P("Hellfire Ninja Waistguard", "hellfireN"),
+  P("Hellfrost Ninja Waistguard", "hellfrostN"),
+  P("Last Ninja's Waistguard", "lastNinja"),
+  P("Kusarigama Master Waistguard", "kusaMaster"),
+  P("Gallant Thief's Waistguard", "gallant"),
+  P("Thief's Waistguard", "thief"),
+  P("Shadowstep Waistguard", "shadowstep"),
+  P("Oniwaban Waistguard", "oniwaban"),
+  P("Ninja Marksman's Waistguard", "nMarksman"),
+  P("Sohaya Waistguard", "sohaya"),
+  P("Kobo Daishi's Hakama", "kobo"),
+  P("Light Yamatai Trousers", "yamataiL"),
+  P("Archer's Hakama", "archer", "samurai"),
+  P("Brave Demon Hunter's Waistguard", "brave", "samurai"),
+  P("Crimson General's Waistguard", "crimson", "samurai"),
+  P("Eccentric's Waistguard", "eccentric", "samurai"),
+  P("First Captain's Hakama", "firstCap", "samurai"),
+  P("Footsoldier's Waistguard", "foot", "samurai"),
+  P("Goichimonshu Waistguard", "goi", "samurai"),
+  P("Great Hachiryo Waistguard", "hachiryo", "samurai"),
+  P("Guardian Monk's Hakama", "monk", "samurai"),
+  P("Heir's Waistguard", "heir", "samurai"),
+  P("Heirloom Waistguard", "heirloom", "samurai"),
+  P("Tatenashi Waistguard", "tatenashi", "samurai"),
+  P("Warrior of the East Waistguard", "woe", "samurai"),
+  P("Lord Kamakura's Waistguard", "kamakura", "samurai"),
+  P("Shuri-no-suke's Waistguard", "shuri", "samurai"),
+  P("Sincere Buddha's Waistguard", "buddha", "samurai"),
+  P("Minamoto Waistguard", "minamoto", "samurai"),
+  P("Ronin's Waistguard", "none", "samurai"),
+  P("Samurai General's Waistguard", "none", "samurai"),
+  P("Gunner's Waistguard", "none", "samurai"),
+  P("Shinsengumi Hakama", "none", "samurai"),
+  P("Swordmaster's Hakama", "none", "samurai"),
+  P("Wayfarer's Waistguard", "none", "samurai"),
+  P("Hellfrost Warrior Waistguard", "none", "samurai"),
+  P("Lilac Waistguard", "none", "samurai"),
+  P("Kintaro's Waistguard", "none", "samurai"),
+  P("Tiger of Kai Waistguard", "none", "samurai")
+],
+feet: [
+  P("— empty —", null, "any"),
+  P("Flying Kato's Greaves", "kato"),
+  P("Iga Jonin Greaves", "iga"),
+  P("Fuma Chief's Greaves", "fuma"),
+  P("Fuma Ninja Greaves", "fumaNinja"),
+  P("Onzoshi Greaves", "onzoshi"),
+  P("Shinobi Gaiters", "shinobi"),
+  P("Ferryman's Greaves", "ferryman"),
+  P("Blessed Sleeve Greaves", "blessed"),
+  P("High Priest's Shoes", "priest"),
+  P("Boots of the Exalted", "exalted"),
+  P("Brother's Sandals", "brother"),
+  P("Kamari Gaiters", "kamari"),
+  P("Heir's Shinobi Greaves", "heirShinobi"),
+  P("Heizo's Greaves", "heizo"),
+  P("Hellfire Ninja Greaves", "hellfireN"),
+  P("Hellfrost Ninja Greaves", "hellfrostN"),
+  P("Last Ninja's Greaves", "lastNinja"),
+  P("Kusarigama Master Greaves", "kusaMaster"),
+  P("Gallant Thief's Greaves", "gallant"),
+  P("Thief's Greaves", "thief"),
+  P("Shadowstep Greaves", "shadowstep"),
+  P("Oniwaban Greaves", "oniwaban"),
+  P("Ninja Marksman's Greaves", "nMarksman"),
+  P("Sohaya Greaves", "sohaya"),
+  P("Kobo Daishi's Gaiters", "kobo"),
+  P("Light Yamatai Greaves", "yamataiL"),
+  P("Archer's Straw Sandals", "archer", "samurai"),
+  P("Brave Demon Hunter's Greaves", "brave", "samurai"),
+  P("Crimson General's Greaves", "crimson", "samurai"),
+  P("Eccentric's Greaves", "eccentric", "samurai"),
+  P("First Captain's Sandals", "firstCap", "samurai"),
+  P("Footsoldier's Greaves", "foot", "samurai"),
+  P("Goichimonshu Greaves", "goi", "samurai"),
+  P("Great Hachiryo Greaves", "hachiryo", "samurai"),
+  P("Guardian Monk's Gaiters", "monk", "samurai"),
+  P("Heir's Greaves", "heir", "samurai"),
+  P("Heirloom Greaves", "heirloom", "samurai"),
+  P("Tatenashi Greaves", "tatenashi", "samurai"),
+  P("Warrior of the East Greaves", "woe", "samurai"),
+  P("Lord Kamakura's Greaves", "kamakura", "samurai"),
+  P("Shuri-no-suke's Greaves", "shuri", "samurai"),
+  P("Sincere Buddha's Greaves", "buddha", "samurai"),
+  P("Minamoto Greaves", "minamoto", "samurai"),
+  P("Ronin's Greaves", "none", "samurai"),
+  P("Samurai General's Greaves", "none", "samurai"),
+  P("Gunner's Greaves", "none", "samurai"),
+  P("Shinsengumi Gaiters", "none", "samurai"),
+  P("Swordmaster's Gaiters", "none", "samurai"),
+  P("Wayfarer's Greaves", "none", "samurai"),
+  P("Hellfrost Warrior Greaves", "none", "samurai"),
+  P("Lilac Greaves", "none", "samurai"),
+  P("Kintaro's Greaves", "none", "samurai"),
+  P("Tiger of Kai Greaves", "none", "samurai")
+],
+w1: [
+  P("— empty —", null, "any"),
+  P("Ebony Tonfa", "none"),
+  P("Infernal Tonfa", "none"),
+  P("Iron Tonfa", "none"),
+  P("Last Ninja's Tonfa", "lastNinja"),
+  P("Lord's Tonfa", "none"),
+  P("Lost Kingdom Tonfa", "none"),
+  P("Martial Artist's Tonfa", "none"),
+  P("Ninja's Tonfa", "none"),
+  P("Pagoda Tonfa", "none"),
+  P("Quaking Tonfa", "none"),
+  P("Retainer's Tonfa", "none"),
+  P("Rosewood Tonfa", "none"),
+  P("Royal Tonfa", "none"),
+  P("Seventh Sword Tonfa", "none"),
+  P("Sarutobi's Gunsticks", "none"),
+  P("Twin Dragon Tonfa", "none"),
+  P("Vajra Tonfa", "none"),
+  P("White Bone Spirit Tonfa", "none"),
+  P("Basket Blade and Boar Cutter", "none"),
+  P("Crucible Saws", "none"),
+  P("Go-No-Yoshihiro Twin Swords", "none"),
+  P("Great Kanehira Sword and Nightingale", "none"),
+  P("Infernal Dual Ninja Swords", "none"),
+  P("Little Crow and Quickdraw", "none"),
+  P("Magoroku Kanemoto Dual Katanas", "none"),
+  P("Mino Dual Uchigatana", "none"),
+  P("Nosada Dual Katana", "none"),
+  P("Seki Dual Uchigatana", "none"),
+  P("Seki Kaneyoshi Dual Tachi", "none"),
+  P("Shichisei and Heishishorin", "none"),
+  P("Soshu Dual Uchigatana", "none"),
+  P("Soshu Masamune Dual Katana", "none"),
+  P("Weathered Bone and Bleached Twig", "none"),
+  P("Yamanba's Knives", "none"),
+  P("Chief's Talons", "none"),
+  P("Chunin's Talons", "none"),
+  P("Frost Blossom Talons", "none"),
+  P("Fuma Talons", "none"),
+  P("Fuma Chief's Talons", "fuma"),
+  P("Genin's Talons", "none"),
+  P("Hachiya Talons", "none"),
+  P("Infernal Talons", "none"),
+  P("Jonin's Talons", "none"),
+  P("Martial Artist's Talons", "none"),
+  P("Nokizaru Talons", "none"),
+  P("Raging Fire Talons", "none"),
+  P("Simple Talons", "none"),
+  P("Taifu Talons", "none"),
+  P("Thief's Talons", "gallant"),
+  P("Thunderous Talons", "none"),
+  P("Togakushi Talons", "none"),
+  P("Tsuchigumo Talons", "none"),
+  P("Vermilion Talons", "none"),
+  P("Yamabushi Talons", "none"),
+  P("White Lotus Talons", "none"),
+  P("Billhook Kusarigama", "none"),
+  P("Black Bamboo Kusarigama", "none"),
+  P("Crescent Moon Kusarigama", "none"),
+  P("Custom Kusarigama", "none"),
+  P("Demon Fang Kusarigama", "iga"),
+  P("Demon Horde Kusarigama", "demonHorde"),
+  P("Fuma Kusarigama", "none"),
+  P("Genin's Kusarigama", "none"),
+  P("Hooked Kusarigama", "none"),
+  P("Infernal Kusarigama", "none"),
+  P("Jonin's Kusarigama", "none"),
+  P("Mitsuyo Kusarigama", "none"),
+  P("Nightstorm Kusarigama", "none"),
+  P("Rakshasa Kusarigama", "none"),
+  P("Rotten Rope Cutter", "none"),
+  P("Shishido Kusarigama", "kusaMaster"),
+  P("Snowmelt Kusarigama", "none"),
+  P("Spy's Kusarigama", "none"),
+  P("Thunder God Kusarigama", "none"),
+  P("Togakushi Kusarigama", "none"),
+  P("Will-o'-Wisp Blade", "none"),
+  P("Yasha's Kusarigama", "none"),
+  P("Atagi Sadamune", "none"),
+  P("Bizen Ichimonji", "none"),
+  P("Bizen Uchigatana", "none"),
+  P("Demontear Sword", "iga"),
+  P("Heshikiri Hasebe", "none"),
+  P("Infernal Ninja Sword", "none"),
+  P("Jikkyu Mitsutada", "none"),
+  P("Juzumaru Tsunetsugu", "none"),
+  P("Kiku Ichimonji", "none"),
+  P("Kobizen Tomonari", "none"),
+  P("Mikazuki Munechika (Ninja)", "none"),
+  P("Mino Uchigatana", "none"),
+  P("Ornamental Blade (Ninja)", "none"),
+  P("Raikiri", "none"),
+  P("Senjuin Uchigatana", "none"),
+  P("Swift Hawk", "kato"),
+  P("Tokagemaru (Ninja)", "none"),
+  P("Usumidori (Ninja)", "onzoshi"),
+  P("Yamato Uchigatana", "none"),
+  P("Barbarian's Hatchets", "none"),
+  P("Black Rain and Thunder", "none"),
+  P("Brigand's Hatchets", "none"),
+  P("Echoing Thunder", "none"),
+  P("Gyosha Hatchets", "none"),
+  P("Haguro Ninja Hatchets", "none"),
+  P("Heizo's Hatchets", "heizo"),
+  P("Hero's Hatchets", "none"),
+  P("Iceberg", "none"),
+  P("Infernal Hatchets", "none"),
+  P("Martial Artist's Hatchets", "none"),
+  P("Mountain Bandit Hatchets", "none"),
+  P("Ninja's Hatchets", "none"),
+  P("Radiant Flame", "none"),
+  P("Shugendo Hermit Hatchets", "none"),
+  P("Togakushi Ninja Hatchets", "none"),
+  P("Wave Cutter Hatchets", "none"),
+  P("Wind Demon Hatchets", "none"),
+  P("Zenki and Goki", "none"),
+  P("Benkei's Splitstaff", "none"),
+  P("Chunin's Splitstaff", "none"),
+  P("Dragon King Splitstaff", "none"),
+  P("Elite Warrior's Splitstaff", "none"),
+  P("Evil-Crusher Splitstaff", "none"),
+  P("Flashfire Splitstaff", "none"),
+  P("Genin's Splitstaff", "none"),
+  P("Head Ninja's Splitstaff", "none"),
+  P("Heroic Monk's Splitstaff", "none"),
+  P("Himiko's Staff", "exalted"),
+  P("Hunter's Splitstaff", "none"),
+  P("Infernal Splitstaff", "none"),
+  P("Itinerant Monk's Splitstaff", "none"),
+  P("Jonin's Splitstaff", "none"),
+  P("Kobo Daishi's Khakkhara", "kobo"),
+  P("Mikoshi's Khakkhara", "none"),
+  P("Sage's Khakkhara", "sage"),
+  P("Seven Scalp Splitstaff", "none"),
+  P("Tempest Splitstaff", "none"),
+  P("Tengu's Khakkhara", "none"),
+  P("Vajra Splitstaff", "none"),
+  P("Warrior Monk's Splitstaff", "none"),
+  P("Zen Splitstaff", "none"),
+  P("Demon Cutter", "brave", "samurai"),
+  P("Demon Arm Cestuses", "brave", "samurai"),
+  P("Crimson General's Nagamaki", "crimson", "samurai"),
+  P("Vermillion Spear", "eccentric", "samurai"),
+  P("Kasha Kiyomitsu", "firstCap", "samurai"),
+  P("Goichimonshu Dual Swords", "goi", "samurai"),
+  P("Brother's Dual Katana", "brother", "samurai"),
+  P("Infernal Katana", "none", "samurai"),
+  P("Infernal Dual Swords", "none", "samurai"),
+  P("Infernal Spear", "none", "samurai"),
+  P("Infernal Odachi", "none", "samurai"),
+  P("Infernal Axe", "none", "samurai"),
+  P("Infernal Switchglaive", "none", "samurai"),
+  P("Infernal Cestuses", "none", "samurai"),
+  P("Hoko & Shield", "none", "samurai"),
+  P("Infernal Hoko & Shield", "none", "samurai"),
+  P("Ninja Hoko & Shield", "none"),
+  P("Infernal Ninja Hoko & Shield", "none"),
+  P("Great Tengu Blade", "swordmaster", "samurai"),
+  P("Beardcutter", "kamakura", "samurai"),
+  P("Kaikunigo", "tigerKai", "samurai"),
+  P("Kashu Kiyomitsu", "firstCap", "samurai"),
+  P("Sohaya Tsurugi", "righteous", "samurai"),
+  P("Honjo Masamune and Saber", "hollyhock", "samurai"),
+  P("Fudo Kuniyuki and Yagen Toshiro", "malefactor", "samurai"),
+  P("Wisdom Sutra and Plane Cutter", "swallow", "samurai"),
+  P("Bizen Tachi", "none", "samurai"),
+  P("Senjuin Tachi", "none", "samurai"),
+  P("Bizen Osafune", "none", "samurai"),
+  P("Dojikiri Yasutsuma", "none", "samurai"),
+  P("Mantra Sword", "none", "samurai"),
+  P("Mikazuki Munechika", "none", "samurai"),
+  P("Nagasone Kotetsu", "none", "samurai"),
+  P("Odenta Mitsuyo", "none", "samurai"),
+  P("Onimura Kunitsuna", "none", "samurai"),
+  P("Ornamental Blade", "none", "samurai"),
+  P("Osafune Kanemitsu", "none", "samurai"),
+  P("Smirkwiper", "none", "samurai"),
+  P("Dual Bloodstained Cleavers", "none", "samurai"),
+  P("Dual Wooden Swords", "none", "samurai"),
+  P("Ichigo Hitofuri and Oyako Toshiro", "none", "samurai"),
+  P("Kanesada and Yasutsugu", "none", "samurai"),
+  P("Mino Dual Tachi", "none", "samurai"),
+  P("Rai Kunitsugu Dual Tachi", "none", "samurai"),
+  P("Regal Lion and Bone Eater", "none", "samurai"),
+  P("Seki Dual Tachi", "none", "samurai"),
+  P("Seki Kanenori Dual Uchigatana", "none", "samurai"),
+  P("Soshu Dual Tachi", "none", "samurai")
+],
+w2: null,
+bow: [
+  P("— empty —", null, "any"),
+  P("Borehole Bow", "none", "any"),
+  P("Chinzei Hachiro's Bow", "none", "any"),
+  P("Crimson General's Bow", "crimson", "any"),
+  P("Fan-Piercing Bow", "blessed", "any"),
+  P("Five-Man Bow", "hachiryo", "any"),
+  P("Longbow", "none", "any"),
+  P("Lord Kamakura's Bow", "none", "any"),
+  P("Marksman's Bow", "none", "any"),
+  P("Raishodo", "none", "any"),
+  P("Ryomen Sukuna's Bow", "none", "any"),
+  P("Seer's Bow", "none", "any"),
+  P("Wisteria Longbow", "none", "any"),
+  P("Hino Rifle", "swallow", "any"),
+  P("Inadome Matchlock", "none", "any"),
+  P("Kunitomo Rifle", "none", "any"),
+  P("Negoro Rifle", "none", "any"),
+  P("Sakai Rifle", "none", "any"),
+  P("Tanegashima Matchlock", "none", "any"),
+  P("Crimson Hand Cannon", "none", "any"),
+  P("Dragon's Roar", "none", "any"),
+  P("Hand Cannon", "none", "any"),
+  P("Lightning Cannon", "none", "any"),
+  P("Thronecrusher Cannon", "none", "any"),
+  P("Yoryu Cannon", "none", "any")
+],
+acc1: [
+  P("— empty —", null, "any"),
+  P("Yasakani Magatama", "yasakani", "any"),
+  P("Fan", "none", "any"),
+  P("Fan (Critical)", "none", "any"),
+  P("Fan (Unscathed)", "none", "any"),
+  P("Pipe", "none", "any"),
+  P("Semiore Flute (Evade)", "none"),
+  P("Semiore Flute (Deflect)", "none", "samurai"),
+  P("Shaman Queen's Necklace", "exalted"),
+  P("Kobo Daishi's Beads", "kobo"),
+  P("Kunimatsu's Inkstone Box", "none", "any"),
+  P("Magatama", "none", "any"),
+  P("Magatama (Critical)", "none", "any"),
+  P("Magatama (Unscathed)", "none", "any"),
+  P("Omamori", "none", "any"),
+  P("Fire Omamori", "none", "any"),
+  P("Water Omamori", "none", "any"),
+  P("Lightning Omamori", "none", "any"),
+  P("Poison Omamori", "none", "any"),
+  P("Paralysis Omamori", "none", "any"),
+  P("Brothers' Omamori", "none", "any"),
+  P("Gourd", "none", "any"),
+  P("Abacus", "none", "any"),
+  P("Comb", "none", "any"),
+  P("Writing Set", "none", "any"),
+  P("Japanese Scissors", "none", "any"),
+  P("Prayer Beads", "none", "any"),
+  P("Prayer Beads (Amrita)", "none", "any"),
+  P("Prayer Beads (Amrita Absorption)", "none", "any"),
+  P("Medicine Case (Item Drop Rate)", "none", "any"),
+  P("Medicine Case (Untouched Elixirs)", "none", "any"),
+  P("Medicine Case (Medicine Efficacy)", "none", "any"),
+  P("Divination Board", "none", "any"),
+  P("Dragon Whistle", "none", "any"),
+  P("Hand Mirror", "none", "any"),
+  P("Two Leaves", "none", "any"),
+  P("Water Dragon", "none", "any"),
+  P("White Camelia Hairpin", "none"),
+  P("Shingen's Fan", "none", "samurai"),
+  P("Kodama Netsuke Charm", "none", "any"),
+  P("Imported Pocket Watch", "brother", "samurai")
+]
+};
+
+PIECES.w2 = PIECES.w1;
+PIECES.acc2 = PIECES.acc1;
+(function seedSamuraiWeapons(){
+  const add = (name, set, lock) => {
+    if(!PIECES.w1.some(p => p.name===name)){
+      const np = P(name, set||"none", "samurai");
+      PIECES.w1.push(np);
+    }
+  };
+  [
+    ["Wooden Hammer","none",["High Attack Damage +4.2%","dmg"]],
+    ["Black Steel Axe","none",["Mid Guard Ki Consumption −2.3%","kiCost"]],
+    ["Palisade Breaker","none",["Low Attack Ki Consumption −1.9%","kiCost"]],
+    ["Oak Hammer","none",["Low Attack Damage +4.2%","dmg"]],
+    ["Bandit Axe","none",["Mid Attack Ki Consumption −1.9%","kiCost"]],
+    ["Pickaxe","none",["Strong Attack Ki Consumption −1.9%","kiCost"]],
+    ["Helmsplitter Axe","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Heavyweight Axe","none",["High Attack Ki Consumption −1.9%","kiCost"]],
+    ["Swordsmith's Hammer","none",["Guard Ki Consumption −2.1%","kiCost"]],
+    ["Rusty Hoe","none",["Low Stance Martial Art Ki Damage +4.4%","kiDmg"]],
+    ["Spearbreaker Hammer","none",["Strong Attack Damage +4.2%","dmg"]],
+    ["Ryomen Sukuna's Axe","none",["Spirit Force Bonus (Status Ailment) C","spirit"]],
+    ["Crucible Cudgel","none",["Spirit Force Bonus (Amrita) C","spirit"]],
+    ["Infernal Axe","none",["Melee Damage (Crucible) +6.0%","dmg"]],
+    ["Leather Cestuses","none",["High Stance Martial Art Damage +4.4%","dmg"]],
+    ["Footsoldier's Cestuses","none",["Mid Guard Ki Consumption −2.3%","kiCost"]],
+    ["Captain's Cestuses","none",["Guard Ki Consumption −2.1%","kiCost"]],
+    ["Martial Artist Cestuses","none",["Martial Arts Ki Consumption −2.0%","kiCost"]],
+    ["Samurai General's Cestuses","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Hachiya Cestuses","none",["Martial Arts Ki Damage +2.5%","kiDmg"]],
+    ["Shugendo Hermit Cestuses","none",["Auto Life Recovery (Amrita)","heal"]],
+    ["White Lotus Cestuses","none",["Spirit Force Bonus (Status Ailment) C","spirit"]],
+    ["Infernal Cestuses","none",["Melee Damage (Crucible) +6.0%","dmg"]],
+    ["Wooden Spear","none",["None","util"]],
+    ["Spear","none",["Low Attack Ki Consumption −1.9%","kiCost"]],
+    ["Legion Spear","none",["High Attack Damage +4.2%","dmg"]],
+    ["Sickle Spear","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Cross Spear","none",["Mid Attack Ki Consumption −1.9%","kiCost"]],
+    ["Officer's Spear","none",["High Stance Martial Art Damage +4.4%","dmg"]],
+    ["Squire's Cross Spear","none",["Martial Art Ki Damage +2.5%","kiDmg"]],
+    ["Warrior's Cross Spear","none",["Low Attack Damage +4.2%","dmg"]],
+    ["Captain's Spear","none",["Strong Attack Ki Consumption −1.9%","kiCost"]],
+    ["Tombokiri","none",["Thrust Damage +4.2%","dmg"]],
+    ["Potsticker Spear","none",["Melee Damage +3.8%","dmg"]],
+    ["Hanzo the Demon's Spear","none",["Backstab Damage +4.5%","dmg"]],
+    ["Crucible Sasumata","none",["Low Stance Martial Art Ki Damage +4.4%","kiDmg"]],
+    ["Swan Spear","none",["Damage Bonus (Bow Damage) D+","ranged"]],
+    ["Koroka Spear","none",["Imbue Fire +8","status"]],
+    ["Infernal Spear","none",["Melee Damage (Crucible) +6.0%","dmg"]],
+    ["Hunter's Switchglaive","none",["High Attack Damage +4.2%","dmg"]],
+    ["Vermillion Switchglaive","none",["Mid Guard Ki Consumption −2.3%","kiCost"]],
+    ["Martial Artist's Switchglaive","none",["Strong Attack Ki Damage +1.9%","kiDmg"]],
+    ["Seven Scalp Switchglaive","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Terminus Switchglaive","none",["Strong Attack Damage +4.2%","dmg"]],
+    ["Sasayuki","none",["Imbue Water +9","status"]],
+    ["Evil-Crusher Switchglaive","none",["Melee Damage vs. Winded Enemies +4.9%","dmg"]],
+    ["Aberrant Switchglaive","none",["Melee Attack Ki Consumption −1.7%","kiCost"]],
+    ["Merciful Switchglaive","none",["Low Attack Ki Consumption −1.9%","kiCost"]],
+    ["Iron Switchglaive","none",["Low Attack Damage +4.2%","dmg"]],
+    ["Infernal Switchglaive","none",["Melee Damage (Crucible) +6.0%","dmg"]],
+    ["Wooden Odachi","none",null],
+    ["Yamato Odachi","none",["Low Attack Ki Consumption −1.9%","kiCost"]],
+    ["Bizen Odachi","none",["High Attack Damage +4.2%","dmg"]],
+    ["Yamashiro Odachi","none",["Mid Guard Ki Consumption −2.3%","kiCost"]],
+    ["Rai Odachi","none",["Strong Attack Ki Damage +1.9%","kiDmg"]],
+    ["Bloodspider Blade","none",["Spirit Force Charge +0.7%","spirit"]],
+    ["Kobizen Odachi","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Sukesada Odachi","none",["Guard Ki Consumption −2.1%","kiCost"]],
+    ["Takahira Odachi","none",["Thrust Damage +4.2%","dmg"]],
+    ["Rai Kuniyuki Odachi","none",["Martial Arts Ki Consumption −2.0%","kiCost"]],
+    ["Taro Tachi","none",["Imbue Water +9","status"]],
+    ["Jiro Tachi","none",["Strong Attack Damage +4.2%","dmg"]],
+    ["Ryomen Sukuna's Sword","none",["Spirit Force Bonus (Status Ailment) C","spirit"]],
+    ["Kimibanzi Tomonari","none",["Melee Ki Damage +1.5%","kiDmg"]],
+    ["Wooden Sword","none",null],
+    ["Taima Kuniyuki","none",["Mid Attack Damage +4.2%","dmg"]],
+    ["Striking Retribution","brother",["Cunning Spirit","set"]],
+    ["Usumidori","minamoto",["General of Ruin","set"]],
+    ["Tokagemaru","none",["Spirit Force Bonus (Amrita) C","spirit"]],
+    ["Yamatai Sword","none",["Increased Damage Dealt","dmg"]]
+  ].forEach(a => add(a[0], a[1], a[2]));
+  PIECES.w2 = PIECES.w1;
+})();
+
+const SAMURAI_ARMOR = [
+  {id:"gunner", name:"Gunner", bonus:"Master of Gunnery", req:{con:10,skl:12}, w:"l",
+   head:"Gunner's Hat", chest:"Gunner's Vest", arms:"Gunner's Gauntlets", waist:"Gunner's Waistguard", feet:"Gunner's Greaves",
+   tiers:{2:["Life +110",""],3:["Rifle / Hand Cannon Speed Up",""],4:["Hand Cannon Damage +10.3%",""],5:["Attack Bonus (Hand Cannon Damage) A",""],6:["Unlimited Ammunition +12.8%",""]}},
+  {id:"wayfarer", name:"Wayfarer", bonus:"Single Sword's Reverie", req:{con:10,skl:10}, w:"l",
+   head:"Wayfarer's Hat", chest:"Wayfarer's Vest", arms:"Wayfarer's Gauntlets", waist:"Wayfarer's Waistguard", feet:"Wayfarer's Greaves",
+   tiers:{2:["Life Recovery (Arts Proficiency Attack) D",""],3:["Strong Attack Damage +7.9%",""],4:["Martial Art Ki Damage +9.1%",""],5:["Attack Bonus (Heart) C+",""],6:["Rising Tide",""]}},
+  {id:"peerless", name:"Peerless Combatant", bonus:"Master of the Spear", req:{con:12,skl:11}, w:"l",
+   head:"Peerless Combatant's Headband", chest:"Peerless Combatant's Robes", arms:"Peerless Combatant's Gauntlets", waist:"Peerless Combatant's Hakama", feet:"Peerless Combatant's Gaiters",
+   tiers:{2:["Defense Bonus (Constitution) D+",""],3:["Thrust Damage +9.0%, Strong Attack Ki Damage +8.3%",""],4:["Enhanced Attack & Defense (Spear) B",""]}},
+  {id:"swordmaster", name:"Swordmaster", bonus:"Sword and Zen as One", req:{con:13,skl:12}, w:"l",
+   head:"Swordmaster's Hat", chest:"Swordmaster's Robe", arms:"Swordmaster's Sleevelets", waist:"Swordmaster's Hakama", feet:"Swordmaster's Gaiters",
+   tiers:{2:["Increased Damage Dealt (Deflect)",""],3:["Defense Bonus (Heart) C+",""],4:["Withering Blow (Bare-Handed Deflect)",""],5:["Enhanced Attack & Defense (Swords) B+",""]}},
+  {id:"hollyhock", name:"Hollyhock", bonus:"Advent of the Divine", req:{con:12,str:12}, w:"m",
+   head:"Hollyhock Helmet", chest:"Hollyhock Cuirass", arms:"Hollyhock Gauntlets", waist:"Hollyhock Waistguard", feet:"Hollyhock Greaves",
+   tiers:{2:["Life Drain (Guardian Spirit Skill Hit) 20",""],3:["Living Artifact Durability +8.2%",""],4:["Spirit Force Charge Bonus (Amrita) C−",""],5:["Elemental Damage (Living Artifact) +7.2%",""],6:["Water Damage +12.0%",""]}},
+  {id:"righteous", name:"Righteous", bonus:"Herald of Peace", req:{con:10,hrt:10}, w:"m",
+   head:"Righteous Helmet", chest:"Righteous Cuirass", arms:"Righteous Gauntlets", waist:"Righteous Waistguard", feet:"Righteous Greaves",
+   tiers:{2:["Glory Obtained +4.2%",""],3:["Spirit Force Bonus (Damage Taken) C−",""],4:["Defense Bonus (Heart) C",""],5:["Dual Protection",""],6:["Transform Bonus (Ninja)",""]}},
+  {id:"lilac", name:"Lilac", bonus:"Unmatched Warrior", req:{sta:12,str:12}, w:"h",
+   head:"Lilac Helmet", chest:"Lilac Cuirass", arms:"Lilac Gauntlets", waist:"Lilac Waistguard", feet:"Lilac Greaves",
+   tiers:{2:["Life Drain (Ranged Weapon Hit) 10",""],3:["Reduced Movement on Enemy (Ranged Weapon Hit) +10.0%",""],4:["Movement Speed (Aiming Ranged Weapon) +30.0%",""],5:["Increased Damage Taken on Enemy (Ranged Weapon Hit) +8.2%",""],6:["Extended Negative Effects (Melee Attack)",""]}},
+  {id:"tigerKai", name:"Tiger of Kai", bonus:"Swift Silence and Daring Defense", req:{sta:12,str:12}, w:"h",
+   head:"Tiger of Kai Helmet", chest:"Tiger of Kai Cuirass", arms:"Tiger of Kai Gauntlets", waist:"Tiger of Kai Waistguard", feet:"Tiger of Kai Greaves",
+   tiers:{2:["Life Drain (Strong Attack) 3%",""],3:["Spirit Force Bonus (Wind Damage) C+",""],4:["Decreased Damage Taken (Life Recovery)",""],5:["Melee Damage vs. Scorched Enemy +8%",""],6:["Guard Ki Recovery Speed +12.0%",""]}},
+  {id:"tamura", name:"Scion of Tamura", bonus:"Pride of the Sakanoue", req:{sta:10,str:10}, w:"h",
+   head:"Scion of Tamura's Helmet", chest:"Scion of Tamura's Cuirass", arms:"Scion of Tamura's Gauntlets", waist:"Scion of Tamura's Waistguard", feet:"Scion of Tamura's Greaves",
+   tiers:{2:["Life +150",""],3:["Damage Taken −4.0%",""],4:["Max Arrows +3",""],5:["Ki Pulse Recovery +8.0%",""],6:["Untouched Projectiles +20.0%",""]}},
+  {id:"malefactor", name:"Malefactor", bonus:"Profligate Sinner", req:{sta:12,str:12}, w:"h",
+   head:"Malefactor's Helmet", chest:"Malefactor's Cuirass", arms:"Malefactor's Gauntlets", waist:"Malefactor's Waistguard", feet:"Malefactor's Greaves",
+   tiers:{2:["Life Drain (Final Blow / Grapple) 100",""],3:["Melee Damage vs. Paralyzed Enemy +50.0%",""],4:["Melee Ki Damage +4.0%",""],5:["Ki Damage on Applying Paralysis",""],6:["Final Blow / Grapple Damage +20.0%",""]}},
+  {id:"kintaro", name:"Kintaro", bonus:"Kintaro", req:{sta:14,str:14}, w:"h",
+   head:"Kintaro's Headband", chest:"Kintaro's Cuirass", arms:"Kintaro's Gauntlets", waist:"Kintaro's Waistguard", feet:"Kintaro's Greaves",
+   tiers:{2:["Damage Taken (While Attacking) −7.0%",""],3:["Life Drain (Melee Attack) 2%",""],4:["Stalwart (During Charged Attacks)",""],5:["Enhanced Attack & Defense (Axes) B",""],6:["Attack Bonus (Strength) B+",""]}},
+  {id:"retreat", name:"Retreat Master", bonus:"Commander of the Rearguard", req:{con:10,skl:10}, w:"m",
+   head:"Retreat Master's Helmet", chest:"Retreat Master's Cuirass", arms:"Retreat Master's Gauntlets", waist:"Retreat Master's Waistguard", feet:"Retreat Master's Greaves",
+   tiers:{2:["Dodge Ki Consumption −6.9%",""],3:["Faster Movement (Ailing)",""],4:["Melee Damage (Unscathed) +10.0%",""],5:["Life Drain (Martial Arts) 2",""]}},
+  {id:"upperVassal", name:"Upper Vassal", bonus:"", req:{con:8,skl:8}, w:"l",
+   head:"Upper Vassal's Hat", chest:"Upper Vassal's Robe", arms:"Upper Vassal's Sleevelets", waist:"Upper Vassal's Hakama", feet:"Upper Vassal's Sandals"},
+  {id:"irregular", name:"Irregular Troop", bonus:"", req:{con:8,skl:8}, w:"l",
+   head:"Irregular Troop's Hat", chest:"Irregular Troop's Cuirass", arms:"Irregular Troop's Gauntlets", waist:"Irregular Troop's Waistguard", feet:"Irregular Troop's Greaves"},
+  {id:"trainingS", name:"Training", bonus:"", req:{con:5,skl:5}, w:"l",
+   head:"Training Hat", chest:"Training Robe", arms:"Training Gauntlets", waist:"Training Hakama", feet:"Training Gaiters"},
+  {id:"authority", name:"Authority", bonus:"", req:{con:12,str:12}, w:"m",
+   head:"Authority's Helmet", chest:"Authority's Cuirass", arms:"Authority's Gauntlets", waist:"Authority's Waistguard", feet:"Authority's Greaves"},
+  {id:"heir", name:"Heir", bonus:"", req:{con:10,str:10}, w:"m",
+   head:"Heir's Helmet", chest:"Heir's Cuirass", arms:"Heir's Gauntlets", waist:"Heir's Waistguard", feet:"Heir's Greaves"},
+  {id:"vassal", name:"Vassal", bonus:"", req:{con:8,str:8}, w:"m",
+   head:"Vassal's Helmet", chest:"Vassal's Cuirass", arms:"Vassal's Gauntlets", waist:"Vassal's Waistguard", feet:"Vassal's Greaves"},
+  {id:"veteran", name:"Veteran", bonus:"", req:{con:8,str:8}, w:"m",
+   head:"Veteran's Helmet", chest:"Veteran's Cuirass", arms:"Veteran's Gauntlets", waist:"Veteran's Waistguard", feet:"Veteran's Greaves"},
+  {id:"youngblood", name:"Youngblood", bonus:"", req:{con:8,str:8}, w:"m",
+   head:"Youngblood Helmet", chest:"Youngblood Cuirass", arms:"Youngblood Gauntlets", waist:"Youngblood Waistguard", feet:"Youngblood Greaves"},
+  {id:"yamataiS", name:"Yamatai", bonus:"", req:{sta:12,str:12}, w:"h",
+   head:"Yamatai Helmet", chest:"Yamatai Cuirass", arms:"Yamatai Gauntlets", waist:"Yamatai Waistguard", feet:"Yamatai Greaves"},
+  {id:"mino", name:"Mino Veteran", bonus:"", req:{sta:12,str:12}, w:"h",
+   head:"Mino Veteran's Helmet", chest:"Mino Veteran's Cuirass", arms:"Mino Veteran's Gauntlets", waist:"Mino Veteran's Waistguard", feet:"Mino Veteran's Greaves"},
+  {id:"hellfrostW", name:"Hellfrost Warrior", bonus:"", req:{sta:10,str:10}, w:"m",
+   head:"Hellfrost Warrior Helmet", chest:"Hellfrost Warrior Cuirass", arms:"Hellfrost Warrior Gauntlets", waist:"Hellfrost Warrior Waistguard", feet:"Hellfrost Warrior Greaves"},
+  {id:"hellfireW", name:"Hellfire Warrior", bonus:"", req:{sta:10,str:10}, w:"m",
+   head:"Hellfire Warrior Helmet", chest:"Hellfire Warrior Cuirass", arms:"Hellfire Warrior Gauntlets", waist:"Hellfire Warrior Waistguard", feet:"Hellfire Warrior Greaves"},
+  {id:"ronin", name:"Ronin", bonus:"", req:{con:8,str:11}, w:"m",
+   head:"Ronin's Faceplate", chest:"Ronin's Cuirass", arms:"Ronin's Gauntlets", waist:"Ronin's Waistguard", feet:"Ronin's Greaves"},
+  {id:"general", name:"Samurai General", bonus:"", req:{con:11,str:16}, w:"m",
+   head:"Samurai General's Helmet", chest:"Samurai General's Cuirass", arms:"Samurai General's Gauntlets", waist:"Samurai General's Waistguard", feet:"Samurai General's Greaves"},
+  {id:"shinsengumi", name:"Shinsengumi", bonus:"", req:{con:17,skl:17}, w:"l",
+   head:"Shinsengumi Headband", chest:"Shinsengumi Haori", arms:"Shinsengumi Sleevelets", waist:"Shinsengumi Hakama", feet:"Shinsengumi Sandals"}
+];
+
+
+
+const WEAPON_SLOTS = new Set(["w1","w2","bow"]);
+const ARMOR_SLOTS = new Set(["head","chest","arms","waist","feet"]);
+
+const SETS = {
+  kato:{name:"Flying Kato / Master of Illusion",yas:1,tiers:{2:["Ninjutsu Gauge Charge +15%","cal"],3:["Shadow Arts Damage +10%","cal"],4:["Spirit Force Charge (Backstab) +8%",""],5:["Elemental Damage +10%","cal"],6:["Life Drain (Ninjutsu Hit) B+","cal"]}},
+  iga:{name:"Iga Jonin / Head of the Iga Ninja",yas:1,tiers:{2:["Dodge Ki Consumption −4.2%",""],3:["Ninjutsu Damage +10.2%","cal"],4:["Faster Movement (Ninjutsu Hit)","cal"],5:["Untouched Ninjutsu +15%","cal"],6:["Ninja Tool Arts Damage +18%","dead"]}},
+  fuma:{name:"Fuma Chief / Famed Fuma",yas:1,tiers:{2:["Shadow Arts Damage (Skill) D","cal"],3:["Ki Damage vs Blustered +10%",""],4:["Stealth B+",""],5:["Shadow Art Ailment Augmentation +8%","cal"],6:["Wind Damage +12%",""]}},
+  onzoshi:{name:"Onzoshi / Tragic Hero",yas:1,tiers:{2:["Dodge Ki Consumption −6.7%",""],3:["Ninjutsu Damage +12.1%","cal"],4:["Increased Damage Dealt (Evade)",""],5:["Faster Movement (Evade)",""],6:["Attack Bonus (Heart) D+",""]}},
+  lastNinja:{name:"Last Ninja / Descendant of Iga",yas:1,tiers:{2:["Backstab Damage",""],3:["Assassination Damage",""],4:["Ninjutsu Damage","cal"],5:["Stealth",""],6:["Attack Bonus (Stealth)",""]}},
+  kusaMaster:{name:"Kusarigama Master / Ultimate Defense",yas:1,tiers:{2:["Dodge Ki Consumption",""],3:["Life Recovery (Backstab)",""],4:["Ninjutsu / Arts Gauge Charge","cal"],5:["Backstab Damage",""],6:["Enhanced Attack & Defense (Kusarigama)",""]}},
+  heizo:{name:"Heizo / Devious Loyalty",yas:1,tiers:{2:["Quick Attack Damage +3.5%",""],3:["Melee Attack Ki Consumption −10.0%",""],4:["Faster Movement (Evade)",""],5:["Faster Ki Recovery (Enemy Killed)",""],6:["Attack Bonus (Skill) D+",""]}},
+  blessed:{name:"Blessed Sleeve / Straight and True",yas:1,tiers:{2:["Life +150",""],3:["Auto-Target Weak Point",""],4:["Ki +51",""],5:["Bullseye Bonus +20%",""],6:["Ranged-hit damage taken on enemy +20%, Melee +8%",""]}},
+  gallant:{name:"Gallant Thief / Picturesque Scenery",yas:1,tiers:{2:["Ki Reduction in Midair",""],3:["Gold Earned",""],4:["Physical Arts Damage",""],5:["Attack Bonus (Stamina)",""],6:["Aerial Attack Damage",""]}},
+  kobo:{name:"Kobo Daishi / Devout Practitioner",yas:1,tiers:{2:["Life",""],3:["Melee Damage",""],4:["Dodge Ki Consumption",""],5:["Effect Duration",""],6:["Enhanced Attack & Defense (Splitstaff)",""],7:["Attack Bonus (Magic)",""]}},
+  exalted:{name:"Exalted / Quick-Witted Courage",yas:1,tiers:{2:["Status Ailment Augmentation (Guardian Spirit Skill) +8.0%",""],3:["Increased Damage Dealt (Amrita Absorption)",""],4:["Guardian Spirit Skill Damage (Magic) B+",""],5:["Faster Ki Recovery (Amrita Absorption)",""],6:["Activate Living Artifact (No Life)",""]}},
+  priest:{name:"High Priest / Purifying Presence",yas:1,tiers:{2:["Untouched Sacred Water 35%",""],3:["Untouched Summoning Seals +11%",""],4:["Auto Life Recovery (Purification)",""],5:["Yokai Debilitation (Sacred Water)",""]}},
+  sage:{name:"Sage / True Pure Land",yas:1,tiers:{2:["Damage Taken (Medicine) down",""],3:["Melee Damage (Crucible) +10%",""],4:["Damage Taken (Purification) down",""],5:["Effect Duration +59",""],6:["Attack Bonus (Intellect) B",""]}},
+  demonHorde:{name:"Demon Horde / Demon Incarnate",yas:1,tiers:{2:["Life Drain (Melee Kill)",""],3:["Life Recovery (Crucible)",""],4:["Faster Ki Recovery (Amrita Absorb)",""],5:["Amrita Earned (Crucible)",""],6:["Crucible Weapon Damage",""]}},
+  moon:{name:"Moonprayer / Seven Misfortunes",yas:1,tiers:{2:["Damage Received (Negative Effect) −4%",""],3:["Extended Negative Effects / Damage Taken (Ailing) −25%",""],4:["Damage Bonus (Negative Effects) B+",""],5:["Melee Damage (Critical) +18%",""],6:["Copy Negative Effect (Critical)",""]}},
+  brave:{name:"Brave Demon Hunter / First of the Four Guardians",yas:1,tiers:{2:["Life +150",""],3:["Martial Art Damage +13.0%",""],4:["Enhanced Attack & Defense (Cestus) C",""],5:["Ki Recovery Speed +15.0%",""],6:["Martial Arts Ki Consumption −15.0%",""],7:["Attack Bonus (Strength) A",""]}},
+  crimson:{name:"Crimson General / Pride of the Crimson Army",yas:1,tiers:{2:["Defense Bonus (Stamina) D",""],3:["Guard Ki Consumption −10.0%",""],4:["Ki Pulse Bonus +21",""],5:["Martial Art Ki Damage +7.1%",""],6:["Enhanced Attack & Defense (Odachi) B",""]}},
+  eccentric:{name:"Eccentric / Rightful Eccentric",yas:1,tiers:{2:["Break",""],3:["Life",""],4:["Strong Attack Damage",""],5:["Luck",""],6:["Strong Attack Damage",""]}},
+  firstCap:{name:"First Captain / Sword of Misfortune",yas:1,tiers:{2:["Thrust Damage +8%",""],3:["Amrita Gauge Charge +10%",""],4:["Sheathed Martial Arts Damage +11%",""],5:["Increased Damage Dealt (Amrita Gauge)",""],6:["Damage Bonus (Amrita Gauge) D+",""]}},
+  goi:{name:"Goichimonshu / Duplicitous General",yas:1,tiers:{2:["Life Drain (Final Blow/Grapple)",""],3:["Martial Arts Ki Consumption",""],4:["Life Drain (Martial Arts)",""],5:["Versatile Warrior (Martial Arts)",""],6:["Enhanced Attack and Defense (Dual Swords)",""]}},
+  hachiryo:{name:"Great Hachiryo / Valiant Wanderer",yas:1,tiers:{2:["Piercing Projectiles",""],3:["Bow Damage",""],4:["Projectile Ki Damage",""],5:["Melee Damage",""],6:["Full-Body Draw",""]}},
+  monk:{name:"Guardian Monk / Imagawa Regent",yas:1,tiers:{2:["Ki Recovery Bonus (Amrita Gauge)",""],3:["Defense Bonus (Magic)",""],4:["Familiarity Bonus",""],5:["Damage Bonus (Familiarity)",""],6:["Life Recovery (Amrita Absorption)",""]}},
+  brother:{name:"Brother / Cunning Spirit",yas:1,tiers:{2:["Glory Obtained",""],3:["Spirit Force Bonus (Damage Taken)",""],4:["Defense Bonus (Heart)",""],5:["Dual Protection",""],6:["Transform Bonus (Ninja)",""]}},
+  swallow:{name:"Swallowtail / Exemplary Eye for Elegance",yas:1,tiers:{2:["Ranged Damage",""],3:["Projectile Ki Damage",""],4:["Bow Speed Up",""],5:["Bullseye Bonus",""],6:["Increased Damage Dealt (Ranged Weapon Hit)",""]}},
+  woe:{name:"Warrior of the East / Warrior of the East's Honor",yas:1,tiers:{2:["Martial Art Damage +5.0%",""],3:["Damage Taken −3.0%",""],4:["Lightning Damage +4.0%",""],5:["Attack Bonus (Constitution) C+",""],6:["Life Drain (Lightning Damage) B+",""]}},
+  malefactor:{name:"Malefactor / Profligate Sinner",yas:1,tiers:{2:["Life Drain (Final Blow / Grapple) 100",""],3:["Melee Damage vs. Paralyzed Enemy +50.0%",""],4:["Melee Ki Damage +4.0%",""],5:["Ki Damage on Applying Paralysis",""],6:["Final Blow / Grapple Damage +20.0%",""]}},
+  goi:{name:"Goichimonshu / The Duplicitous General",yas:1,tiers:{2:["Life +110",""],3:["Martial Arts Ki Consumption −10.0%",""],4:["Life Drain (Martial Arts) 1",""],5:["Versatile Warrior (Ki Consumption)",""],6:["Enhanced Attack & Defense (Dual Swords) D+",""]}},
+  crimson:{name:"Crimson General / Pride of the Crimson Army",yas:1,tiers:{2:["Defense Bonus (Stamina) D",""],3:["Guard Ki Consumption −10.0%",""],4:["Ki Pulse Bonus +21",""],5:["Martial Art Ki Damage +7.1%",""],6:["Enhanced Attack & Defense (Odachi) B",""],7:["Melee Damage (Unscathed) +12.0%",""]}},
+  tatenashi:{name:"Tatenashi / The God of War Looks Down",yas:1,tiers:{2:["Projectile Damage Taken −8.0%",""],3:["Damage Taken −3.0%",""],4:["Damage Bonus (Equipment Weight) C",""],5:["Damage Taken −4.0%, Decreased Elemental Damage Taken +45",""]}},
+  kamakura:{name:"Lord Kamakura / Founder of the Shogunate",yas:1,tiers:{2:["Martial Arts Ki Consumption −5.7%",""],3:["Bluster Accumulation (Enemy) +10.0%",""],4:["Life Recovery (Yokai Realm)",""],5:["Spirit Force Bonus (Wind Damage) C+",""],6:["Melee Damage (Yokai Realm) +12.0%",""],7:["Damage Bonus (Spirit Force) A",""]}},
+  shuri:{name:"Shuri-no-suke / Kai's Vice General",yas:1,tiers:{2:["Treasure Sensor",""],3:["Spirit Force Charge (Enhanced) +4.0%",""],4:["Increased Damage Dealt (Amrita Absorption)",""],5:["Attack Bonus (Intellect) B",""]}},
+  buddha:{name:"Sincere Buddha / The Protection of Kannon",yas:1,tiers:{2:["Poison Resistance +10",""],3:["Life Recovery Amount +10.0%",""],4:["Decreased Damage Taken (Deflect)",""],5:["Guard Ki Consumption −8.0%",""],6:["Melee Damage (Unscathed) +10.0%",""],7:["Damage Bonus (Poison Resistance) A",""]}},
+  minamoto:{name:"Minamoto / General of Ruin",yas:1,tiers:{2:["Guard Ki Consumption −4.2%",""],3:["Frost Moon Damage +22.0%",""],4:["Faster Ki Recovery (Deflect)",""],5:["Ki Damage (Deflect)",""],6:["Attack Bonus (Strength) D+",""]}}
+};
+
+const GRACES = {
+  benzaiten:{name:"Benzaiten",tiers:{2:["Life +241",""],3:["The Art of Defense — one Versatility stack after a deflect or evade (Versatility mastery required)",""],4:["Damage Taken (While Attacking) −6.0%",""],5:["Amrita Earned +10.0%",""],6:["Stack Count Duration — extends how long stacks last",""],7:["Adaptability — Martial Arts Ki cost drops with Versatility stacks",""]}},
+  daiko:{name:"Daikokuten",tiers:{2:["Life +238",""],3:["Equipment Drop Rate +5%",""],4:["Defense Bonus (Ninjutsu Power) B−",""],5:["Attack Bonus (Arts Proficiency) A−","dead"],6:["Arts Proficiency Power +70","dead"],7:["Ninjutsu Power +82","cal"]}},
+  ebisu:{name:"Ebisu",tiers:{2:["Life +234",""],3:["Luck +20",""],4:["Damage Taken −4%",""],5:["Increased Luck (Enemy Killed)",""],6:["Luck +50",""],7:["Item Drop Rate +20%",""]}},
+  fukuro:{name:"Fukurokuju",tiers:{2:["Life +237",""],3:["Dispel Negative Effects (Medicine) 59.6%",""],4:["Damage Taken −4%",""],5:["Luck +20",""],6:["Attack Bonus (Constitution) B+",""],7:["Damage Taken −9%",""]}},
+  hachiman:{name:"Hachiman",tiers:{2:["Life +238",""],3:["Untouched Projectiles +8%",""],4:["Damage Taken −4%",""],5:["Untouched Projectiles +10%",""],6:["Damage Bonus (Bow Damage) A",""],7:["Bow Damage +20%",""]}},
+  hotei:{name:"Hotei",tiers:{2:["Stackable (Auto-Recovery)",""],3:["Auto Life Recovery (Deflect)",""],4:["Effect Duration +3",""],5:["Auto Life Recovery (Evade)",""],6:["Ki Recovery Speed (Unscathed) +18.1%",""],7:["Increased Damage Dealt (Auto-Recovery)",""]}},
+  inari:{name:"Inari",tiers:{2:["Life +234",""],3:["Effect Duration +3",""],4:["Damage Taken −4%",""],5:["Elemental Weapon Damage +10%","dead"],6:["Faster Ki Recovery (Onmyo)",""],7:["Elemental Weapon Damage +18%","dead"]}},
+  jurojin:{name:"Jurojin",tiers:{2:["Life +237",""],3:["Life Drain (Onmyo Magic Hit) C+",""],4:["Damage Taken −4%",""],5:["Onmyo Magic Power +50",""],6:["Auto Life Recovery (Onmyo Magic)",""],7:["Attack Bonus (Magic) A−",""]}},
+  kuzuryu:{name:"Kuzuryu",tiers:{2:["Life +237",""],3:["Archspirit (Summoning Seal Hit)",""],4:["Poison Resistance +30",""],5:["Melee Damage vs Poisoned +10%",""],6:["Poison Status Ailment Augmentation A+",""],7:["Untouched Summoning Seals +15%",""]}},
+  vais:{name:"Vaisravana",tiers:{2:["Life +238",""],3:["Gold Earned +5%",""],4:["Damage Taken −4%",""],5:["Martial Art Damage +6%","dead"],6:["Martial Art Ki Damage +7%","dead"],7:["Attack Bonus (Strength) A−",""]}}
+};
+
+
+const CATS = {
+  dmg:"Damage Dealt", kiDmg:"Ki Damage", status:"Status", spirit:"Spirit Force",
+  heal:"Life Recovery", drop:"Drop", taken:"Damage Taken", kiCost:"Ki Cost",
+  amrita:"Amrita", move:"Movement", ranged:"Ranged", ninjutsu:"Ninjutsu",
+  life:"Life", util:"Utility", set:"Set Bonus", grace:"Grace"
+};
+const CAT_MAX = {dmg:1, kiDmg:2, status:1, spirit:1, heal:1, drop:1, taken:2, kiCost:1, amrita:1, move:1, ranged:2, ninjutsu:1, life:1, util:1, set:1, grace:1};
+
+const FIXED_BY_NAME = {
+
+  "Borehole Bow":["Projectile Damage (Unscathed) +4.0%","ranged"],
+  "Chinzei Hachiro's Bow":["Bow Damage (Close Range) +3.3%","ranged"],
+  "Longbow":["Bullseye Bonus +4.5%","ranged"],
+  "Lord Kamakura's Bow":["Founder of the Shogunate","set"],
+  "Marksman's Bow":["Pride of the Sakanoue","set"],
+  "Raishodo":["Bow Speed Up","ranged"],
+  "Ryomen Sukuna's Bow":["Ranged Damage +3.3%","ranged"],
+  "Seer's Bow":["Untouched Projectiles +1.0%","ranged"],
+  "Wisteria Longbow":["Decreases Damage Dealt on Enemy (Ranged Weapon Hit) +50.0%","ranged"],
+  "Inadome Matchlock":["Rifle Damage +3.3%","ranged"],
+  "Kunitomo Rifle":["Decreases Damage Dealt on Enemy (Ranged Weapon Hit) +50.0%","ranged"],
+  "Negoro Rifle":["Auto-Target Weak Point","ranged"],
+  "Sakai Rifle":["Projectile Damage (Unscathed) +4.0%","ranged"],
+  "Tanegashima Matchlock":["Bullseye Bonus +4.5%","ranged"],
+  "Crimson Hand Cannon":["Decreases Damage Dealt on Enemy (Ranged Weapon Hit) +50.0%","ranged"],
+  "Dragon's Roar":["Hand Cannon Damage (Close Range) +3.3%","ranged"],
+  "Hand Cannon":["Bullseye Bonus +4.5%","ranged"],
+  "Lightning Cannon":["Hand Cannon Damage +3.3%","ranged"],
+  "Thronecrusher Cannon":["Stalwart (Aiming Ranged Weapon)","ranged"],
+  "Yoryu Cannon":["Auto-Target Weak Point","ranged"],
+
+  "Ebony Tonfa":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Infernal Tonfa":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Katana":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Dual Swords":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Spear":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Odachi":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Axe":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Switchglaive":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Infernal Cestuses":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Hoko & Shield":["Guard Ki Consumption −2.1%","kiCost"],
+  "Infernal Hoko & Shield":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Ninja Hoko & Shield":["Guard Ki Consumption −2.1%","kiCost"],
+  "Infernal Ninja Hoko & Shield":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Iron Tonfa":["Damage Bonus (Familiarity) C−","dmg"],
+  "Lord's Tonfa":["Spirit Force Charge +0.7%","spirit"],
+  "Lost Kingdom Tonfa":["Life Drain (Martial Arts) 4","heal"],
+  "Martial Artist's Tonfa":["Melee Ki Damage +1.5%","kiDmg"],
+  "Ninja's Tonfa":["Strong Attack Ki Consumption −1.9%","kiCost"],
+  "Pagoda Tonfa":["Imbue Wind +12","status"],
+  "Quaking Tonfa":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Retainer's Tonfa":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Rosewood Tonfa":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Royal Tonfa":["Backstab Damage +4.5%","dmg"],
+  "Seventh Sword Tonfa":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Sarutobi's Gunsticks":["Strong Attack Damage +4.2%","dmg"],
+  "Twin Dragon Tonfa":["Martial Art Damage +4.0%","dmg"],
+  "Vajra Tonfa":["Life Drain (Quick Attack) 5%","heal"],
+  "White Bone Spirit Tonfa":["Imbue Water","status"],
+  "Basket Blade and Boar Cutter":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Crucible Saws":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Go-No-Yoshihiro Twin Swords":["Aerial Attack Damage +4.2%","dmg"],
+  "Great Kanehira Sword and Nightingale":["Imbue Lightning +12","status"],
+  "Infernal Dual Ninja Swords":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Little Crow and Quickdraw":["Life Drain (Quick Attack) 5%","heal"],
+  "Magoroku Kanemoto Dual Katanas":["Martial Art Damage +4.0%","dmg"],
+  "Mino Dual Uchigatana":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Nosada Dual Katana":["Imbue Water +12","status"],
+  "Seki Dual Uchigatana":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Seki Kaneyoshi Dual Tachi":["Backstab Damage +4.5%","dmg"],
+  "Shichisei and Heishishorin":["Spirit Force Charge +0.7%","spirit"],
+  "Soshu Dual Uchigatana":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Soshu Masamune Dual Katana":["Melee Ki Damage +1.5%","kiDmg"],
+  "Weathered Bone and Bleached Twig":["Imbue Wind +11","status"],
+  "Yamanba's Knives":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Chief's Talons":["Aerial Attack Damage +4.2%","dmg"],
+  "Chunin's Talons":["Strong Attack Ki Consumption −1.9%","kiCost"],
+  "Frost Blossom Talons":["Imbue Water +11","status"],
+  "Fuma Talons":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Genin's Talons":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Hachiya Talons":["Melee Damage vs Winded Enemy +4.9%","dmg"],
+  "Infernal Talons":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Jonin's Talons":["Backstab Damage +4.5%","dmg"],
+  "Martial Artist's Talons":["Spirit Force Charge +0.7%","spirit"],
+  "Nokizaru Talons":["Melee Ki Damage +1.5%","kiDmg"],
+  "Raging Fire Talons":["Imbue Fire +12","status"],
+  "Simple Talons":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Taifu Talons":["Imbue Wind +12","status"],
+  "Thunderous Talons":["Imbue Lightning +11","status"],
+  "Togakushi Talons":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Tsuchigumo Talons":["Paralysis Accumulation +1.5%","status"],
+  "Vermilion Talons":["Life Drain (Quick Attack) 5%","heal"],
+  "Yamabushi Talons":["Life Drain (Quick Attack) 5%","heal"],
+  "White Lotus Talons":["Damage Bonus (Familiarity) C−","dmg"],
+  "Billhook Kusarigama":["Ninjutsu Ki Damage +2.5%","ninjutsu"],
+  "Black Bamboo Kusarigama":["Spirit Force Charge +0.7%","spirit"],
+  "Crescent Moon Kusarigama":["Martial Art Damage +4.0%","dmg"],
+  "Custom Kusarigama":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Fuma Kusarigama":["Thrust Damage +4.2%","dmg"],
+  "Genin's Kusarigama":["Backstab Damage +4.5%","dmg"],
+  "Hooked Kusarigama":["Aerial Attack Damage +4.2%","dmg"],
+  "Infernal Kusarigama":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Jonin's Kusarigama":["Life Drain (Quick Attack) 5%","heal"],
+  "Mitsuyo Kusarigama":["Poison Accumulation (Enemy) +1.5%","status"],
+  "Nightstorm Kusarigama":["Imbue Wind +12","status"],
+  "Rakshasa Kusarigama":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Rotten Rope Cutter":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Snowmelt Kusarigama":["Imbue Water +14","status"],
+  "Spy's Kusarigama":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Thunder God Kusarigama":["Imbue Lightning +9","status"],
+  "Togakushi Kusarigama":["Strong Attack Damage +4.2%","dmg"],
+  "Will-o'-Wisp Blade":["Imbue Fire +9","status"],
+  "Yasha's Kusarigama":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Atagi Sadamune":["Backstab Damage +4.5%","dmg"],
+  "Bizen Ichimonji":["Melee Damage vs Winded Enemy +4.9%","dmg"],
+  "Bizen Uchigatana":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Heshikiri Hasebe":["Quick Attack Damage +4.2%","dmg"],
+  "Infernal Ninja Sword":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Jikkyu Mitsutada":["Melee Damage +3.8%","dmg"],
+  "Juzumaru Tsunetsugu":["Life Drain (Martial Arts) 4","heal"],
+  "Kiku Ichimonji":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Kobizen Tomonari":["Spirit Force Charge +0.7%","spirit"],
+  "Mikazuki Munechika (Ninja)":["Martial Art Damage +4.0%","dmg"],
+  "Mino Uchigatana":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Ornamental Blade (Ninja)":["Imbue Water +13","status"],
+  "Raikiri":["Imbue Lightning +13","status"],
+  "Senjuin Uchigatana":["Melee Ki Damage +1.5%","kiDmg"],
+  "Tokagemaru (Ninja)":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Yamato Uchigatana":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Barbarian's Hatchets":["Life Drain (Quick Attack) 5%","heal"],
+  "Black Rain and Thunder":["Dual Elements (Water and Lightning) +10","status"],
+  "Brigand's Hatchets":["Quick Attack Ki Consumption −1.9%","kiCost"],
+  "Echoing Thunder":["Imbue Lightning +11","status"],
+  "Gyosha Hatchets":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Haguro Ninja Hatchets":["Aerial Attack Damage +4.2%","dmg"],
+  "Hero's Hatchets":["Martial Arts Ki Consumption −2.0%","kiCost"],
+  "Iceberg":["Imbue Water +11","status"],
+  "Infernal Hatchets":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Martial Artist's Hatchets":["Melee Ki Damage +1.5%","kiDmg"],
+  "Mountain Bandit Hatchets":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Ninja's Hatchets":["Backstab Damage +4.5%","dmg"],
+  "Radiant Flame":["Imbue Fire +9","status"],
+  "Shugendo Hermit Hatchets":["Spirit Force Charge +0.7%","spirit"],
+  "Togakushi Ninja Hatchets":["Martial Art Ki Damage +2.5%","kiDmg"],
+  "Wave Cutter Hatchets":["Damage Bonus (Familiarity) C−","dmg"],
+  "Wind Demon Hatchets":["Martial Art Damage +4.0%","dmg"],
+  "Zenki and Goki":["Spirit Force Bonus (Amrita) C","spirit"],
+  "Benkei's Splitstaff":["Life Drain (Melee Attack) 3%","heal"],
+  "Chunin's Splitstaff":["Ninjutsu Damage +3.3%","ninjutsu"],
+  "Dragon King Splitstaff":["Imbue Water +12","status"],
+  "Elite Warrior's Splitstaff":["Martial Art Damage +4.0%","dmg"],
+  "Evil-Crusher Splitstaff":["Strong Attack Ki Damage +1.9%","kiDmg"],
+  "Flashfire Splitstaff":["Imbue Fire +14","status"],
+  "Genin's Splitstaff":["Ninjutsu Ki Damage +2.5%","ninjutsu"],
+  "Head Ninja's Splitstaff":["Melee Damage +3.8%","dmg"],
+  "Heroic Monk's Splitstaff":["Strong Attack Damage +4.2%","dmg"],
+  "Hunter's Splitstaff":["Melee Damage vs Winded Enemy +4.9%","dmg"],
+  "Infernal Splitstaff":["Melee Damage (Crucible) +6.0%","dmg"],
+  "Itinerant Monk's Splitstaff":["Quick Attack Damage +4.2%","dmg"],
+  "Jonin's Splitstaff":["Melee Ki Damage +1.5%","kiDmg"],
+  "Mikoshi's Khakkhara":["Imbue Lightning +6","status"],
+  "Seven Scalp Splitstaff":["Melee Attack Ki Consumption −1.7%","kiCost"],
+  "Tempest Splitstaff":["Imbue Water +11","status"],
+  "Tengu's Khakkhara":["Spirit Force Charge +0.7%","spirit"],
+  "Vajra Splitstaff":["Imbue Lightning +12","status"],
+  "Warrior Monk's Splitstaff":["Spirit Force +2.0%","spirit"],
+  "Zen Splitstaff":["Martial Arts Ki Consumption −2.0%","kiCost"],
+
+  "Tengu Mask":["Efficient Guardian Spirit Skills","spirit"],
+  "Night Shade Mask":["Melee Damage vs. Unscathed Enemies +2.0%","dmg"],
+  "Black Fox Mask":["Damage Bonus (Onmyo Magic)","dmg"],
+  "Female Demon Mask":["Enemy Sensor","util"],
+  "Old Sage Mask":["Decreased Damage Taken (Medicine)","taken"],
+  "Demon God Mask":["Spirit Force Charge (Strong Attack)","spirit"],
+  "Fan":["Ki Recovery Speed +3.0%","kiCost"],
+  "Fan (Critical)":["Ki Recovery Speed (Critical) +8.9%","kiCost"],
+  "Fan (Unscathed)":["Ki Recovery Speed (Unscathed) +3.6%","kiCost"],
+  "Fire Omamori":["Fire Damage Reduction +15","taken"],
+  "Water Omamori":["Water Damage Reduction +15","taken"],
+  "Lightning Omamori":["Lightning Damage Reduction +15","taken"],
+  "Poison Omamori":["Poison Resistance +15","status"],
+  "Paralysis Omamori":["Paralysis Resistance +15","status"],
+  "Gourd":["Amrita Earned +1.8%","amrita"],
+  "Japanese Scissors":["Spirit Force +4.0","spirit"],
+  "Magatama":["Spirit Force Charge +1.4%","spirit"],
+  "Magatama (Critical)":["Spirit Force Charge (Critical) +4.1%","spirit"],
+  "Magatama (Unscathed)":["Spirit Force Charge (Unscathed) +1.7%","spirit"],
+  "Omamori":["Life +25","life"],
+  "Prayer Beads":["Amrita Sensor +12.0%","amrita"],
+  "Prayer Beads (Amrita)":["Spirit Force Bonus (Amrita) B","spirit"],
+  "Prayer Beads (Amrita Absorption)":["Life Recovery (Amrita Absorption) 4","heal"],
+  "Writing Set":["Effect Duration +25","util"],
+  "Abacus":["Gold Earned +3.1%","drop"],
+  "Brothers' Omamori":["Defense +10","taken"],
+  "Comb":["Amrita Gauge Charge +1.4%","amrita"],
+  "Divination Board":["Onmyo Magic Power +20","util"],
+  "Dragon Whistle":["Auto-Grave Recovery +20.0%","util"],
+  "Hand Mirror":["Soul Core Drop Rate +4.5%","drop"],
+  "Medicine Case (Item Drop Rate)":["Item Drop Rate +3.1%","drop"],
+  "Medicine Case (Untouched Elixirs)":["Untouched Elixirs +5.0%","util"],
+  "Medicine Case (Medicine Efficacy)":["Medicine Efficacy +2.8%","heal"],
+  "Pipe":["Ki +20","kiCost"],
+  "Two Leaves":["Melee Attack Ki Consumption −4.5%","kiCost"],
+  "Water Dragon":["Decreased Elemental Damage +8","taken"],
+  "White Camelia Hairpin":["Water Damage +3.3%","dmg"],
+  "Yasakani Magatama":["Reduced Set Requirements −1","set"],
+  "Semiore Flute (Evade)":["Increased Spirit Force (Evade) +14","spirit"],
+  "Semiore Flute (Deflect)":["Increased Spirit Force (Deflect) +14","spirit"],
+  "Shaman Queen's Necklace":["Quick-Witted Courage","set"],
+  "Kobo Daishi's Beads":["Devout Practitioner","set"],
+  "Shingen's Fan":["Spirit Force Bonus (Fire Damage) B","spirit"],
+  "Kunimatsu's Inkstone Box":["[missing]","util"],
+  "Kodama Netsuke Charm":["[missing]","util"],
+  "Imported Pocket Watch":["Cunning Spirit (Brother set)","set"],
+  "Archer's Hat":["Bow Damage +2.0%","ranged"],
+  "Archer's Robe":["Bow Damage +4.0%","ranged"],
+  "Archer's Gauntlets":["Bow Damage +2.0%","ranged"],
+  "Archer's Hakama":["Bow Damage +3.0%","ranged"],
+  "Archer's Straw Sandals":["Bow Damage +2.0%","ranged"],
+  "Ferryman's Hood":["Ki +10","life"],
+  "Ferryman's Robes":["Ki +20","life"],
+  "Irregular Troop's Cuirass":["Equipment Drop Rate +1.6%","drop"],
+  "Irregular Troop's Hat":["Equipment Drop Rate +0.8%","drop"],
+  "Thief's Cuirass":["Equipment Drop Rate +1.6%","drop"],
+  "Oniwaban Cuirass":["Melee Damage vs. Unscathed Enemies +4.0%","dmg"],
+  "Heir's Shinobi Garment":["Dodge Ki Consumption −2.0%","kiCost"],
+  "Fuma Ninja Robe":["Ninjutsu Gauge Charge +3.0%","ninjutsu"],
+  "Shinobi Robes":["Ki Recovery Speed (Unscathed) +3.6%","kiCost"],
+  "Shinsengumi Haori":["Guard Ki Consumption −2.0%","kiCost"],
+  "Shinsengumi Headband":["Guard Ki Consumption −2.0%","kiCost"],
+  "Upper Vassal's Hat":["Ki +10","life"],
+  "Upper Vassal's Robe":["Ki +20","life"],
+  "Naval Vest":["Dash Ki Consumption −8.0%","kiCost"],
+  "Naval Cap":["Dash Ki Consumption −4.0%","kiCost"],
+  "Ferryman's Bracers":["Ki +10","life"],
+  "Ferryman's Hakama":["Ki +10","life"],
+  "Ferryman's Greaves":["Gold Earned +1.2%","drop"],
+  "Footsoldier's Hat":["Ki +10","life"],
+  "Heirloom Helmet":["Damage Taken (While Attacking) −4.0%","taken"],
+  "Light Yamatai Helmet":["Decreased Elemental Damage Taken +12","taken"],
+  "Light Yamatai Cuirass":["Decreased Elemental Damage Taken +12","taken"],
+  "Light Yamatai Gauntlets":["Decreased Elemental Damage Taken +12","taken"],
+  "Light Yamatai Trousers":["Decreased Elemental Damage Taken +12","taken"],
+  "Light Yamatai Greaves":["Decreased Elemental Damage Taken +12","taken"],
+  "Fan":["Ki Recovery Speed +3.0%","kiCost"],
+  "Fan (Critical)":["Ki Recovery Speed (Critical) +8.9%","kiCost"],
+  "Fan (Unscathed)":["Ki Recovery Speed (Unscathed) +3.6%","kiCost"],
+  "Fire Omamori":["Fire Damage Reduction +15","taken"],
+  "Water Omamori":["Water Damage Reduction +15","taken"],
+  "Lightning Omamori":["Lightning Damage Reduction +15","taken"],
+  "Poison Omamori":["Poison Resistance +15","status"],
+  "Paralysis Omamori":["Paralysis Resistance +15","status"],
+  "Omamori":["Life +25","life"],
+  "Gourd":["Amrita Earned +1.8%","amrita"],
+  "Japanese Scissors":["Spirit Force +4.0","spirit"],
+  "Magatama":["Spirit Force Charge +1.4%","spirit"],
+  "Magatama (Critical)":["Spirit Force Charge (Critical) +4.1%","spirit"],
+  "Magatama (Unscathed)":["Spirit Force Charge (Unscathed) +1.7%","spirit"],
+  "Prayer Beads":["Amrita Sensor +12.0%","amrita"],
+  "Prayer Beads (Amrita)":["Spirit Force Bonus (Amrita) B","spirit"],
+  "Prayer Beads (Amrita Absorption)":["Life Recovery (Amrita Absorption) 4","heal"],
+  "Shingen's Fan":["Spirit Force Bonus (Fire Damage) B","spirit"],
+  "Writing Set":["Effect Duration +25","util"],
+  "Abacus":["Gold Earned +3.1%","drop"],
+  "Brothers' Omamori":["Defense +10","taken"],
+  "Comb":["Amrita Gauge Charge +1.4%","amrita"],
+  "Divination Board":["Onmyo Magic Power +20","util"],
+  "Dragon Whistle":["Auto-Grave Recovery +20.0%","heal"],
+  "Hand Mirror":["Soul Core Drop Rate +4.5%","drop"],
+  "Medicine Case (Item Drop Rate)":["Item Drop Rate +3.1%","drop"],
+  "Medicine Case (Untouched Elixirs)":["Untouched Elixirs +5.0%","util"],
+  "Medicine Case (Medicine Efficacy)":["Medicine Efficacy +2.8%","heal"],
+  "Pipe":["Ki +20","life"],
+  "Two Leaves":["Melee Attack Ki Consumption −4.5%","kiCost"],
+  "Water Dragon":["Decreased Elemental Damage +8","taken"],
+  "White Camelia Hairpin":["Water Damage +3.3%","dmg"],
+  "Great Tengu Blade":["Sword and Zen as One","set"],
+  "Beardcutter":["Founder of the Shogunate","set"],
+  "Kaikunigo":["Swift Silence and Daring Defense","set"],
+  "Bizen Tachi":["High Attack Ki Consumption −1.9%","kiCost"],
+  "Senjuin Tachi":["Guard Ki Consumption −2.1%","kiCost"],
+  "Dojikiri Yasutsuma":["Melee Damage +3.8%","dmg"],
+  "Mantra Sword":["Melee Ki Damage +1.5%","kiDmg"],
+  "Nagasone Kotetsu":["Life Drain (Quick Attack) 5%","heal"],
+  "Odenta Mitsuyo":["Imbue Water +12","status"],
+  "Onimura Kunitsuna":["Martial Art Damage +4.0%","dmg"],
+  "Ornamental Blade":["Spirit Force Charge +0.7%","spirit"],
+  "Osafune Kanemitsu":["Strong Attack Damage +4.2%","dmg"],
+  "Smirkwiper":["High Attack Damage +4.2%","dmg"]
+};
+
+const FIXED_PREFIX = [
+  ["Fuma Ninja",["Ninjutsu Gauge Charge +1.5%","ninjutsu"]],
+  ["Shinobi Hood",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Shinobi Faceplate",["Backstab Damage +2.0%","dmg"]],
+  ["Shinobi Robes",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Shinobi Bracers",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Shinobi Hakama",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Shinobi Gaiters",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Heir's Shinobi",["Dodge Ki Consumption −1.0%","kiCost"]],
+  ["Thief's",["Equipment Drop Rate +0.8%","drop"]],
+  ["Shadowstep",["Ki Recovery Speed (Unscathed) +2.7%","kiCost"]],
+  ["Kamari",["Stealth D+","move"]],
+  ["Hellfire Ninja",["Strong Attack Ki Consumption −1.0%","kiCost"]],
+  ["Hellfrost Ninja",["Strong Attack Ki Consumption −1.0%","kiCost"]],
+  ["Hellfire Warrior",["Strong Attack Ki Consumption −1.0%","kiCost"]],
+  ["Oniwaban",["Melee Damage vs. Unscathed Enemies +2.0%","dmg"]],
+  ["Ninja Marksman",["Bow Damage +2.0%","ranged"]],
+  ["Archer's",["Bow Damage +2.0%","ranged"]],
+  ["Footsoldier",["Ki +10","life"]],
+  ["Heirloom",["Damage Taken (While Attacking) −4.0%","taken"]],
+  ["Light Yamatai",["Decreased Elemental Damage Taken +12","taken"]],
+  ["Sohaya",["Yokai Annihilator","set"]],
+  ["Archer's",["Bow Damage +2.0%","ranged"]],
+  ["Irregular Troop",["Equipment Drop Rate +0.8%","drop"]],
+  ["Shinsengumi",["Guard Ki Consumption −1.0%","kiCost"]],
+  ["Upper Vassal",["Ki +20","life"]],
+  ["Authority",["Projectile Damage Taken −2.0%","taken"]],
+  ["Footsoldier",["Ki +20","life"]],
+  ["Heir's",["Guard Ki Consumption −2.0%","kiCost"]],
+  ["Hellfire Warrior",["Ki +20","life"]],
+  ["Hellfrost Warrior",["Ki +20","life"]],
+  ["Ronin",["Gold Earned +1.2%","drop"]],
+  ["Samurai General",["Melee Damage vs. Unscathed Enemy +2.0%","dmg"]],
+  ["Vassal",["Damage Taken (Critical) −7.4%","taken"]],
+  ["Veteran",["Life +24","life"]],
+  ["Youngblood",["Amrita Earned +1.6%","amrita"]],
+  ["Heirloom",["Damage Taken (While Attacking) −4.0%","taken"]],
+  ["Mino Veteran",["Decreased Elemental Damage +6","taken"]],
+  ["Yamatai",["Damage Taken (While Attacking) −4.0%","taken"]]
+];
+
+const SET_FIXED = {
+  kato:"Master of Illusion", iga:"Head of the Iga Ninja", fuma:"Famed Fuma",
+  onzoshi:"The Tragic Hero", lastNinja:"Descendant of Iga", kusaMaster:"Ultimate Defense",
+  heizo:"Devious Loyalty", blessed:"Straight and True", gallant:"Picturesque Scenery",
+  kobo:"Devout Practitioner", exalted:"Quick-Witted Courage", priest:"Purifying Presence",
+  sage:"The True Pure Land", demonHorde:"Demon Incarnate", moon:"Seven Misfortunes, Eight Hardships",
+  brave:"First of the Four Guardians", crimson:"Pride of the Crimson Army",
+  eccentric:"The Rightful Eccentric", firstCap:"Sword of Misfortune",
+  goi:"The Duplicitous General", hachiryo:"Valiant Wanderer", monk:"Imagawa Regent",
+  brother:"Cunning Spirit",
+  swallow:"Exemplary Eye for Elegance",
+  tatenashi:"The God of War Looks Down",
+  woe:"Warrior of the East's Honor",
+  kamakura:"Founder of the Shogunate",
+  shuri:"Kai's Vice General",
+  buddha:"The Protection of Kannon",
+  minamoto:"General of Ruin",
+  sohaya:"Yokai Annihilator",
+  heirloom:"Heirloom",
+  foot:"Footsoldier",
+  archer:"Archer",
+  hellfireW:"Hellfire Warrior",
+  hellfireN:"Hellfire Ninja",
+  hellfrostN:"Hellfrost Ninja"
+};
+
+const WEAPON_TYPE_BY_NAME = {
+  "Little Crow and Quickdraw":"Dual Ninja Swords",
+  "Great Tengu Blade":"Sword",
+  "Kaikunigo":"Sword",
+  "Sohaya Tsurugi":"Sword",
+  "Honjo Masamune and Saber":"Dual Swords",
+  "Fudo Kuniyuki and Yagen Toshiro":"Dual Swords",
+  "Bizen Tachi":"Sword",
+  "Senjuin Tachi":"Sword",
+  "Bizen Osafune":"Sword",
+  "Dojikiri Yasutsuma":"Sword",
+  "Nagasone Kotetsu":"Sword",
+  "Odenta Mitsuyo":"Sword",
+  "Onimura Kunitsuna":"Sword",
+  "Osafune Kanemitsu":"Sword",
+  "Smirkwiper":"Sword",
+  "Ichigo Hitofuri and Oyako Toshiro":"Dual Swords",
+  "Kanesada and Yasutsugu":"Dual Swords",
+  "Regal Lion and Bone Eater":"Dual Swords",
+  "Palisade Breaker":"Axe",
+  "Rusty Hoe":"Axe",
+  "Crucible Cudgel":"Axe",
+  "Tombokiri":"Spear",
+  "Crucible Sasumata":"Spear",
+  "Sasayuki":"Switchglaive",
+  "Bloodspider Blade":"Odachi",
+  "Taro Tachi":"Odachi",
+  "Jiro Tachi":"Odachi",
+  "Kimibanzi Tomonari":"Odachi",
+  "Taima Kuniyuki":"Sword",
+  "Striking Retribution":"Sword"
+};
+function weaponType(p){
+  if(p && p.wtype) return p.wtype;
+  if(p && WEAPON_TYPE_BY_NAME[p.name]) return WEAPON_TYPE_BY_NAME[p.name];
+  const n = (p&&p.name||"").toLowerCase();
+  if(n.includes("tonfa")||n.includes("gunstick")) return "Tonfa";
+  if(n.includes("talon")) return "Talons";
+  if(n.includes("kusarigama")||n.includes("rope cutter")||n.includes("wisp blade")) return "Kusarigama";
+  if(n.includes("hatchet")||n.includes("iceberg")||n.includes("echoing thunder")||n.includes("radiant flame")||n.includes("black rain")||n.includes("zenki")) return "Hatchets";
+  if(n.includes("splitstaff")||n.includes("khakkhara")||n.includes("khakkara")||n.includes("himiko")) return "Splitstaff";
+  if(n.includes("dual")||n.includes("twin swords")||n.includes("cleavers")||n.includes("saws")||n.includes("knives")||n.includes("nightingale")||n.includes("heishishorin")||n.includes("boar cutter")||n.includes("bleached twig")) return n.includes("brother")||n.includes("goichimonshu")?"Dual Swords":"Dual Ninja Swords";
+  if(n.includes("ninja sword")||n.includes("swift hawk")||n.includes("demontear")||n.includes("usumidori")||n.includes("uchigatana")||n.includes("sadamune")||n.includes("ichimonji")||n.includes("munechika")||n.includes("raikiri")||n.includes("tokagemaru")||n.includes("ornamental blade")||n.includes("heshikiri")||n.includes("jikkyu")||n.includes("juzumaru")||n.includes("kobizen")||n.includes("atagi")) return "Ninja Sword";
+  if(n.includes("bow")||n.includes("raishodo")) return "Bow";
+  if(n.includes("rifle")||n.includes("matchlock")) return "Rifle";
+  if(n.includes("cannon")||n.includes("dragon's roar")||n.includes("yoryu")) return "Hand Cannon";
+  if(n.includes("odachi")||n.includes("nagamaki")) return "Odachi";
+  if(n.includes("ninja hoko")) return "Ninja Hoko & Shield";
+  if(n.includes("hoko")) return "Hoko & Shield";
+  if(n.includes("spear")||n.includes("naginata")) return "Spear";
+  if(n.includes("switchglaive")) return "Switchglaive";
+  if(n.includes("cestus")||n.includes("cestuses")) return "Cestuses";
+  if(n.includes("axe")||n.includes("hammer")) return "Axe";
+  if(n.includes("dual sword")||n.includes("dual katana")||n.includes("goichimonshu dual")) return "Dual Swords";
+  if(n.includes("sword")||n.includes("katana")||n.includes("kiyomitsu")||n.includes("cutter")||n.includes("usumidori")) return "Sword";
+  if(n.includes("non-set samurai")) return "";
+  return "";
+}
+
+function isCrucibleNow(slot, p){
+  if(!slot || !p) return false;
+  if(!canCrucible(slot, p)) return false;
+  return !!(state[slot] && (state[slot].crucible || state[slot].cruOnly));
+}
+function lockedAffix(p, slot){
+  if(!p || p.name.indexOf("empty")>=0) return null;
+  if(slot==="w2") return null;
+  if(isCrucibleNow(slot, p)) return null;
+  if(p.name.indexOf("Non-set")===0 || p.name.indexOf("Grace eligible")>=0)
+    return {name:"No named lock — Grace eligible", cat:"grace", locked:false};
+  if(FIXED_BY_NAME[p.name]) return {name:FIXED_BY_NAME[p.name][0], cat:FIXED_BY_NAME[p.name][1], locked:true};
+  for(const [pre,val] of FIXED_PREFIX){
+    if(p.name.indexOf(pre)===0) return {name:val[0], cat:val[1], locked:true};
+  }
+  if(namedSet(p) && SET_FIXED[p.set]) return {name:SET_FIXED[p.set], cat:"set", locked:true};
+  if(namedSet(p)) return {name:SETS[p.set].name.split(" / ")[1]||SETS[p.set].name, cat:"set", locked:true};
+  return {name:"No documented named lock", cat:"util", locked:false};
+}
+
+const SPIRITS = {
+  ninja: [
+    {id:"kusa-n", name:"Kusanagi (Ninja)", el:"Water", atk:44, def:39, skills:["Turbulent Waves","Heaven's Drops"], fx:["Aerial Attack Damage +10.6%","Water Damage Reduction +29","Ki Consumption (Jump) −14.6%","Quick Attack Damage +7.1%","Spirit Force Charge (Backstab) +15.8%"]},
+    {id:"nekomata", name:"Nekomata", el:"Lightning", atk:47, def:47, skills:["Electrified Kunai","Thunderclaw Kick"], fx:["Ninjutsu Ki Damage +9.3%","Ki Recovery Speed +7.3%","Quick Attack Break +14.2%","Melee Attack Ki Consumption −9.3%","Final Blow / Grapple Damage +21.8%"]},
+    {id:"enko", name:"Enko", el:"Fire", atk:48, def:47, skills:["Blazing Claw","Hellfire Maul"], fx:["Amrita Gauge Charge","Damage Over Time","Damage Taken Over Time","Reduced Spirit Force Consumption","Melee Damage vs. Scorched Enemy"]},
+    {id:"tengu", name:"Kurama Tengu", el:"Wind", atk:39, def:32, skills:["Kurama's Tempest","Kurama's Slicer"], fx:["Martial Art Ki Damage","Enemy Sensor","Wind Damage Reduction","Spirit Force Bonus (Elixir)","Elemental Damage"]},
+    {id:"kong-n", name:"Kongojishi (Ninja)", el:"Fire", atk:45, def:50, skills:["Mountain Render","Inferno Rush"], fx:["Increased Damage Dealt (Evade)","Fire Damage","Life","Ki Recovery Speed (Unscathed)","Melee Damage (Unscathed)"]},
+    {id:"ho", name:"Ho", el:"Wind", atk:44, def:52, skills:["Airstream Reversal","Feathered Airburst"], fx:["Amrita Earned","Dodge Ki Consumption","Faster Movement (Guardian Spirit Skill Hit)","Increased Spirit Force (Evade)","Luck"]},
+    {id:"hooh-n", name:"Ho-oh (Ninja)", el:"Lightning", atk:48, def:48, skills:["Downburst"], fx:["Decreased Damage Dealt (Onmyo Magic Hit)","Faster Ki Recovery (Onmyo Magic Hit)","Onmyo Magic Ki Damage","Untouched Onmyo Magic (Except Summoning Seals)"]},
+    {id:"shami", name:"Shami-choro", el:"Lightning", atk:48, def:47, skills:["Thunderous Performance","Strings of Light"], fx:["Faster Movement (Evade)","Faster Ki Recovery (Onmyo Magic Hit)","Lightning Damage +11.0%","Auto Life Recovery (Critical)","Status Enhancement Duration +15.8%"]},
+    {id:"kujaku", name:"Tengen Kujaku", el:"Fire", atk:48, def:47, skills:["Elemental Roulette","Inferno Whirlwind"], fx:["Spirit Force Bonus (Projectiles / Items) AA−","Pleiades (Life Recovery)","Extended Elemental Weapon +14.1%","Spirit Force Bonus (Elemental Damage) B","Enemy / Treasure / Amrita / Nigitama Sensor"]}
+  ],
+  samurai: [
+    {id:"kusa-s", name:"Kusanagi (Samurai)", el:"Fire", atk:50, def:45, skills:["Nagi Blade","Heaven's Fire"], fx:["Martial Art Damage","Fire Damage Reduction","Ki Pulse Recovery","Increased Arts Proficiency","Spirit Force Charge (Martial Art)"]},
+    {id:"guhin", name:"Guhin", el:"Wind", atk:47, def:47, skills:["Tree Slicer","Eight-Handed Blade"], fx:["Martial Arts Ki Consumption","Damage Taken","Strong Attack Break","Faster Winded Recovery","Melee Damage vs. Winded Enemy"]},
+    {id:"shinroku", name:"Shin-Roku", el:"Lightning", atk:43, def:53, skills:["Divine Thunder","Thunderous Kick"], fx:["Increased Damage Dealt (Purification)","Nigitama Sensor","Lightning Damage Reduction","Life Drain (Strong Attack)","Ailment Resistance"]},
+    {id:"kong-s", name:"Kongojishi (Samurai)", el:"Wind", atk:45, def:50, skills:["Devastation Shot","Gale Claws"], fx:["Increased Damage Dealt (Deflect)","Wind Damage","Life","Damage Taken (While Attacking)","Guard Ki Consumption (Critical)"]},
+    {id:"tanuki", name:"Narikama Tanuki", el:"Water", atk:null, def:null, skills:["Great Tanuki Slam","Boiling Counter"], fx:["Auto-Amrita Recovery","Untouched Elixirs","Water Damage","Strong Attack Damage","Auto Life Recovery (Critical)"]},
+    {id:"oh", name:"Oh", el:"Wind", atk:44, def:52, skills:["Gusting Crosswind","Cutting Wings"], fx:["Spirit Force Charge Bonus (Amrita)","Guard Ki Consumption","Life Recovery (Amrita Absorption)","Faster Ki Recovery (Deflect)","Item Drop Rate"]},
+    {id:"shachi", name:"Golden Shachi", el:"Water", atk:45, def:52, skills:["Twin Waves","Golden Current"], fx:["Auto Life Recovery (Purification)","Gold Earned","Ki Damage vs. Saturated Enemy","Melee Damage (Yokai Realm)","Increased Damage Dealt (Living Artifact Ends)"]},
+    {id:"hooh-s", name:"Ho-oh (Samurai)", el:"Lightning", atk:48, def:48, skills:["Vortex Talons"], fx:["Auto Life Recovery (Onmyo Magic Used)","Onmyo Magic Damage","Reduced Movement (Onmyo Magic Hit)","Soul Core Drop Rate","Untouched Onmyo Magic"]},
+    {id:"murakumo-s", name:"Murakumo (Samurai)", el:"Lightning", atk:50, def:44, skills:["Lightning Squall","Crackling Steel"], fx:["Shock Accumulation (Enemy) B","Amrita Bonus (Inflict Electrified)","Pleiades (Guardian Spirit Skill Hit)","Status Enhancement Duration (Final Blow / Grapple) +8.4%","Living Artifact Durability +7.3%"]},
+    {id:"tora", name:"Tora Gozen", el:"Water", atk:47, def:48, skills:["Tora's Rush","Tora's Guard"], fx:["Water Damage","Life Recovery (Deflect)","Guard Ki Consumption","Melee Damage vs. Saturated Enemy","Ki Recovery Speed (Unscathed)"]}
+  ]
+};
+const gsState = {id:"", style:""};
+
+const SLOTS = [
+  ["head","Head"],["chest","Chest"],["arms","Arms"],["waist","Waist"],["feet","Feet"],
+  ["w1","Weapon 1"],["w2","Weapon 2"],["bow","Ranged"],["acc1","Accessory 1"],["acc2","Accessory 2"]
+];
+
+const state = {};
+SLOTS.forEach(([id]) => state[id] = {i:0, grace:"", crucible:false, wtype:"all", cruOnly:false});
+const STAT_MAX = 99;
+const LEVEL_MAX = 300;
+const STATS = [
+  ["con","Constitution"],["hrt","Heart"],["sta","Stamina"],
+  ["str","Strength"],["skl","Skill"],["int","Intellect"],["mag","Magic"]
+];
+const char = {con:5,hrt:5,sta:5,str:5,skl:5,int:5,mag:5,cap:200};
+const SET_META = {
+  kato:{req:{con:16,skl:15},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  iga:{req:{con:8,skl:9},w:{head:0.7,chest:1.4,arms:0.7,waist:1.1,feet:0.7}},
+  fuma:{req:{sta:6,skl:8},w:{head:1.8,chest:3.6,arms:1.8,waist:2.7,feet:1.8}},
+  onzoshi:{req:{con:10,skl:10},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  lastNinja:{req:{con:8,skl:10},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  kusaMaster:{req:{con:9,skl:11},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  heizo:{req:{sta:17,skl:11},w:{head:1.8,chest:5.2,arms:1.8,waist:2.7,feet:1.8}},
+  blessed:{req:{con:8,skl:10},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  gallant:{req:{con:7,skl:9},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  kobo:{req:{con:12,mag:14},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  exalted:{req:{con:18,skl:18},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  priest:{req:{con:14,skl:13},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  sage:{req:{con:12,skl:11},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  demonHorde:{req:{con:10,str:10},w:{head:1.8,chest:3.6,arms:1.8,waist:2.7,feet:1.8}},
+  moon:{req:{con:10,skl:10},w:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}},
+  brave:{req:{sta:12,str:12},w:{head:2.0,chest:4.0,arms:2.0,waist:3.0,feet:2.0}},
+  crimson:{req:{sta:14,str:12},w:{head:2.0,chest:4.0,arms:2.0,waist:3.0,feet:2.0}},
+  eccentric:{req:{con:10,str:10},w:{head:1.8,chest:3.6,arms:1.8,waist:2.7,feet:1.8}},
+  firstCap:{req:{con:11,skl:11},w:{head:1.5,chest:3.0,arms:1.5,waist:2.2,feet:1.5}},
+  goi:{req:{con:10,skl:12},w:{head:1.5,chest:3.0,arms:1.5,waist:2.2,feet:1.5}},
+  hachiryo:{req:{con:10,skl:10},w:{head:1.5,chest:3.0,arms:1.5,waist:2.2,feet:1.5}},
+  monk:{req:{con:12,mag:12},w:{head:1.8,chest:3.6,arms:1.8,waist:2.7,feet:1.8}},
+  brother:{req:{con:8,skl:8},w:{head:1.5,chest:3.0,arms:1.5,waist:2.2,feet:1.5}},
+  swallow:{req:{con:10,skl:10},w:{head:1.5,chest:3.0,arms:1.5,waist:2.2,feet:1.5}},
+  woe:{req:{sta:6,str:6},w:{head:5.0,chest:10.0,arms:5.0,waist:7.5,feet:5.0}},
+  tatenashi:{req:{sta:12,str:13},w:{head:5.5,chest:11.0,arms:5.5,waist:8.3,feet:5.5}},
+  kamakura:{req:{sta:9,str:12},w:{head:5.4,chest:10.8,arms:5.4,waist:8.1,feet:5.4}},
+  shuri:{req:{sta:9,str:8},w:{head:5.2,chest:10.4,arms:5.2,waist:7.8,feet:5.2}},
+  buddha:{req:{sta:18,str:17},w:{head:5.7,chest:11.4,arms:5.7,waist:8.6,feet:5.7}},
+  minamoto:{req:{sta:10,str:12},w:{head:5.0,chest:10.0,arms:5.0,waist:7.5,feet:5.0}},
+  malefactor:{req:{sta:12,str:12},w:{head:5.2,chest:10.4,arms:5.2,waist:7.8,feet:5.2}},
+  goi:{req:{sta:7,str:6},w:{head:5.1,chest:10.2,arms:5.1,waist:7.7,feet:5.1}},
+  crimson:{req:{sta:6,str:5},w:{head:4.9,chest:9.8,arms:4.9,waist:7.4,feet:4.9}}
+};
+(function seedSamuraiArmor(){
+  const W = {l:{head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}, m:{head:1.8,chest:3.6,arms:1.8,waist:2.7,feet:1.8}, h:{head:5.2,chest:10.4,arms:5.2,waist:7.8,feet:5.2}};
+  SAMURAI_ARMOR.forEach(s => {
+    if(s.tiers){
+      SETS[s.id] = {name: s.bonus ? (s.name+" / "+s.bonus) : s.name, yas:1, tiers:s.tiers};
+      SET_FIXED[s.id] = s.bonus || s.name;
+    }
+    SET_META[s.id] = {req:s.req||{}, w:W[s.w]||W.m};
+    [["head",s.head],["chest",s.chest],["arms",s.arms],["waist",s.waist],["feet",s.feet]].forEach(([slot,name]) => {
+      if(!name) return;
+      const list = PIECES[slot];
+      const hit = list.find(p => p.name===name);
+      const wt = ({l:"light",m:"medium",h:"heavy"})[s.w] || "medium";
+      if(hit){
+        if(s.tiers) hit.set = s.id;
+        else hit.set = "none";
+        hit.style = "samurai";
+        hit.wt = wt;
+      } else {
+        const np = P(name, s.tiers?s.id:"none", "samurai");
+        np.wt = wt;
+        list.push(np);
+      }
+    });
+  });
+  const WT_BY_SET = {
+    archer:"light", firstCap:"light", gunner:"light", irregular:"light", moon:"light",
+    peerless:"light", shinsengumi:"light", swordmaster:"light", upperVassal:"light", wayfarer:"light",
+    authority:"medium", brave:"medium", brother:"medium", eccentric:"medium", foot:"medium",
+    hachiryo:"medium", monk:"medium", heir:"medium", hellfireW:"medium", hellfrostW:"medium",
+    hollyhock:"medium", minamoto:"medium", righteous:"medium", ronin:"medium", general:"medium",
+    swallow:"medium", vassal:"medium", veteran:"medium", youngblood:"medium",
+    crimson:"heavy", goi:"heavy", heirloom:"heavy", kintaro:"heavy", lilac:"heavy",
+    kamakura:"heavy", malefactor:"heavy", mino:"heavy", retreat:"heavy", tamura:"heavy",
+    shuri:"heavy", buddha:"heavy", tatenashi:"heavy", woe:"heavy", yamataiS:"heavy", tigerKai:"heavy"
+  };
+  ["head","chest","arms","waist","feet"].forEach(slot => {
+    (PIECES[slot]||[]).forEach(p => {
+      if(p.style==="samurai" && !p.wt) p.wt = WT_BY_SET[p.set] || "medium";
+    });
+  });
+  Object.assign(SET_META, {
+    goi:{req:{sta:7,str:6},w:{head:5.1,chest:10.2,arms:5.1,waist:7.7,feet:5.1}},
+    crimson:{req:{sta:6,str:5},w:{head:4.9,chest:9.8,arms:4.9,waist:7.4,feet:4.9}},
+    malefactor:{req:{sta:12,str:12},w:{head:5.2,chest:10.4,arms:5.2,waist:7.8,feet:5.2}},
+    woe:{req:{sta:6,str:6},w:{head:5.0,chest:10.0,arms:5.0,waist:7.5,feet:5.0}},
+    tatenashi:{req:{sta:12,str:13},w:{head:5.5,chest:11.0,arms:5.5,waist:8.3,feet:5.5}},
+    kamakura:{req:{sta:9,str:12},w:{head:5.4,chest:10.8,arms:5.4,waist:8.1,feet:5.4}},
+    shuri:{req:{sta:9,str:8},w:{head:5.2,chest:10.4,arms:5.2,waist:7.8,feet:5.2}},
+    buddha:{req:{sta:18,str:17},w:{head:5.7,chest:11.4,arms:5.7,waist:8.6,feet:5.7}}
+  });
+})();
+function pointsUsed(){
+  return STATS.reduce((n,[k]) => n + Math.max(0, char[k]-5), 0);
+}
+function charLevel(){
+  return 1 + pointsUsed();
+}
+function setStat(k, v, raiseCap){
+  v = Math.max(5, Math.min(STAT_MAX, +v||5));
+  const prev = char[k];
+  char[k] = v;
+  let lv = charLevel();
+  if(lv > LEVEL_MAX){ char[k] = prev; return false; }
+  if(lv > char.cap){
+    if(raiseCap) char.cap = Math.min(LEVEL_MAX, lv);
+    else {
+      const room = char.cap - (lv - (v - prev));
+      char[k] = prev + Math.max(0, room);
+      if(char[k] > STAT_MAX) char[k] = STAT_MAX;
+    }
+  }
+  return true;
+}
+function setLevelCap(n){
+  n = Math.max(charLevel(), Math.min(LEVEL_MAX, +n||charLevel()));
+  char.cap = n;
+}
+function maxWeight(){
+  const ninja = stylesOn().includes("ninja") && !stylesOn().includes("samurai");
+  const base = ninja ? 15 : 20;
+  const per = ninja ? 0.3 : 1.1;
+  return +(base + char.sta * per).toFixed(1);
+}
+function coreFromLevels(){
+  const ninja = stylesOn().includes("ninja") && !stylesOn().includes("samurai");
+  const sam = stylesOn().includes("samurai") && !stylesOn().includes("ninja");
+  const life = char.con*40 + char.hrt*10 + char.sta*25 + char.str*10 + char.skl*10 + char.int*10 + char.mag*10;
+  const ki = char.hrt*20;
+  const kiRec = +(char.hrt*2.6 + char.int*5.8).toFixed(1);
+  const meleeKi = +(char.str*0.6).toFixed(1);
+  const arts = char.skl*15;
+  const ninPow = char.skl*15;
+  const onmyo = char.mag*15;
+  const dur = +(char.int*1.8).toFixed(1);
+  let melee = 0;
+  if(sam) melee = char.hrt*2 + char.str*2 + char.int*2;
+  else if(ninja) melee = char.hrt*1 + char.str*1 + char.mag*1;
+  else melee = null;
+  const wlim = ninja ? +(15 + char.sta*0.3).toFixed(1) : (sam ? +(20 + char.sta*1.1).toFixed(1) : null);
+  return {life, ki, kiRec, meleeKi, arts, ninPow, onmyo, dur, melee, wlim, ninja, sam};
+}
+function pieceWeight(slot, p){
+  if(!p || p.name.indexOf("empty")>=0) return 0;
+  if(WEAPON_SLOTS.has(slot)) return 0;
+  if(slot==="acc1"||slot==="acc2") return 0.1;
+  if(p.weight!=null) return p.weight;
+  const m = SET_META[p.set];
+  if(m && m.w && m.w[slot]!=null) return m.w[slot];
+  if(p.wt==="heavy") return ({head:5.1,chest:10.2,arms:5.1,waist:7.7,feet:5.1}[slot]||5.1);
+  if(p.wt==="medium") return ({head:2.3,chest:4.6,arms:2.3,waist:3.5,feet:2.3}[slot]||2.3);
+  if(p.wt==="light" || p.style==="samurai") return ({head:1.6,chest:3.2,arms:1.6,waist:2.4,feet:1.6}[slot]||1.6);
+  return ({head:0.8,chest:1.6,arms:0.8,waist:1.2,feet:0.8}[slot]||0.8);
+}
+function pieceReq(p){
+  if(!p) return null;
+  const m = SET_META[p.set];
+  return m && m.req ? m.req : null;
+}
+function reqMet(req){
+  if(!req) return true;
+  const map = {con:char.con,hrt:char.hrt,sta:char.sta,str:char.str,skl:char.skl,int:char.int,mag:char.mag};
+  return Object.entries(req).every(([k,v]) => (map[k]||0) >= v);
+}
+function reqText(req){
+  if(!req) return "";
+  const names = {con:"Constitution",hrt:"Heart",sta:"Stamina",str:"Strength",skl:"Skill",int:"Intellect",mag:"Magic"};
+  return Object.entries(req).map(([k,v]) => names[k]+" "+v).join(" / ");
+}
+function totalWeight(){
+  return SLOTS.reduce((n,[slot]) => n + pieceWeight(slot, PIECES[slot][state[slot].i]), 0);
+}
+function agility(pct){
+  if(pct < 30) return "A";
+  if(pct < 70) return "B";
+  if(pct < 100) return "C";
+  return "D";
+}
+function syncCharFields(){
+  const lv = document.getElementById("char-level");
+  if(lv){
+    const used = pointsUsed();
+    const lvNow = charLevel();
+    const remain = Math.max(0, char.cap - 1 - used);
+    lv.innerHTML = `Level <input type="tel" inputmode="numeric" pattern="[0-9]*" id="lv-in" value="${Math.max(char.cap,lvNow)}">, Remaining Points ${remain} &nbsp; Max. Level ${LEVEL_MAX}`;
+    const inp = document.getElementById("lv-in");
+    inp.onchange = inp.onkeydown = e => {
+      if(e.type==="keydown" && e.key!=="Enter") return;
+      setLevelCap(inp.value);
+      syncCharFields();
+      render();
+    };
+  }
+  STATS.forEach(([k]) => {
+    const r = document.querySelector(`[data-st="${k}"]`);
+    const n = document.querySelector(`[data-stn="${k}"]`);
+    if(r) r.value = char[k];
+    if(n) n.value = char[k];
+  });
+  paintStatHints();
+}
+function equippedReqs(){
+  const need = {};
+  const names = {};
+  for(const [slot] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p || p.name.indexOf("empty")>=0) continue;
+    const req = pieceReq(p);
+    if(!req) continue;
+    Object.entries(req).forEach(([k,v]) => {
+      if(!need[k] || v>need[k]){ need[k]=v; names[k]=setName(SETS[p.set]||{name:p.name}); }
+    });
+  }
+  return {need, names};
+}
+function softNote(v){
+  if(v<=10) return "high gain";
+  if(v<=20) return "mid gain";
+  if(v<=30) return "lower gain";
+  if(v<=55) return "weapon scaling still useful";
+  return "past common 55 soft cap";
+}
+function paintStatHints(){
+  const {need, names} = equippedReqs();
+  STATS.forEach(([k,lab]) => {
+    const el = document.querySelector(`[data-need="${k}"]`);
+    if(!el) return;
+    const bits = [softNote(char[k])];
+    if(need[k]){
+      const ok = char[k] >= need[k];
+      bits.push((ok?"meets ":"needs ")+lab+" "+need[k]+" ("+names[k]+")");
+      el.classList.toggle("bad", !ok);
+    } else el.classList.remove("bad");
+    el.textContent = bits.join(" · ");
+  });
+}
+function drawChar(){
+  const box = document.getElementById("char-stats");
+  if(!box) return;
+  if(!box.dataset.ready){
+    box.innerHTML = STATS.map(([k,lab]) =>
+      `<div class="statrow">
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" value="${char[k]}" data-stn="${k}">
+        <button type="button" class="pm" data-pm="${k}" data-d="-1">−</button>
+        <input type="range" min="5" max="${STAT_MAX}" value="${char[k]}" data-st="${k}">
+        <button type="button" class="pm" data-pm="${k}" data-d="1">+</button>
+        <span class="lab">${lab}</span></div>
+       <div class="needhint" data-need="${k}"></div>`
+    ).join("");
+    box.dataset.ready = "1";
+    box.querySelectorAll("input[type=range]").forEach(inp => {
+      inp.addEventListener("input", () => {
+        setStat(inp.dataset.st, inp.value, false);
+        syncCharFields();
+        render();
+      });
+    });
+    box.querySelectorAll("input[data-stn]").forEach(inp => {
+      inp.addEventListener("change", () => {
+        setStat(inp.dataset.stn, inp.value, false);
+        syncCharFields();
+        render();
+      });
+    });
+    box.querySelectorAll(".pm").forEach(b => {
+      b.addEventListener("click", () => {
+        setStat(b.dataset.pm, char[b.dataset.pm] + (+b.dataset.d), true);
+        syncCharFields();
+        render();
+      });
+    });
+  }
+  syncCharFields();
+}
+
+
+const NINJA_W = ["Tonfa","Dual Ninja Swords","Talons","Kusarigama","Ninja Sword","Hatchets","Splitstaff","Ninja Hoko & Shield"];
+const SAMURAI_W = ["Sword","Dual Swords","Spear","Odachi","Axe","Switchglaive","Cestuses","Hoko & Shield"];
+const RANGE_W = ["Bow","Rifle","Hand Cannon"];
+
+const WCOLOR = {
+  Tonfa:"#64d2ff", "Dual Ninja Swords":"#bf5af2", Talons:"#ff375f", Kusarigama:"#30d158",
+  "Ninja Sword":"#ffd60a", Hatchets:"#ff9f0a", Splitstaff:"#5e5ce6",
+  Sword:"#ffd60a", "Dual Swords":"#bf5af2", Spear:"#64d2ff", Odachi:"#ff9f0a",
+  Axe:"#ff453a", Switchglaive:"#5e5ce6", Cestuses:"#ff375f",
+  "Hoko & Shield":"#64d2ff", "Ninja Hoko & Shield":"#30d158",
+  Bow:"#30d158", Rifle:"#8e8e93", "Hand Cannon":"#ff9f0a"
+};
+const WPATH = {
+  Tonfa:"M7 1h2v11H7zM9 4h5v2H9z",
+  "Dual Ninja Swords":"M3 13 7.5 2l1 .4L4.4 13zm4.2 0L12 2l1 .4L8.6 13z",
+  Talons:"M4 13c0-4 1-8 2.2-10l.8.4C6 5.5 5.4 8.6 5.4 13zm3.2 0c0-3.8.8-7.4 1.8-9.4l.8.4C9 6 8.6 8.8 8.6 13zm3.3 0c0-3.4.7-6.5 1.5-8.4l.8.4c-.7 1.8-1.1 4.4-1.1 8z",
+  Kusarigama:"M3 3h6v2H8v8H6V5H3zm8.2 3.2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z",
+  "Ninja Sword":"M8.2 1.6 13 6.4 11.8 7.6 10.4 6.2 5 11.6H3.2V9.8L8.6 4.4 7.2 3z",
+  Hatchets:"M3 13 6.8 2.2h1.8L4.8 13zm5 0L12.6 2.2H14.4L9.8 13z",
+  Splitstaff:"M7.2 1h1.6v14H7.2zM3.8 6.2h8.4v1.8H3.8z",
+  Sword:"M8.2 1.6 13 6.4 11.8 7.6 10.4 6.2 5 11.6H3.2V9.8L8.6 4.4 7.2 3z",
+  "Dual Swords":"M3 13 7.5 2l1 .4L4.4 13zm4.2 0L12 2l1 .4L8.6 13z",
+  Spear:"M7.3 14.6V5L5 2.8 6.2 1.6 8 3.4 9.8 1.6 11 2.8 8.7 5v9.6z",
+  Odachi:"M2.4 13.6 11.6 2.6l2 2-9.2 11z",
+  Axe:"M7 1.4h2V13H7zM9 3.2c2.6.3 4 2.2 4 4.4s-1.4 4.1-4 4.4z",
+  Switchglaive:"M3 13 10.6 3.6l2 2L5 15z",
+  Cestuses:"M3.2 6h3v7h-3zm6.6 0h3v7h-3zM4 4h2v2H4zm6.6 0h2v2h-2z",
+  "Hoko & Shield":"M3 2h2.2v12H3zm6 1.5 5 4.5-5 4.5z",
+  "Ninja Hoko & Shield":"M3 2h2.2v12H3zm6 1.5 5 4.5-5 4.5z",
+  Bow:"M2 8c4-4.6 8-4.6 12 0-4 4.6-8 4.6-12 0z",
+  Rifle:"M2 7h8.4l3.2 2v2.2H2z",
+  "Hand Cannon":"M3 6.2h7.4v5H3zm7.4.8 3 1.1v2.2l-3 1.1z"
+};
+function wIcon(type){
+  if(!type || !WPATH[type]) return "";
+  const c = WCOLOR[type]||"#d1d1d6";
+  return `<span class="wico" style="background:${c}22;color:${c}" title="${type}"><svg viewBox="0 0 16 16"><path d="${WPATH[type]}"/></svg></span>`;
+}
+function namedSet(p){ return p && p.set && SETS[p.set]; }
+function graceEligible(p, slot){
+  if(!p || !p.set) return false;
+  if(slot && state[slot] && state[slot].crucible && canCrucible(slot,p)) return true;
+  if(p.set === "grace" || p.set === "none" || p.set === "yasakani") return true;
+  return !SETS[p.set];
+}
+function canCrucible(slot, p){
+  if(slot==="bow") return false;
+  if(!WEAPON_SLOTS.has(slot) || !p) return false;
+  if((p.name||"").indexOf("empty")>=0) return false;
+  if(namedSet(p)) return false;
+  return true;
+}
+function stylesOn(){
+  return [...document.querySelectorAll(".flt-style:checked")].map(x=>x.value);
+}
+function kindsOn(){
+  return [...document.querySelectorAll(".flt-kind:checked")].map(x=>x.value);
+}
+function setName(info){
+  const n = !info ? "" : (typeof info==="string" ? (SETS[info]?SETS[info].name:info) : info.name);
+  return n.split(" / ")[0];
+}
+function setBonusTitle(info){
+  const n = !info ? "" : (typeof info==="string" ? (SETS[info]?SETS[info].name:info) : info.name);
+  const i = n.lastIndexOf(" / ");
+  return i>=0 ? n.slice(i+3) : n;
+}
+function bonusName(info){ return setName(info); }
+function allowed(p, slot){
+  const st = stylesOn();
+  const kd = kindsOn();
+  if(p.name.indexOf("empty")>=0) return true;
+  if(p.style==="ninja" && !st.includes("ninja")) return false;
+  if(p.style==="samurai" && !st.includes("samurai")) return false;
+  const isSet = !!(p.set && SETS[p.set]);
+  if(isSet && !kd.includes("set")) return false;
+  if(!isSet && !kd.includes("nonset")) return false;
+  if(WEAPON_SLOTS.has(slot) && state[slot].wtype && state[slot].wtype!=="all"){
+    if(weaponType(p)!==state[slot].wtype) return false;
+  }
+  if(WEAPON_SLOTS.has(slot) && state[slot].cruOnly && !canCrucible(slot,p)) return false;
+  return true;
+}
+function guessCat(text){
+  const s = (text||"").toLowerCase();
+  if(s.includes("ninjutsu")||s.includes("shadow art")) return CATS.ninjutsu;
+  if(s.includes("onmyo")) return "Onmyo";
+  if(s.includes("ki damage")||s.includes("break")) return CATS.kiDmg;
+  if(s.includes("damage taken")||s.includes("defense")) return CATS.taken;
+  if(s.includes("life drain")||s.includes("life recovery")||s.includes("auto life")) return CATS.heal;
+  if(s.includes("life +")||s.includes("life +")) return CATS.life;
+  if(s.includes("dodge")||s.includes("movement")||s.includes("ki consumption")||s.includes("ki recovery")) return CATS.kiCost;
+  if(s.includes("amrita")||s.includes("spirit force")) return CATS.spirit;
+  if(s.includes("luck")||s.includes("drop")||s.includes("gold")) return CATS.drop;
+  if(s.includes("elemental")||s.includes("damage")||s.includes("attack bonus")||s.includes("melee")||s.includes("bow")) return CATS.dmg;
+  if(s.includes("poison")||s.includes("status")||s.includes("ailment")||s.includes("confusion")) return CATS.status;
+  return CATS.util;
+}
+function setClass(id){
+  return "dd-name set-" + (id && SETS[id] ? id : (id==="grace"||id==="yasakani"?"grace":"none"));
+}
+function equippedSetCount(setId){
+  let n = 0, yasa = false;
+  for(const [slot] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p) continue;
+    if(p.set==="yasakani") yasa = true;
+    if(p.set===setId && namedSet(p)) n++;
+  }
+  return yasa ? n+1 : n;
+}
+function equippedGraceCount(gid){
+  let n = 0, yasa = false;
+  for(const [slot] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p) continue;
+    if(p.set==="yasakani") yasa = true;
+    if(state[slot].grace===gid) n++;
+  }
+  return yasa ? n+1 : n;
+}
+function tiersHtml(info, active){
+  if(!info || !info.tiers) return "";
+  return "<ul class='dd-tiers'>" + Object.entries(info.tiers).map(([n,v]) =>
+    "<li class='"+(active>=+n?"on":"")+"'>"+n+"pc "+v[0]+"</li>"
+  ).join("") + "</ul>";
+}
+function wtLabel(slot, p){
+  const w = pieceWeight(slot, p);
+  if(!p || p.name.indexOf("empty")>=0) return "";
+  return `<span class="wt">Weight ${w.toFixed(1)}</span>`;
+}
+function pieceTitle(p, slot){
+  if(!p || p.name.indexOf("empty")>=0) return "— empty —";
+  const ico = WEAPON_SLOTS.has(slot) ? wIcon(weaponType(p)) : "";
+  return ico + p.name + wtLabel(slot, p);
+}
+function closeAll(){
+  document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open"));
+}
+function armorWeightSelects(id){
+  if(!ARMOR_SLOTS.has(id) || !stylesOn().includes("samurai")) return "";
+  const block = wt => `
+    <div class="mini wt-labs"><span class="wt-lab">${wt==="light"?"Light Armor (High Mobility)":wt==="medium"?"Medium Armor (Balanced)":"Heavy Armor (High Defense)"}</span></div>
+    <div class="dd" data-kind="piece" data-slot="${id}" data-wt="${wt}">
+      <button type="button" class="dd-btn" data-piece-btn="${id}" data-wt="${wt}"></button>
+      <div class="dd-list" data-piece-list="${id}" data-wt="${wt}"></div>
+    </div>
+    <div class="dd" data-kind="grace" data-slot="${id}" data-wt="${wt}" hidden>
+      <button type="button" class="dd-btn" data-grace-btn="${id}" data-wt="${wt}"></button>
+      <div class="dd-list" data-grace-list="${id}" data-wt="${wt}"></div>
+    </div>`;
+  return block("light")+block("medium")+block("heavy");
+}
+function fillSelects(){
+  const box = document.getElementById("slots");
+  const samOn = stylesOn().includes("samurai");
+  box.innerHTML = SLOTS.map(([id,label]) => {
+    const split = samOn && ARMOR_SLOTS.has(id);
+    const pieceBlock = split ? armorWeightSelects(id) : `
+      <div class="dd" data-kind="piece" data-slot="${id}">
+        <button type="button" class="dd-btn" data-piece-btn="${id}"></button>
+        <div class="dd-list" data-piece-list="${id}"></div>
+      </div>
+      <div class="dd" data-kind="grace" data-slot="${id}" hidden>
+        <button type="button" class="dd-btn" data-grace-btn="${id}"></button>
+        <div class="dd-list" data-grace-list="${id}"></div>
+      </div>`;
+    return `
+    <div class="slot"><span>${label}</span><div class="ctrls">
+      ${pieceBlock}
+      <div class="mini" data-wtype="${id}"></div>
+      <div class="mini" data-cruonly="${id}"></div>
+      <div data-locked="${id}"></div>
+    </div></div>`;
+  }).join("");
+  document.querySelectorAll(".dd-btn").forEach(btn=>{
+    btn.onclick = e => {
+      e.stopPropagation();
+      const wrap = btn.parentElement;
+      const was = wrap.classList.contains("open");
+      closeAll();
+      if(was || btn.disabled) return;
+      const slot = wrap.dataset.slot;
+      if(wrap.dataset.kind==="piece" && slot){
+        const plist = wrap.querySelector(".dd-list");
+        plist.innerHTML = pieceItems(slot, wrap.dataset.wt);
+        plist.querySelectorAll(".dd-item").forEach(it=>{
+          it.onclick = ev => {
+            ev.stopPropagation();
+            state[slot].i = +it.dataset.i;
+            state[slot].grace = "";
+            const np = PIECES[slot][+it.dataset.i];
+            state[slot].crucible = !!(state[slot].cruOnly && canCrucible(slot, np));
+            closeAll();
+            SLOTS.forEach(([sid]) => syncSlot(sid));
+            render();
+          };
+        });
+      }
+      if(wrap.dataset.kind==="grace" && slot){
+        const glist = wrap.querySelector(".dd-list");
+        glist.innerHTML = `<div class="dd-item" data-g=""><div class="dd-name">No Grace</div></div>` + graceItems(state[slot].grace);
+        glist.querySelectorAll(".dd-item").forEach(it=>{
+          it.onclick = ev => {
+            ev.stopPropagation();
+            state[slot].grace = it.dataset.g || "";
+            closeAll();
+            syncSlot(slot);
+            render();
+          };
+        });
+      }
+      wrap.classList.add("open");
+    };
+  });
+  SLOTS.forEach(([id]) => syncSlot(id));
+}
+function setDisplayName(p){
+  if(!p || !p.set) return "";
+  if(namedSet(p)) return bonusName(SETS[p.set]);
+  if(p.set==="yasakani") return "Yasakani";
+  return "";
+}
+function pieceItems(id, wt){
+  const cur = state[id].i;
+  const rows = PIECES[id].map((p,i) => ({p,i})).filter(({p,i}) => {
+    if(wt && p.name.indexOf("empty")<0 && p.wt && p.wt!==wt) return false;
+    return allowed(p,id) || i===cur;
+  });
+  rows.sort((a,b) => {
+    const ae = a.p.name.indexOf("empty")>=0, be = b.p.name.indexOf("empty")>=0;
+    if(ae && !be) return -1;
+    if(!ae && be) return 1;
+    const as = setDisplayName(a.p) || "\uffff";
+    const bs = setDisplayName(b.p) || "\uffff";
+    const c = as.localeCompare(bs, undefined, {sensitivity:"base"});
+    if(c) return c;
+    return a.p.name.localeCompare(b.p.name, undefined, {sensitivity:"base"});
+  });
+  return rows.map(({p,i}) => {
+    if(p.name.indexOf("empty")>=0)
+      return `<div class="dd-item" data-i="${i}"><div class="dd-name">— empty —</div></div>`;
+    const s = namedSet(p);
+    const nameCls = s ? setClass(p.set) : (graceEligible(p,id) ? "dd-name set-grace" : "dd-name");
+    let extra = "";
+    if(s) extra = `<div class="dd-set ${setClass(p.set)}">${setName(SETS[p.set])}</div>` + tiersHtml(SETS[p.set], equippedSetCount(p.set));
+    else if(p.set==="yasakani") extra = "<ul class='dd-tiers'><li>−1 set / Grace requirement (all slots)</li></ul>";
+    else {
+      const lock = id==="w2" ? null : lockedAffix(p, id);
+      extra = lock && lock.locked && lock.name ? "<ul class='dd-tiers'><li>"+lock.name+"</li></ul>" : "";
+    }
+    return `<div class="dd-item" data-i="${i}"><div class="${nameCls}">${WEAPON_SLOTS.has(id)?wIcon(weaponType(p)):""}${p.name}${wtLabel(id,p)}</div>${extra}</div>`;
+  }).join("");
+}
+function graceItems(sel){
+  return Object.entries(GRACES).sort((a,b)=>a[1].name.localeCompare(b[1].name)).map(([gid,g]) =>
+    `<div class="dd-item" data-g="${gid}"><div class="dd-name set-grace">Grace of ${g.name}</div>${tiersHtml(g, equippedGraceCount(gid))}</div>`
+  ).join("");
+}
+function syncSlot(id){
+  const p = PIECES[id][state[id].i];
+  const empty = !p || p.name.indexOf("empty")>=0;
+  const gwraps = document.querySelectorAll(`.dd[data-kind=grace][data-slot="${id}"]`);
+  const pbtns = document.querySelectorAll(`[data-piece-btn="${id}"]`);
+  const plists = document.querySelectorAll(`[data-piece-list="${id}"]`);
+  pbtns.forEach(pbtn => {
+    const wt = pbtn.dataset.wt;
+    const match = !wt || empty || (p && p.wt===wt);
+    pbtn.innerHTML = match ? pieceTitle(p, id) : "— empty —";
+    pbtn.className = "dd-btn " + (match && namedSet(p) ? setClass(p.set) : "");
+  });
+  plists.forEach(plist => {
+    const wt = plist.dataset.wt;
+    plist.innerHTML = pieceItems(id, wt);
+    plist.querySelectorAll(".dd-item").forEach(it=>{
+      it.onclick = e => {
+        e.stopPropagation();
+        state[id].i = +it.dataset.i;
+        state[id].grace = "";
+        const np = PIECES[id][+it.dataset.i];
+        state[id].crucible = !!(state[id].cruOnly && canCrucible(id, np));
+        closeAll();
+        syncSlot(id);
+        render();
+      };
+    });
+  });
+  gwraps.forEach(gwrap => {
+    const gbtn = gwrap.querySelector("[data-grace-btn]");
+    const glist = gwrap.querySelector("[data-grace-list]");
+    const gwt = gwrap.dataset.wt;
+    const here = !gwt || empty || (p && p.wt===gwt);
+    const show = here && !empty && graceEligible(p,id) && !namedSet(p);
+    if(!show){
+      gwrap.hidden = true;
+      if(gbtn){ gbtn.disabled = true; gbtn.textContent = ""; }
+      if(glist) glist.innerHTML = "";
+      return;
+    }
+    gwrap.hidden = false;
+    gbtn.disabled = false;
+    gbtn.className = "dd-btn set-grace";
+    gbtn.textContent = state[id].grace ? ("Grace of " + GRACES[state[id].grace].name) : "Choose Grace";
+    glist.innerHTML = `<div class="dd-item" data-g=""><div class="dd-name">No Grace</div></div>` + graceItems(state[id].grace);
+    glist.querySelectorAll(".dd-item").forEach(it=>{
+      it.onclick = e => {
+        e.stopPropagation();
+        state[id].grace = it.dataset.g || "";
+        closeAll();
+        syncSlot(id);
+        render();
+      };
+    });
+  });
+  if(empty || namedSet(p) || !graceEligible(p,id)) state[id].grace = empty || namedSet(p) ? "" : state[id].grace;
+  if(canCrucible(id,p) && state[id].cruOnly) state[id].crucible = true;
+  else if(id==="bow" || namedSet(p) || !p || (p.name||"").indexOf("empty")>=0) state[id].crucible = false;
+  const wt = document.querySelector(`[data-wtype="${id}"]`);
+  if(WEAPON_SLOTS.has(id)){
+    const st = stylesOn();
+    let types = [];
+    if(st.length){
+      types = ["all"];
+      if(id==="bow") types = types.concat(RANGE_W);
+      else {
+        if(st.includes("ninja")) types = types.concat(NINJA_W);
+        if(st.includes("samurai")) types = types.concat(SAMURAI_W);
+      }
+    }
+    if(state[id].wtype && state[id].wtype!=="all" && !types.includes(state[id].wtype)) state[id].wtype = "all";
+    const label = {all:"All","Dual Ninja Swords":"Dual Swords","Ninja Sword":"Sword","Ninja Hoko & Shield":"Hoko & Shield"};
+    wt.innerHTML = types.map(tp => `<button type="button" class="wchip${state[id].wtype===tp||(tp==="all"&&!state[id].wtype)?" on":""}" data-tp="${tp}" title="${tp}">${tp==="all"?"":wIcon(tp)}${label[tp]||tp}</button>`).join("");
+    wt.querySelectorAll("button").forEach(b=>{
+      b.onclick = e => { e.stopPropagation(); state[id].wtype = b.dataset.tp; fillSelects(); render(); };
+    });
+    const co = document.querySelector(`[data-cruonly="${id}"]`);
+    if(co){
+      co.innerHTML = (id!=="bow" && types.length) ? `<label><input type="checkbox" ${state[id].cruOnly?"checked":""}> Crucible Only</label>` : "";
+      const box = co.querySelector("input");
+      if(box) box.onchange = e => { state[id].cruOnly = e.target.checked; if(e.target.checked) state[id].crucible = true; fillSelects(); render(); };
+    }
+  } else wt.innerHTML = "";
+  drawLocked(id, p);
+}
+function drawLocked(id, p){
+  const box = document.querySelector(`[data-locked="${id}"]`);
+  if(!box) return;
+  if(!p || p.name.indexOf("empty")>=0){ box.innerHTML=""; return; }
+  const lock = lockedAffix(p, id);
+  if(id==="w2" || !lock || !lock.locked || lock.cat==="set" || isCrucibleNow(id,p)){ box.innerHTML=""; return; }
+  box.innerHTML = `<div class="locked"><span class="tag">${CATS[lock.cat]||lock.cat}</span>${lock.name}</div>`;
+}
+
+function render(){
+  const rows=[], warns=[], rawSet={}, rawGrace={};
+  let yasa=false;
+  for(const [slot,label] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p || p.name.indexOf("empty")>=0) continue;
+    if(p.set==="yasakani") yasa=true;
+    const setName = namedSet(p) ? bonusName(SETS[p.set]) : (p.set && p.set!=="grace" && p.set!=="none" ? p.set : "—");
+    const g = state[slot].grace;
+    const locked = graceEligible(p);
+    if(namedSet(p) && reqMet(pieceReq(p))) rawSet[p.set]=(rawSet[p.set]||0)+1;
+    if(g) rawGrace[g]=(rawGrace[g]||0)+1;
+    const cruTxt = WEAPON_SLOTS.has(slot)
+      ? (state[slot].crucible ? "Yes" : (namedSet(p) ? "Never" : "No"))
+      : "—";
+    const lock = lockedAffix(p);
+    const lockTxt = lock && lock.cat!=="grace" ? lock.name : "—";
+    const sg = g ? `<span class="set-grace">Grace of ${GRACES[g].name}</span>` : (namedSet(p) ? `<span class="${setClass(p.set)}">${bonusName(SETS[p.set])}</span>` : "—");
+    rows.push(`<tr>
+      <td>${label}</td>
+      <td>${sg}</td>
+      <td>${lockTxt}</td>
+    </tr>`);
+  }
+  const pills=[];
+  const lines=[];
+  const stats=[];
+  function pushStat(cat, display, extraHtml, raw){
+    stats.push({cat, text: raw || display.replace(/<[^>]+>/g,"")});
+    const nxt = extraHtml || "";
+    lines.push(`<div class="bonus"><div class="bmain"><span class="tag">${cat}</span> ${display}</div>${nxt}</div>`);
+  }
+  function nextTier(info, eff){
+    const pcs = Object.keys(info.tiers).map(Number).sort((a,b)=>a-b);
+    const nxt = pcs.find(pc => pc > eff);
+    if(nxt==null) return "";
+    return `<span class="next">next ${nxt}pc: ${info.tiers[nxt][0]}</span>`;
+  }
+  function addStack(id, n, info){
+    const eff = yasa ? n+1 : n;
+    const min = Math.min(...Object.keys(info.tiers).map(Number));
+    const cls = id==="grace"?"grace":id;
+    if(n>=1) pills.push(`<span class="pill on set-${cls}">${bonusName(info)}</span>`);
+    if(eff < min){
+      pushStat(CATS.grace||"Grace", `<span class="${setClass(id)}">${bonusName(info)} ${n}pc</span>`, nextTier(info,eff), bonusName(info)+" "+n+"pc");
+      return;
+    }
+    const pcs = Object.keys(info.tiers).map(Number).sort((a,b)=>a-b);
+    const active = pcs.filter(pc => eff>=pc);
+    active.forEach((pc,i) => {
+      const [text]=info.tiers[pc];
+      const cat = guessCat(text);
+      const nxt = i===active.length-1 ? nextTier(info,eff) : "";
+      pushStat(cat, `<span class="${setClass(id)}">${bonusName(info)} ${pc}pc:</span> ${text}`, nxt, text);
+    });
+  }
+  for(const [id,n] of Object.entries(rawSet)) if(SETS[id]) addStack(id,n,SETS[id]);
+  for(const [id,n] of Object.entries(rawGrace)) if(GRACES[id]) addStack("grace",n,{...GRACES[id], name:"Grace of "+GRACES[id].name});
+
+  const pieceLines=[];
+  for(const [slot,label] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p || p.name.indexOf("empty")>=0) continue;
+    const lock = lockedAffix(p, slot);
+    if(slot!=="w2" && lock && lock.locked && lock.cat!=="set"){
+      pushStat(CATS[lock.cat]||lock.cat, lock.name);
+    }
+    if(state[slot].crucible){
+      pushStat("Utility", p.name+" — Crucible");
+    }
+  }
+  const hasStyle = stylesOn().length>0;
+  const tw = +totalWeight().toFixed(1);
+  const mw = maxWeight();
+  const pct = mw ? (tw/mw*100) : 0;
+  const ag = agility(pct);
+  const barCls = ag==="A"||ag==="B"?"":(ag==="C"?" c":" d");
+  const wbox = document.getElementById("weightpills");
+  if(wbox){
+    wbox.innerHTML = hasStyle
+      ? `<span class="pill on">Weight ${tw} / ${mw} (${pct.toFixed(1)}%)</span><span class="pill on ag-${ag}">Agility ${ag}</span>`
+      : "";
+  }
+  for(const [slot,label] of SLOTS){
+    const p = PIECES[slot][state[slot].i];
+    if(!p || p.name.indexOf("empty")>=0) continue;
+    const req = pieceReq(p);
+    if(req && !reqMet(req)){
+      warns.push(p.name+" needs "+reqText(req)+" — set bonus and locked effects stay inactive.");
+    }
+  }
+  document.getElementById("counts").innerHTML = pills.join("") || "<span class='pill'>No stacks</span>";
+  document.getElementById("warns").innerHTML = warns.map(w=>`<div class="warn">${w}</div>`).join("") +
+    (hasStyle ? `<div class="wbar${barCls}"><span style="width:${Math.min(100,pct)}%"></span></div>` : "");
+  const body = document.body;
+  body.classList.toggle("form-ninja", stylesOn().includes("ninja") && !stylesOn().includes("samurai"));
+  body.classList.toggle("form-samurai", stylesOn().includes("samurai") && !stylesOn().includes("ninja"));
+  if(stylesOn().length){
+    const core = coreFromLevels();
+    const nOn = stylesOn().includes("ninja");
+    const sOn = stylesOn().includes("samurai");
+    pushStat("Life", "Constitution: Life +"+(char.con*40));
+    pushStat("Life", "Level: Life +"+core.life);
+    if(sOn) pushStat("Melee", "Heart / Strength / Intellect: Melee Attack +"+(char.hrt*2+char.str*2+char.int*2));
+    if(nOn) pushStat("Melee", "Heart / Strength / Magic: Melee Attack +"+(char.hrt+char.str+char.mag));
+    pushStat("Ki", "Heart: Ki +"+core.ki);
+    pushStat("Ki", "Heart & Intellect: Ki Recovery Speed +"+core.kiRec);
+    pushStat("Ki Damage", "Strength: Melee Ki Damage +"+core.meleeKi);
+    if(nOn) pushStat("Ninjutsu", "Skill: Ninjutsu Power +"+core.ninPow);
+    if(sOn) pushStat("Arts", "Skill: Arts Proficiency Power +"+core.arts);
+    pushStat("Onmyo", "Magic: Onmyo Magic Power +"+core.onmyo);
+    pushStat("Elemental", "Intellect: Effect Duration +"+core.dur);
+    if(nOn) pushStat("Utility", "Stamina: Weight Limit "+(15+char.sta*0.3).toFixed(1));
+    if(sOn) pushStat("Utility", "Stamina: Weight Limit "+(20+char.sta*1.1).toFixed(1));
+  }
+  const gsOn = document.getElementById("flt-gs")?.checked;
+  if(gsOn){
+    const s = currentSpirit();
+    if(s){
+      const ad = s.atk!=null ? `Atk ${s.atk} / Def ${s.def} (enh. 30)` : "enhancement 30";
+      pushStat("Spirit", s.name+" — "+s.el+" · "+ad);
+      s.fx.forEach(f => pushStat("Spirit", f));
+    }
+  }
+  const combine = document.getElementById("flt-combine")?.checked;
+  document.getElementById("bonuses").innerHTML = ((combine ? combineStatHtml(stats) : lines).join("") || "<p class='note'>No bonuses.</p>");
+  paintStatHints();
+}
+function eligNote(p){
+  if(namedSet(p)) return "Blocked (named set)";
+  if(graceEligible(p)) return "Eligible — pick above";
+  return "—";
+}
+
+function hasGear(){
+  return SLOTS.some(([id]) => {
+    const p = PIECES[id][state[id].i];
+    return p && p.name.indexOf("empty")<0;
+  });
+}
+function clearGear(){
+  SLOTS.forEach(([id]) => { state[id].i=0; state[id].grace=""; state[id].crucible=false; });
+}
+function parseAmt(text){
+  const m = String(text).match(/^(.*?)(?:\s+)([+\-−]?\d+(?:\.\d+)?)(%?)\s*$/);
+  if(!m) return null;
+  return {key:m[1].trim().toLowerCase(), label:m[1].trim(), num:parseFloat(m[2].replace("−","-")), unit:m[3]||""};
+}
+function combineStatHtml(list){
+  const map = new Map();
+  const order = [];
+  list.forEach(({cat,text}) => {
+    const p = parseAmt(text);
+    if(!p){
+      order.push({cat, text, skip:true});
+      return;
+    }
+    const id = p.key+"|"+p.unit;
+    if(!map.has(id)){
+      const row = {cat, label:p.label, num:0, unit:p.unit};
+      map.set(id, row);
+      order.push(row);
+    }
+    map.get(id).num += p.num;
+  });
+  return order.map(r => {
+    if(r.skip) return `<div class="bonus"><div class="bmain"><span class="tag">${r.cat}</span> ${r.text}</div></div>`;
+    const sign = r.num>0?"+":"";
+    const n = Number.isInteger(r.num) ? r.num : +r.num.toFixed(1);
+    return `<div class="bonus"><div class="bmain"><span class="tag">${r.cat}</span> ${r.label} ${sign}${n}${r.unit}</div></div>`;
+  });
+}
+function currentSpirit(){
+  if(!gsState.id || !gsState.style) return null;
+  if(!stylesOn().includes(gsState.style)) return null;
+  return (SPIRITS[gsState.style]||[]).find(s => s.id===gsState.id) || null;
+}
+function applyView(){
+  const gsOn = document.getElementById("flt-gs")?.checked;
+  document.getElementById("char-card")?.classList.remove("hide");
+  document.getElementById("gs-card")?.toggleAttribute("hidden", !gsOn);
+  document.getElementById("equip-card")?.classList.remove("hide");
+}
+function spiritPool(){
+  const st = stylesOn();
+  const out = [];
+  if(st.includes("ninja")) SPIRITS.ninja.forEach(s => out.push({style:"ninja", s}));
+  if(st.includes("samurai")) SPIRITS.samurai.forEach(s => out.push({style:"samurai", s}));
+  return out;
+}
+function drawGS(){
+  const btn = document.getElementById("gs-btn");
+  const list = document.getElementById("gs-list");
+  if(!btn || !list) return;
+  const pool = spiritPool();
+  if(gsState.id && !pool.some(x => x.s.id===gsState.id && x.style===gsState.style)){
+    gsState.id = ""; gsState.style = "";
+  }
+  const cur = currentSpirit();
+  btn.textContent = cur ? cur.name : "— none —";
+  list.innerHTML = `<div class="dd-item" data-gs="" data-style=""><div class="dd-name">— none —</div></div>` +
+    pool.map(({style,s}) => {
+      const ad = (s.atk!=null?`Atk ${s.atk} / Def ${s.def}`:"Enhancement 30");
+      return `<div class="dd-item" data-gs="${s.id}" data-style="${style}"><div class="dd-name">${s.name}</div><ul class="dd-tiers"><li>${s.el} · ${ad}</li>${s.fx.map(f=>"<li>"+f+"</li>").join("")}</ul></div>`;
+    }).join("");
+  const wrap = btn.parentElement;
+  btn.onclick = e => {
+    e.stopPropagation();
+    const was = wrap.classList.contains("open");
+    closeAll();
+    if(!was) wrap.classList.add("open");
+  };
+  list.querySelectorAll(".dd-item").forEach(it => {
+    it.onclick = e => {
+      e.stopPropagation();
+      gsState.id = it.dataset.gs || "";
+      gsState.style = it.dataset.style || "";
+      closeAll();
+      drawGS();
+      render();
+    };
+  });
+}
+document.querySelectorAll(".flt-kind").forEach(r=>r.onchange=()=>{fillSelects();render();});
+function snapshot(){
+  return {
+    char:{...char},
+    gs:{...gsState},
+    slots: Object.fromEntries(SLOTS.map(([id]) => [id, {...state[id]}])),
+    styles: stylesOn(),
+    kinds: kindsOn(),
+    gsOn: !!document.getElementById("flt-gs")?.checked,
+    combine: !!document.getElementById("flt-combine")?.checked
+  };
+}
+function applySnap(s){
+  if(!s) return;
+  Object.assign(char, s.char||{});
+  Object.assign(gsState, s.gs||{});
+  SLOTS.forEach(([id]) => { if(s.slots&&s.slots[id]) Object.assign(state[id], s.slots[id]); });
+  document.querySelectorAll(".flt-style").forEach(x => x.checked = (s.styles||[]).includes(x.value));
+  document.querySelectorAll(".flt-kind").forEach(x => x.checked = (s.kinds||[]).includes(x.value));
+  const g=document.getElementById("flt-gs"); if(g) g.checked=!!s.gsOn;
+  const c=document.getElementById("flt-combine"); if(c) c.checked=!!s.combine;
+  drawChar(); fillSelects(); drawGS(); render(); applyView();
+}
+function buildSummary(){
+  const lines = ["Nioh 3 loadout", "Level "+char.cap+" · used "+pointsUsed()];
+  STATS.forEach(([k,lab]) => lines.push(lab+" "+char[k]));
+  SLOTS.forEach(([id,lab]) => {
+    const p = PIECES[id][state[id].i];
+    if(!p || p.name.indexOf("empty")>=0) return;
+    const g = state[id].grace ? " / Grace of "+GRACES[state[id].grace].name : "";
+    const cru = state[id].crucible ? " / Crucible" : "";
+    lines.push(lab+": "+p.name+g+cru);
+  });
+  const s = currentSpirit();
+  if(s) lines.push("Guardian Spirit: "+s.name);
+  lines.push("Weight "+totalWeight().toFixed(1)+" / "+maxWeight()+" · Agility "+agility(totalWeight()/maxWeight()*100));
+  return lines.join("\n");
+}
+document.getElementById("btn-clear")?.addEventListener("click", () => {
+  if(!confirm("Empty all gear?")) return;
+  clearGear();
+  gsState.id=""; gsState.style="";
+  fillSelects(); drawGS(); render();
+});
+document.getElementById("btn-copy")?.addEventListener("click", async () => {
+  const t = buildSummary();
+  try{ await navigator.clipboard.writeText(t); }catch(e){
+    prompt("Copy this:", t);
+  }
+});
+document.getElementById("btn-save")?.addEventListener("click", () => {
+  const name = prompt("Loadout name?", "Calamity");
+  if(!name) return;
+  try{
+    const all = JSON.parse(localStorage.getItem("n3builds")||"{}");
+    all[name] = snapshot();
+    localStorage.setItem("n3builds", JSON.stringify(all));
+  }catch(e){ alert("Save needs Safari. Grok preview cannot store loadouts."); }
+});
+document.getElementById("btn-load")?.addEventListener("click", () => {
+  let all={};
+  try{ all = JSON.parse(localStorage.getItem("n3builds")||"{}"); }catch(e){}
+  const keys = Object.keys(all);
+  if(!keys.length){ alert("No saved loadouts. Open this file in Safari first."); return; }
+  const name = prompt("Load which?\n"+keys.join("\n"), keys[0]);
+  if(name && all[name]) applySnap(all[name]);
+});
+document.getElementById("flt-combine")?.addEventListener("change", () => render());
+document.getElementById("flt-gs")?.addEventListener("change", () => { applyView(); drawGS(); render(); });
+document.querySelectorAll(".flt-style").forEach(r=>{
+  r.addEventListener("change", () => {
+    const other = [...document.querySelectorAll(".flt-style")].find(x => x!==r);
+    if(r.checked && other && other.checked){
+      if(hasGear() && !confirm("Switching Form will reset all selections below, continue?")){
+        r.checked = false;
+        fillSelects(); render(); applyView();
+        return;
+      }
+      other.checked = false;
+      clearGear();
+    }
+    fillSelects(); drawGS(); render(); applyView();
+  });
+});
+
+document.addEventListener('click', closeAll);
+function boot(){
+  try{
+    drawChar(); fillSelects(); drawGS(); render(); applyView();
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("sw.js").catch(()=>{});
+    }
+    const m = document.getElementById("boot-msg");
+    if(m) m.remove();
+  }catch(err){
+    const m = document.getElementById("boot-msg");
+    if(m) m.textContent = "Builder failed to start: " + err.message;
+    console.error(err);
+  }
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+</script>
 </body>
 </html>
