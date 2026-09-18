@@ -18,6 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Point Home Screen icon at v3
+        run: |
+          sed -i 's|href="icon.svg"|href="icon-v3.svg"|g' index.html
+          sed -i 's|"src": "icon.svg"|"src": "icon-v3.svg"|g' manifest.json || true
       - uses: actions/configure-pages@v5
         with:
           enablement: true
