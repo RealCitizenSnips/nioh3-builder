@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install ImageMagick
+        run: sudo apt-get update -y && sudo apt-get install -y imagemagick
       - name: Patch builder chrome
         run: python3 scripts/patch_pages.py
       - uses: actions/configure-pages@v5
