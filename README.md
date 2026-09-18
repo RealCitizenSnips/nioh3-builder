@@ -1,24 +1,19 @@
 # Nioh 3 Equipment Builder
 
-Phone-first loadout builder for Nioh 3. Current version: **v0.8.1**.
+Phone-first loadout builder for Nioh 3. Current version: **v0.9.1**.
 
-Repo: https://github.com/RealCitizenSnips/nioh3-builder
-
-Live URL (after Pages is enabled and `index.html` is the builder):
+## Live URL
 
 https://realcitizensnips.github.io/nioh3-builder/
 
-## First-time setup (once)
+If that 404s, open the repo on GitHub → **Settings → Pages → Source: GitHub Actions**, then wait a minute and refresh.
 
-1. Download `nioh3-set-builder.html` from the Grok chat.
-2. In this repo: **Add file → Upload files**.
-3. Upload it and name it `index.html` (replace the placeholder).
-4. **Settings → Pages → Source: GitHub Actions**.
-5. Wait a minute, then open the live URL in **Safari**.
-6. Share → **Add to Home Screen**.
+## Add to iPhone Home Screen
 
-Loadouts save on that phone only.
+1. Open the live URL in **Safari** (not Chrome, not Files).
+2. Tap Share → **Add to Home Screen**.
+3. It opens like an app. Loadouts save on that phone only (Safari localStorage).
 
-## After that
+## For testers
 
-New builder updates go in this repo. Send your friend the live URL, not a Files download.
+Send the live URL. After we push a change, hard-refresh Safari or delete and re-add the Home Screen icon.
