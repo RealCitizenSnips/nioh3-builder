@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import base64, shutil, subprocess, sys
+import base64, shutil, subprocess
 
 root = Path(".")
 html = root / "index.html"
@@ -18,18 +18,18 @@ def join_b64(prefix, dest):
 join_b64("title-banner", "title-banner.jpg")
 join_b64("icon-home", "icon-home.png")
 
-# Rebuild a square black icon from the existing PNG using ImageMagick if present
 src = root / "icon-180.png"
 dst = root / "icon-home.png"
 if src.exists():
     try:
         subprocess.check_call([
             "convert", str(src),
-            "-alpha", "off",
-            "-fuzz", "12%", "-trim",
-            "+repage",
-            "-background", "#080808",
             "-gravity", "center",
+            "-crop", "70x90%+0+0",
+            "+repage",
+            "-resize", "180x180^",
+            "-gravity", "center",
+            "-background", "#080808",
             "-extent", "180x180",
             str(dst),
         ])
@@ -66,7 +66,7 @@ body.form-ninja .dd-btn,body.form-ninja .dd-list{border:1px solid #3d7eff}
 body.form-samurai .dd-btn,body.form-samurai .dd-list{border:1px solid #c43a3a}
 .hero{margin:0;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 4px;text-align:center;background:transparent;border:0;box-shadow:none}
 .hero img{display:block;width:92%;max-height:120px;object-fit:contain;margin:0 auto;mix-blend-mode:screen}
-.hero h1,.brush-fallback{display:none!important}
+.hero h1{display:none!important}
 .brush-title{font-family:"Yuji Boku",serif;color:#e8c56a;font-size:1.7rem;line-height:1.1;letter-spacing:.04em;text-shadow:0 0 18px rgba(160,20,20,.55);margin:0}
 .brush-title small{display:block;font-size:1rem;margin-top:4px}
 .hero .ver{display:block;margin:6px 0 8px;color:#c4a050}
@@ -82,14 +82,13 @@ if "Yuji Boku" not in t:
     t = t.replace("</style>", css + "\n</style>")
 
 for old in ['href="icon.svg"','href="icon-v3.svg"','href="icon-brushed.svg"','href="icon-180.png?v=082"','href="icon-180.png"','href="icon-home.png?v=083"']:
-    t = t.replace(old, 'href="icon-home.png?v=084"')
+    t = t.replace(old, 'href="icon-home.png?v=085"')
 
 hero = '<div class="sheet"><header class="hero">' + title_img + '<div class="brush-title">Nioh 3<small>Equipment Builder</small></div><span class="ver">v0.8.4</span></header>'
 for old in [
     '<header class="hero"><h1>Nioh 3 Equipment Builder</h1><img src="title-banner.jpg" alt="Nioh 3 Equipment Builder"><span class="ver">v0.8.3</span></header>',
     '<header class="hero"><h1>Nioh 3 Equipment Builder</h1><span class="ver">v0.8.2</span></header>',
     '<h1>Nioh 3 Equipment Builder <span class="ver">v0.8.1</span></h1>',
-    '<div class="sheet"><header class="hero"><h1>Nioh 3 Equipment Builder</h1><img src="title-banner.jpg" alt="Nioh 3 Equipment Builder"><span class="ver">v0.8.3</span></header>',
 ]:
     t = t.replace(old, hero)
 
@@ -102,6 +101,5 @@ if t.count('<div class="sheet">') >= 1 and "\n<script>" in t and "</div>\n<scrip
 html.write_text(t)
 man = root / "manifest.json"
 if man.exists():
-    m = man.read_text().replace("icon.svg", "icon-home.png").replace("icon-v3.svg", "icon-home.png").replace("icon-180.png", "icon-home.png")
-    man.write_text(m)
-print("patched title", has_title, "icon", dst.exists())
+    man.write_text(man.read_text().replace("icon.svg", "icon-home.png").replace("icon-v3.svg", "icon-home.png").replace("icon-180.png", "icon-home.png"))
+print("patched")
