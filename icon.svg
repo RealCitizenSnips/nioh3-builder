@@ -1,5 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-<rect width="180" height="180" rx="36" fill="#0d2b4a"/>
-<rect x="18" y="18" width="144" height="144" rx="28" fill="none" stroke="#ffd60a" stroke-width="6"/>
-<polygon points="90,42 126,128 90,108 54,128" fill="#f5f5f7"/>
+  <rect width="180" height="180" fill="#0a0a0a"/>
+  <defs>
+    <radialGradient id="g" cx="50%" cy="55%" r="45%">
+      <stop offset="0%" stop-color="#8a1515"/>
+      <stop offset="70%" stop-color="#1a0505"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="90" cy="98" r="58" fill="url(#g)"/>
+  <rect x="87" y="22" width="6" height="136" rx="2" fill="#6e6558"/>
+  <rect x="78" y="48" width="24" height="6" rx="1" fill="#8a7a62"/>
+  <ellipse cx="90" cy="38" rx="7" ry="10" fill="#9a8b70"/>
+  <path d="M48 118c18-44 28-70 42-88 8 22 16 48 42 88" fill="none" stroke="#e4c57a" stroke-width="14" stroke-linecap="round"/>
+  <path d="M62 78h56" fill="none" stroke="#e4c57a" stroke-width="10" stroke-linecap="round"/>
 </svg>
