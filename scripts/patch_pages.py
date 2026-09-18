@@ -26,9 +26,21 @@ if src.exists():
             shutil.copy(src, dst)
 
 b64p = root / "title-banner.b64"
+jpg = root / "title-banner.jpg"
 if b64p.exists():
     raw = re.sub(r"\s+", "", b64p.read_text())
-    (root / "title-banner.jpg").write_bytes(base64.b64decode(raw))
+    if raw and raw != "PLACEHOLDER" and len(raw) > 100:
+        try:
+            jpg.write_bytes(base64.b64decode(raw))
+        except Exception:
+            pass
+if not jpg.exists() and (root / "title-banner.svg").exists():
+    try:
+        subprocess.check_call(["convert", "-background", "black", str(root / "title-banner.svg"), str(jpg)])
+    except Exception:
+        pass
+
+banner_src = "title-banner.jpg" if jpg.exists() else "title-banner.svg"
 
 repls = [
     ('width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"',
@@ -79,7 +91,7 @@ if "max-height:168px" not in t:
 for old in ['href="icon.svg"','href="icon-v3.svg"','href="icon-brushed.svg"','href="icon-180.png"','href="icon-home.png?v=083"','href="icon-home.png?v=084"','href="icon-home.png?v=085"']:
     t = t.replace(old, 'href="icon-home.png?v=086"')
 
-hero = '<div class="sheet"><header class="hero"><img src="title-banner.jpg" alt="Nioh 3 Equipment Builder"><span class="ver">v0.8.6</span></header>'
+hero = '<div class="sheet"><header class="hero"><img src="'+banner_src+'" alt="Nioh 3 Equipment Builder"><span class="ver">v0.8.6</span></header>'
 t = re.sub(r'(?:<div class="sheet">)?<header class="hero">.*?</header>', hero, t, count=1, flags=re.S)
 t = t.replace('<h1>Nioh 3 Equipment Builder <span class="ver">v0.8.1</span></h1>', hero)
 t = re.sub(r'v0\.8\.[0-9]', 'v0.8.6', t)
@@ -99,4 +111,4 @@ html.write_text(t)
 man = root / "manifest.json"
 if man.exists():
     man.write_text(man.read_text().replace("icon.svg","icon-home.png").replace("icon-v3.svg","icon-home.png").replace("icon-180.png","icon-home.png"))
-print("patched")
+print("patched", banner_src)
