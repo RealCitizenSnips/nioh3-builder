@@ -1,22 +1,30 @@
 #!/usr/bin/env python3
-"""Decode the banner JPEG only. Do not rewrite CSS or HTML."""
+"""Decode shipped HTML + banner. Do not rewrite CSS."""
 from pathlib import Path
-import base64, re
+import base64, gzip, re
+
 root = Path(".")
-jpg = root / "title-banner.jpg"
+
+def decode_text(p: Path) -> bytes:
+    raw = re.sub(r"\s+", "", p.read_text())
+    raw += "=" * ((4 - len(raw) % 4) % 4)
+    return base64.b64decode(raw)
+
+parts = sorted(root.glob("index.gz.b64.*"))
+blob = root / "index.html.gz.b64"
+if parts:
+    data = base64.b64decode(re.sub(r"\s+", "", "".join(p.read_text() for p in parts)))
+    (root / "index.html").write_bytes(gzip.decompress(data))
+    print("gunzipped parts", (root/"index.html").stat().st_size)
+elif blob.exists():
+    (root / "index.html").write_bytes(gzip.decompress(decode_text(blob)))
+    print("gunzipped blob", (root/"index.html").stat().st_size)
+
 b64p = root / "title-banner.b64"
 if b64p.exists():
-    raw = re.sub(r"\s+", "", b64p.read_text())
-    raw += "=" * ((4 - len(raw) % 4) % 4)
-    try:
-        data = base64.b64decode(raw)
-        if data[:2] == b"\xff\xd8" and len(data) > 20000:
-            jpg.write_bytes(data)
-            print("wrote banner", len(data))
-        else:
-            print("banner b64 not a large jpeg", len(data) if data else 0)
-    except Exception as e:
-        print("banner decode failed", e)
-else:
-    print("no title-banner.b64")
+    data = decode_text(b64p)
+    if data[:2] == b"\xff\xd8" and len(data) > 20000:
+        (root / "title-banner.jpg").write_bytes(data)
+        print("wrote banner", len(data))
+
 print("index size", (root/"index.html").stat().st_size)
