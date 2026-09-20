@@ -20,6 +20,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Apply UI patch
         run: python3 scripts/patch_pages.py
+      - name: Verify banner + builder
+        run: |
+          test -f index.html
+          test -f title-banner.png
+          grep -q "v0.9.5" index.html
+          grep -q "title-banner.png" index.html
+          grep -q "Reset All" index.html
+          ! grep -q "title-banner.svg" index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
