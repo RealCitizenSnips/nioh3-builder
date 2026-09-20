@@ -16,7 +16,9 @@ t = re.sub(r"/\* n3-chrome \*/.*?/\* /n3-chrome \*/", "", t, flags=re.S)
 b64_path = Path(__file__).with_name("banner.b64")
 if not b64_path.exists():
     sys.exit("scripts/banner.b64 missing — cannot build title-banner.png")
-png = base64.b64decode(re.sub(r"\s+", "", b64_path.read_text()))
+raw = re.sub(r"\s+", "", b64_path.read_text())
+raw += "=" * ((4 - len(raw) % 4) % 4)
+png = base64.b64decode(raw)
 if png[:8] != b"\x89PNG\r\n\x1a\n":
     sys.exit("scripts/banner.b64 is not a PNG")
 (ROOT / "title-banner.png").write_bytes(png)
