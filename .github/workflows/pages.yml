@@ -1,1 +1,42 @@
-PLACEHOLDER_YML
+name: Deploy Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply UI patch
+        run: python3 scripts/patch_pages.py
+      - name: Verify banner + builder
+        run: |
+          fail=0
+          check() { if eval "$1"; then echo "OK  $2"; else echo "FAIL $2"; fail=1; fi; }
+          check 'test -f index.html' 'index.html exists'
+          check 'test -f title-banner.png' 'title-banner.png written'
+          check 'python3 -c "p=open(\"title-banner.png\",\"rb\").read(8); assert p==b\"\\x89PNG\\r\\n\\x1a\\n\""' 'banner is a PNG'
+          check 'grep -q "v0.9.6" index.html' 'version v0.9.6'
+          check 'grep -q "title-banner.png" index.html' 'html points at PNG'
+          check 'grep -q "Reset All" index.html' 'Reset All label'
+          check 'grep -q "Switching Style will clear all Equipment" index.html' 'style-switch copy'
+          check '! grep -q "title-banner.svg" index.html' 'no SVG title reference'
+          check '! grep -q "Empty all gear" index.html' 'old Empty all gear gone'
+          if [ "$fail" -ne 0 ]; then echo "verify failed"; exit 1; fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - uses: actions/deploy-pages@v4
+        id: deployment
