@@ -26,13 +26,16 @@ jobs:
           check() { if eval "$1"; then echo "OK  $2"; else echo "FAIL $2"; fail=1; fi; }
           check 'test -f index.html' 'index.html exists'
           check 'test -f title-banner.png' 'title-banner.png written'
-          check 'python3 -c "p=open(\"title-banner.png\",\"rb\").read(8); assert p==b\"\\x89PNG\\r\\n\\x1a\\n\""' 'banner is a PNG'
-          check 'grep -q "v0.9.6" index.html' 'version v0.9.6'
-          check 'grep -q "title-banner.png" index.html' 'html points at PNG'
+          check 'python3 -c "p=open(\"title-banner.png\",\"rb\").read(); assert p[:8]==b\"\\x89PNG\\r\\n\\x1a\\n\" and len(p)>20000"' 'banner is a real PNG >20KB'
+          check 'grep -q "v0.9.8" index.html' 'version v0.9.8'
+          check 'grep -q "title-banner.png?v=098" index.html' 'html points at PNG banner'
           check 'grep -q "Reset All" index.html' 'Reset All label'
+          check 'grep -q "char\[k\]=5" index.html' 'Reset All clears stat sliders'
+          check 'grep -q "state\[id\].wtype=\"all\"" index.html' 'Reset All clears weapon filters'
           check 'grep -q "Switching Style will clear all Equipment" index.html' 'style-switch copy'
-          check '! grep -q "title-banner.svg" index.html' 'no SVG title reference'
           check '! grep -q "Empty all gear" index.html' 'old Empty all gear gone'
+          check 'python3 -c "h=open(\"index.html\").read(); hero=h.split(\"<header\",1)[1].split(\"</header\",1)[0]; assert \"brush-title\" not in hero and \"NIOH 3\" not in hero and \"title-banner.png\" in hero"' 'hero is PNG only, no title text'
+          check 'grep -q "font-size:22px" index.html' 'section headings 22px'
           if [ "$fail" -ne 0 ]; then echo "verify failed"; exit 1; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

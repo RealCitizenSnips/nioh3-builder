@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""v0.9.6 UI overlay. Does not change gear catalog data."""
+"""v0.9.8 UI overlay. Does not change gear catalog data."""
 from pathlib import Path
 import base64
 import re
-import struct
 import sys
-import zlib
 
 ROOT = Path(".")
 INDEX = ROOT / "index.html"
@@ -15,45 +13,24 @@ if not INDEX.exists():
 t = INDEX.read_text(encoding="utf-8")
 t = re.sub(r"/\* n3-chrome \*/.*?/\* /n3-chrome \*/", "", t, flags=re.S)
 
-def write_fallback_png(path):
-    w, h, rgb = 8, 8, (22, 8, 8)
-    def chunk(tag, data):
-        crc = zlib.crc32(tag + data) & 0xFFFFFFFF
-        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", crc)
-    raw = b"".join(b"\x00" + (bytes(rgb) * w) for _ in range(h))
-    png = (
-        b"\x89PNG\r\n\x1a\n"
-        + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
-        + chunk(b"IDAT", zlib.compress(raw, 9))
-        + chunk(b"IEND", b"")
-    )
-    path.write_bytes(png)
-
-def try_banner():
-    here = Path(__file__).resolve().parent
-    parts = []
-    for name in ("banner.b64.a", "banner.b64.b", "banner.b64"):
-        p = here / name
-        if p.exists():
-            parts.append(re.sub(r"\s+", "", p.read_text()))
-    raw = "".join(parts)
-    if not raw:
-        return False
-    raw += "=" * ((4 - len(raw) % 4) % 4)
-    try:
-        png = base64.b64decode(raw, validate=False)
-    except Exception:
-        return False
-    if png[:8] != b"\x89PNG\r\n\x1a\n":
-        return False
-    (ROOT / "title-banner.png").write_bytes(png)
-    return True
-
-if not try_banner():
-    write_fallback_png(ROOT / "title-banner.png")
-    print("banner fallback png written")
-else:
-    print("banner decoded", (ROOT / "title-banner.png").stat().st_size)
+here = Path(__file__).resolve().parent
+chunks = []
+for i in range(1, 4):
+    p = here / f"banner098.{i}"
+    if not p.exists():
+        sys.exit(f"missing banner payload {p.name}")
+    chunks.append(re.sub(r"\s+", "", p.read_text()))
+raw = "".join(chunks)
+raw += "=" * ((4 - len(raw) % 4) % 4)
+try:
+    png = base64.b64decode(raw)
+except Exception as e:
+    sys.exit(f"banner base64 decode failed: {e}")
+if png[:8] != b"\x89PNG\r\n\x1a\n":
+    sys.exit("decoded banner is not a PNG")
+if len(png) < 20000:
+    sys.exit(f"decoded banner too small ({len(png)} bytes) — refusing dummy PNG")
+(ROOT / "title-banner.png").write_bytes(png)
 
 SET_COLORS = {
     "kato": "#7ec8e3", "iga": "#9ad27a", "fuma": "#c9a0e8", "onzoshi": "#e3b36a",
@@ -91,15 +68,16 @@ body{margin:0!important;padding:0!important;font-size:16px!important;line-height
 #boot-msg{display:none!important}
 .card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;margin:0!important;padding:14px 12px 12px!important}
 .card + .card{border-top:1px solid rgba(212,168,80,.16)!important}
-h1{display:none!important}
-.brush-title{display:block!important;margin:8px 8px 0;text-align:center;font-family:Palatino,Georgia,serif;font-weight:700;line-height:1.05;color:#e8c56a;text-shadow:0 0 18px rgba(138,18,18,.55)}
-.brush-title .n{display:block;font-size:42px;letter-spacing:.08em}
-.brush-title .s{display:block;margin-top:6px;font-size:16px;letter-spacing:.22em}
-.hero{margin:0!important;padding:calc(6px + env(safe-area-inset-top,0px)) 8px 2px!important;text-align:center!important;background:transparent!important;border:0!important}
+h1,.brush-title,.brush-title .n,.brush-title .s{display:none!important}
+.hero{margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) 8px 2px!important;text-align:center!important;background:transparent!important;border:0!important}
 .hero::after{display:none!important}
-.hero img{display:none!important}
+.hero img{display:block!important;width:92%!important;max-width:520px!important;height:auto!important;max-height:168px!important;object-fit:contain!important;object-position:center center!important;margin:0 auto!important;border:0!important;background:transparent!important}
 .hero .ver,.ver{display:block!important;margin:4px auto 8px!important;font-size:.68rem!important;font-weight:600!important;letter-spacing:.16em!important;color:#c4a050!important}
-h2,.slot>span{font-size:.68rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important}
+h2,.card > h2,.filter-grid h2{
+  font-size:22px!important;letter-spacing:.08em!important;text-transform:uppercase!important;
+  color:#e8c56a!important;font-weight:700!important;line-height:1.2!important;margin:0 0 10px!important
+}
+.slot>span{font-size:.78rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important}
 .dd-btn,.dd-name,.dd-item,.bonus,.bmain,.filters label,.tools button,
 input[type=tel],.lvrow input,#lv-in,.locked,.live,.note,.mini label{font-size:16px!important}
 .filters label,.tools button,.bonus,.bmain,.locked,.live,.note,.mini label{color:#e8c56a!important}
@@ -121,8 +99,18 @@ body.form-ninja input[type=range]::-webkit-slider-thumb{background:#4d8dff}
 body.form-samurai input[type=range]{background:#5a1c1c;accent-color:#e04a4a}
 body.form-samurai input[type=range]::-webkit-slider-thumb{background:#e04a4a}
 input[type=checkbox]{accent-color:#e8c56a!important}
-.filters input[type=checkbox]{-webkit-appearance:none!important;appearance:none!important;width:16px!important;height:16px!important;margin:0!important;border:2px solid #c4a050!important;border-radius:4px!important;background-color:#1a0e0e!important;accent-color:#e8c56a!important;display:inline-block!important;flex:0 0 16px!important;background-repeat:no-repeat!important;background-position:center!important;background-size:12px 12px!important}
-.filters input[type=checkbox]:checked{background-color:#e8c56a!important;border-color:#e8c56a!important;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%231a0e0e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.2 8.2l3.1 3.1 6.5-6.6'/></svg>")!important}
+.filters input[type=checkbox]{
+  -webkit-appearance:none!important;appearance:none!important;
+  width:16px!important;height:16px!important;margin:0!important;
+  border:2px solid #c4a050!important;border-radius:4px!important;
+  background-color:#1a0e0e!important;accent-color:#e8c56a!important;
+  display:inline-block!important;flex:0 0 16px!important;
+  background-repeat:no-repeat!important;background-position:center!important;background-size:12px 12px!important
+}
+.filters input[type=checkbox]:checked{
+  background-color:#e8c56a!important;border-color:#e8c56a!important;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%231a0e0e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.2 8.2l3.1 3.1 6.5-6.6'/></svg>")!important
+}
 .legal{display:block!important;font-size:.62rem!important;color:#a88848!important;text-align:center;padding:16px 8px 24px;line-height:1.4}
 """ + set_block
 
@@ -145,9 +133,8 @@ if 'name="theme-color" content="#160808"' in t and "prefers-color-scheme" not in
     )
 
 hero = """<header class="hero">
-  <div class="brush-title"><span class="n">NIOH 3</span><span class="s">EQUIPMENT BUILDER</span></div>
-  <img src="title-banner.png?v=096" alt="">
-  <span class="ver">v0.9.6</span>
+  <img src="title-banner.png?v=098" alt="Nioh 3 Equipment Builder" width="442" height="253">
+  <span class="ver">v0.9.8</span>
 </header>"""
 
 if re.search(r'<header class="hero">', t):
@@ -158,9 +145,9 @@ else:
     t = t.replace("<body>", "<body>\n" + hero, 1)
 
 t = t.replace("title-banner.svg", "title-banner.png")
-t = re.sub(r"v0\.9\.[0-5]\b", "v0.9.6", t)
+t = re.sub(r"v0\.9\.[0-7]\b", "v0.9.8", t)
+
 t = t.replace(">Empty all gear<", ">Reset All<")
-t = t.replace('confirm("Empty all gear?")', 'confirm("Reset All?")')
 t = t.replace(
     "Switching Form will reset all selections below, continue?",
     "Switching Style will clear all Equipment. Continue?",
@@ -169,6 +156,28 @@ t = t.replace(
     'el.textContent = bits.join(" · ");',
     'el.textContent = bits.join(" · ");el.style.fontSize="16px";el.style.webkitTextSizeAdjust="100%";',
 )
+
+new_reset = """document.getElementById("btn-clear")?.addEventListener("click", () => {
+  if(!confirm("Reset All? This clears gear, levels, sliders, and filters.")) return;
+  clearGear();
+  gsState.id=""; gsState.style="";
+  STATS.forEach(([k]) => { char[k]=5; });
+  char.cap = 200;
+  document.querySelectorAll(".flt-style").forEach(el => { el.checked=false; });
+  document.querySelectorAll(".flt-kind").forEach(el => { el.checked=true; });
+  const cmb=document.getElementById("flt-combine"); if(cmb) cmb.checked=false;
+  const gs=document.getElementById("flt-gs"); if(gs) gs.checked=true;
+  SLOTS.forEach(([id]) => { state[id].wtype="all"; state[id].cruOnly=false; });
+  fillSelects(); drawGS(); drawChar(); syncCharFields(); render();
+});"""
+m = re.search(
+    r'document\.getElementById\("btn-clear"\)\?\.addEventListener\("click", \(\) => \{.*?\n\}\);',
+    t,
+    flags=re.S,
+)
+if not m:
+    sys.exit("reset handler not found")
+t = t[:m.start()] + new_reset + t[m.end():]
 
 legal = (
     '<p class="legal">Unofficial fan-made tool. Not affiliated with Team Ninja, '
@@ -181,4 +190,4 @@ if "Unofficial fan-made tool" not in t:
         t = t.replace("</body>", legal + "\n</body>")
 
 INDEX.write_text(t, encoding="utf-8")
-print("patched v0.9.6", INDEX.stat().st_size)
+print("patched v0.9.8", INDEX.stat().st_size, "banner", len(png))
