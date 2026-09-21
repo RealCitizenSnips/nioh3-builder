@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""v0.9.8 UI overlay. Does not change gear catalog data."""
+"""v0.9.9 UI overlay. Does not change gear catalog data.
+Expects title-banner.png already written by scripts/make_banner.py.
+"""
 from pathlib import Path
-import base64
 import re
 import sys
 
@@ -10,28 +11,17 @@ INDEX = ROOT / "index.html"
 if not INDEX.exists():
     sys.exit("index.html missing — nothing to patch")
 
+banner = ROOT / "title-banner.png"
+if not banner.exists():
+    sys.exit("title-banner.png missing — run scripts/make_banner.py first")
+png = banner.read_bytes()
+if png[:8] != b"\x89PNG\r\n\x1a\n":
+    sys.exit("title-banner.png is not a PNG")
+if len(png) < 8000:
+    sys.exit(f"title-banner.png too small ({len(png)} bytes) — refusing dummy")
+
 t = INDEX.read_text(encoding="utf-8")
 t = re.sub(r"/\* n3-chrome \*/.*?/\* /n3-chrome \*/", "", t, flags=re.S)
-
-here = Path(__file__).resolve().parent
-chunks = []
-for i in range(1, 4):
-    p = here / f"banner098.{i}"
-    if not p.exists():
-        sys.exit(f"missing banner payload {p.name}")
-    chunks.append(re.sub(r"\s+", "", p.read_text()))
-raw = "".join(chunks)
-raw += "=" * ((4 - len(raw) % 4) % 4)
-try:
-    png = base64.b64decode(raw)
-except Exception as e:
-    sys.exit(f"banner base64 decode failed: {e}")
-if png[:8] != b"\x89PNG\r\n\x1a\n":
-    sys.exit("decoded banner is not a PNG")
-if len(png) < 20000:
-    sys.exit(f"decoded banner too small ({len(png)} bytes) — refusing dummy PNG")
-(ROOT / "title-banner.png").write_bytes(png)
-
 SET_COLORS = {
     "kato": "#7ec8e3", "iga": "#9ad27a", "fuma": "#c9a0e8", "onzoshi": "#e3b36a",
     "lastNinja": "#e08a8a", "kusaMaster": "#8fd0c0", "heizo": "#d0c07a",
@@ -74,7 +64,7 @@ h1,.brush-title,.brush-title .n,.brush-title .s{display:none!important}
 .hero img{display:block!important;width:92%!important;max-width:520px!important;height:auto!important;max-height:168px!important;object-fit:contain!important;object-position:center center!important;margin:0 auto!important;border:0!important;background:transparent!important}
 .hero .ver,.ver{display:block!important;margin:4px auto 8px!important;font-size:.68rem!important;font-weight:600!important;letter-spacing:.16em!important;color:#c4a050!important}
 h2,.card > h2,.filter-grid h2{
-  font-size:22px!important;letter-spacing:.08em!important;text-transform:uppercase!important;
+  font-size:24px!important;letter-spacing:.08em!important;text-transform:uppercase!important;
   color:#e8c56a!important;font-weight:700!important;line-height:1.2!important;margin:0 0 10px!important
 }
 .slot>span{font-size:.78rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important}
@@ -133,8 +123,8 @@ if 'name="theme-color" content="#160808"' in t and "prefers-color-scheme" not in
     )
 
 hero = """<header class="hero">
-  <img src="title-banner.png?v=098" alt="Nioh 3 Equipment Builder" width="442" height="253">
-  <span class="ver">v0.9.8</span>
+  <img src="title-banner.png?v=099" alt="Nioh 3 Equipment Builder" width="442" height="253">
+  <span class="ver">v0.9.9</span>
 </header>"""
 
 if re.search(r'<header class="hero">', t):
@@ -145,9 +135,11 @@ else:
     t = t.replace("<body>", "<body>\n" + hero, 1)
 
 t = t.replace("title-banner.svg", "title-banner.png")
-t = re.sub(r"v0\.9\.[0-7]\b", "v0.9.8", t)
+t = re.sub(r"v0\.9\.[0-8]\b", "v0.9.9", t)
+t = t.replace("v0.8.1", "v0.9.9")
 
 t = t.replace(">Empty all gear<", ">Reset All<")
+t = t.replace("Empty all gear?", "Reset All? This clears gear, levels, sliders, and filters.")
 t = t.replace(
     "Switching Form will reset all selections below, continue?",
     "Switching Style will clear all Equipment. Continue?",
@@ -190,4 +182,4 @@ if "Unofficial fan-made tool" not in t:
         t = t.replace("</body>", legal + "\n</body>")
 
 INDEX.write_text(t, encoding="utf-8")
-print("patched v0.9.8", INDEX.stat().st_size, "banner", len(png))
+print("patched v0.9.9", INDEX.stat().st_size, "banner", len(png))
