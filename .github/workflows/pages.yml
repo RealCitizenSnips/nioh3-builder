@@ -24,6 +24,33 @@ jobs:
           python3 scripts/make_banner.py
       - name: Write missing icon placeholders
         run: python3 scripts/make_icons.py
+      - name: Compose overlay if overlay_v010.js is missing
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          ov = Path("scripts/overlay_v010.js")
+          logic = Path("scripts/overlay_logic.js")
+          level = Path("scripts/level_table.json")
+          truth = Path("scripts/sheet_truth.json")
+          startp = Path("scripts/start_defaults.json")
+          if ov.exists() and "n3val" in ov.read_text(encoding="utf-8"):
+              print("overlay_v010.js present")
+          else:
+              missing = [str(p) for p in (logic, level, truth) if not p.exists()]
+              if missing:
+                  raise SystemExit("cannot compose overlay, missing " + ", ".join(missing))
+              start = startp.read_text(encoding="utf-8").strip() if startp.exists() else "{}"
+              text = (
+                  "const N3_LEVEL = " + level.read_text(encoding="utf-8").strip() + ";\n"
+                  "const N3_TRUTH = " + truth.read_text(encoding="utf-8").strip() + ";\n"
+                  "const N3_START = " + start + ";\n"
+                  + logic.read_text(encoding="utf-8")
+              )
+              if "n3val" not in text:
+                  raise SystemExit("composed overlay missing n3val")
+              ov.write_text(text, encoding="utf-8")
+              print("composed overlay_v010.js", ov.stat().st_size)
+          PY
       - name: Apply UI patch
         run: python3 scripts/patch_pages.py
       - name: Verify banner + builder
