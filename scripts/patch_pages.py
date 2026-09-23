@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""v0.9.9 UI overlay. Does not change gear catalog data.
+"""v0.10.0 UI overlay + Level-tab lookups + icon files + sheet names.
 Expects title-banner.png already written by scripts/make_banner.py.
+Expects scripts/overlay_v010.js (Level table + sheet truth).
 """
 from pathlib import Path
 import re
@@ -71,7 +72,13 @@ h1,.brush-title,.brush-title .n,.brush-title .s{display:none!important}
   font-size:16px!important;letter-spacing:.06em!important;text-transform:uppercase!important;
   color:#e8c56a!important;font-weight:600!important;line-height:1.2!important;margin:0 0 8px!important
 }
-.slot>span{font-size:.78rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important}
+.slot>span{font-size:.78rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important;display:flex!important;align-items:center!important;gap:8px!important}
+.statrow{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important}
+.statrow .lab{display:inline-flex!important;align-items:center!important;gap:8px!important}
+img.ico{width:22px!important;height:22px!important;border-radius:50%!important;object-fit:cover!important;background:#2a2a2a!important;flex:0 0 22px!important;display:inline-block!important;vertical-align:middle!important}
+.statrow img.ico{width:24px!important;height:24px!important;flex-basis:24px!important}
+.wchip img.ico,.dd-name img.ico{width:18px!important;height:18px!important;flex-basis:18px!important}
+.dd-name{display:flex!important;align-items:center!important;gap:6px!important}
 .dd-btn,.dd-name,.dd-item,.bonus,.bmain,.filters label,.tools button,
 input[type=tel],.lvrow input,#lv-in,.locked,.live,.note,.mini label{font-size:16px!important}
 .filters label,.tools button,.bonus,.bmain,.locked,.live,.note,.mini label{color:#e8c56a!important}
@@ -127,20 +134,21 @@ if 'name="theme-color" content="#160808"' in t and "prefers-color-scheme" not in
     )
 
 hero = """<header class="hero">
-  <img src="title-banner.png?v=099" alt="Nioh 3 Equipment Builder" width="442" height="253">
-  <span class="ver">v0.9.9</span>
+  <img src="title-banner.png?v=010" alt="Nioh 3 Equipment Builder" width="442" height="253">
+  <span class="ver">v0.10.0</span>
 </header>"""
 
 if re.search(r'<header class="hero">', t):
     t = re.sub(r'<header class="hero">.*?</header>', hero, t, count=1, flags=re.S)
 elif re.search(r"<h1>.*?</h1>", t, flags=re.S):
-    t = re.sub(r"<h1>.*?</h1>", hero, t, count=1, flags=re.S)
+    t = t.sub if False else re.sub(r"<h1>.*?</h1>", hero, t, count=1, flags=re.S)
 else:
     t = t.replace("<body>", "<body>\n" + hero, 1)
 
 t = t.replace("title-banner.svg", "title-banner.png")
-t = re.sub(r"v0\.9\.[0-8]\b", "v0.9.9", t)
-t = t.replace("v0.8.1", "v0.9.9")
+t = re.sub(r"v0\.9\.[0-9]\b", "v0.10.0", t)
+t = t.replace("v0.8.1", "v0.10.0")
+t = t.replace("v0.9.9", "v0.10.0")
 
 t = t.replace(">Empty all gear<", ">Reset All<")
 t = t.replace("Empty all gear?", "Reset All? This clears gear, levels, sliders, and filters.")
@@ -185,5 +193,51 @@ if "Unofficial fan-made tool" not in t:
     else:
         t = t.replace("</body>", legal + "\n</body>")
 
+old_core_push = '''    pushStat("Life", "Constitution: Life +"+(char.con*40));
+    pushStat("Life", "Level: Life +"+core.life);
+    if(sOn) pushStat("Melee", "Heart / Strength / Intellect: Melee Attack +"+(char.hrt*2+char.str*2+char.int*2));
+    if(nOn) pushStat("Melee", "Heart / Strength / Magic: Melee Attack +"+(char.hrt+char.str+char.mag));
+    pushStat("Ki", "Heart: Ki +"+core.ki);
+    pushStat("Ki", "Heart & Intellect: Ki Recovery Speed +"+core.kiRec);
+    pushStat("Ki Damage", "Strength: Melee Ki Damage +"+core.meleeKi);
+    if(nOn) pushStat("Ninjutsu", "Skill: Ninjutsu Power +"+core.ninPow);
+    if(sOn) pushStat("Arts", "Skill: Arts Proficiency Power +"+core.arts);
+    pushStat("Onmyo", "Magic: Onmyo Magic Power +"+core.onmyo);
+    pushStat("Elemental", "Intellect: Effect Duration +"+core.dur);
+    if(nOn) pushStat("Utility", "Stamina: Weight Limit "+(15+char.sta*0.3).toFixed(1));
+    if(sOn) pushStat("Utility", "Stamina: Weight Limit "+(20+char.sta*1.1).toFixed(1));'''
+new_core_push = '''    pushStat("Life", "Constitution: Life +"+n3val(char.con,"conLife"));
+    pushStat("Life", "Heart: Life +"+n3val(char.hrt,"hrtLife"));
+    pushStat("Life", "Stamina: Life +"+n3val(char.sta,"staLife"));
+    pushStat("Life", "Strength: Life +"+n3val(char.str,"strLife"));
+    pushStat("Life", "Skill: Life +"+n3val(char.skl,"sklLife"));
+    pushStat("Life", "Intellect: Life +"+n3val(char.int,"intLife"));
+    pushStat("Life", "Magic: Life +"+n3val(char.mag,"magLife"));
+    pushStat("Life", "Level: Life +"+core.life);
+    if(sOn) pushStat("Melee", "Heart / Strength / Intellect: Melee Attack +"+(char.hrt*2+char.str*2+char.int*2));
+    if(nOn) pushStat("Melee", "Heart / Strength / Magic: Melee Attack +"+(char.hrt+char.str+char.mag));
+    pushStat("Ki", "Heart: Ki +"+core.ki);
+    pushStat("Ki", "Heart: Ki Recovery Speed +"+n3val(char.hrt,"hrtKiRec"));
+    pushStat("Ki", "Intellect: Ki Recovery Speed +"+n3val(char.int,"intKiRec"));
+    pushStat("Ki", "Heart & Intellect: Ki Recovery Speed +"+core.kiRec);
+    pushStat("Ki Damage", "Strength: Ki Damage Dealt +"+core.meleeKi);
+    if(nOn) pushStat("Ninjutsu", "Skill: Ninjutsu Power +"+core.ninPow);
+    if(sOn) pushStat("Arts", "Skill: Arts Proficiency Power +"+core.arts);
+    pushStat("Onmyo", "Magic: Onmyo Magic Power +"+core.onmyo);
+    pushStat("Elemental", "Intellect: Effect Duration +"+core.dur);
+    if(nOn) pushStat("Utility", "Stamina: Ninja Weight Limit +"+n3val(char.sta,"staNinWt")+" (total "+core.wlim+")");
+    if(sOn) pushStat("Utility", "Stamina: Samurai Weight Limit +"+n3val(char.sta,"staSamWt")+" (total "+core.wlim+")");'''
+if old_core_push not in t:
+    sys.exit("core pushStat block not found")
+t = t.replace(old_core_push, new_core_push)
+
+overlay = ROOT / "scripts" / "overlay_v010.js"
+if not overlay.exists():
+    sys.exit("scripts/overlay_v010.js missing")
+ov = overlay.read_text(encoding="utf-8")
+if "function boot(){" not in t:
+    sys.exit("boot() not found")
+t = t.replace("function boot(){", ov + "\nfunction boot(){", 1)
+
 INDEX.write_text(t, encoding="utf-8")
-print("patched v0.9.9", INDEX.stat().st_size, "banner", len(png))
+print("patched v0.10.0", INDEX.stat().st_size, "banner", len(png))
