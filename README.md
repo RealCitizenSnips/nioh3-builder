@@ -1,6 +1,6 @@
 # Nioh 3 Equipment Builder
 
-Phone-first loadout builder for Nioh 3. Current version: **v0.9.9**.
+Phone-first loadout builder for Nioh 3. Current version: **v0.10.0**.
 
 ## Live URL
 
@@ -14,6 +14,8 @@ If that 404s, open the repo on GitHub → **Settings → Pages → Source: GitHu
 2. Tap Share → **Add to Home Screen**.
 3. It opens like an app. Loadouts save on that phone only (Safari localStorage).
 
+After a version bump, delete the Home Screen icon and add it again, or Safari → reload, so the service worker picks up v0.10.0.
+
 ## For testers
 
 Send the live URL. After we push a change, they should refresh or close and reopen the Home Screen icon.
@@ -21,8 +23,8 @@ Send the live URL. After we push a change, they should refresh or close and reop
 ## Repo layout
 
 - `index.html` — the builder (catalog). UI chrome is applied on deploy by `scripts/patch_pages.py`
-- `scripts/make_banner.py` — paints the transparent title PNG on deploy
-- `scripts/patch_pages.py` — gold theme, Reset All, heading size
+- `scripts/patch_pages.py` — writes the verified transparent brush PNG and gold theme
+- `scripts/overlay_v010.js` — Level-tab lookups, start defaults, icon hooks
 - `manifest.json` / `sw.js` / icons — Home Screen (PWA)
 - `archive/*` branches — frozen published versions
 - `.github/workflows/pages.yml` — publishes this folder to GitHub Pages
