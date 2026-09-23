@@ -63,9 +63,13 @@ h1,.brush-title,.brush-title .n,.brush-title .s{display:none!important}
 .hero::after{display:none!important}
 .hero img{display:block!important;width:92%!important;max-width:520px!important;height:auto!important;max-height:168px!important;object-fit:contain!important;object-position:center center!important;margin:0 auto!important;border:0!important;background:transparent!important}
 .hero .ver,.ver{display:block!important;margin:4px auto 8px!important;font-size:.68rem!important;font-weight:600!important;letter-spacing:.16em!important;color:#c4a050!important}
-h2,.card > h2,.filter-grid h2{
+.card > h2{
   font-size:24px!important;letter-spacing:.08em!important;text-transform:uppercase!important;
   color:#e8c56a!important;font-weight:700!important;line-height:1.2!important;margin:0 0 10px!important
+}
+.filter-grid h2{
+  font-size:16px!important;letter-spacing:.06em!important;text-transform:uppercase!important;
+  color:#e8c56a!important;font-weight:600!important;line-height:1.2!important;margin:0 0 8px!important
 }
 .slot>span{font-size:.78rem!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important}
 .dd-btn,.dd-name,.dd-item,.bonus,.bmain,.filters label,.tools button,
