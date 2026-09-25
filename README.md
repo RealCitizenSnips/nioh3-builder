@@ -10,7 +10,11 @@ https://realcitizensnips.github.io/nioh3-builder/
 
 ## Tweak sizes and names yourself
 
-Read **[TUNE.md](TUNE.md)**. Short version: edit `tune.css` for sizes, search `index.html` for button labels, commit to `main`.
+Read **[TUNE.md](TUNE.md)**. Short version:
+
+1. Edit **`tune.css`** for icon and text sizes.
+2. Search **`index.html`** for button labels if you want to rename them.
+3. Commit to `main`. Wait about a minute. Refresh.
 
 ## Add to iPhone Home Screen
 

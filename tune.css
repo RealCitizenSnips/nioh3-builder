@@ -1,19 +1,35 @@
 /* ============================================================
-   TUNE.CSS  —  the only file you should edit to change sizes
+   TUNE.CSS  —  the only file you should edit for sizes
    v0.11.0
 
-   How to use
-   1. Open this file on GitHub.
-   2. Click the pencil (Edit).
-   3. Change a number. Keep the unit (px).
-   4. Commit to main. Wait ~1 min. Refresh the live app.
+   How to use (on your phone or computer)
+   1. Open https://github.com/RealCitizenSnips/nioh3-builder
+   2. Click tune.css
+   3. Click the pencil (Edit)
+   4. Change a number. Keep the unit (px).
+   5. Commit to main.
+   6. Wait about 1 minute. Safari: pull-to-refresh, or
+      delete the Home Screen icon and add it again.
 
-   Do not delete the --name: part. Only change the value after it.
+   Do not delete the --n3-...: name. Only change the value.
+   You can also add extra CSS below the :root block.
    ============================================================ */
 
 :root {
-  /* Body / most labels / dropdowns / bonuses / buttons */
+  /* Almost all reading text: dropdowns, bonuses, buttons, filters */
   --n3-text: 16px;
+
+  /* Dropdown list + the closed dropdown button */
+  --n3-drop: 16px;
+
+  /* Copy / Reset / Save / Load / Levels buttons */
+  --n3-btn: 16px;
+
+  /* Overall Stats bonus lines */
+  --n3-bonus: 16px;
+
+  /* Filter labels (Ninja, Samurai, With Set Bonus, …) */
+  --n3-filter: 16px;
 
   /* Big card titles: Filters, Overall Stats, Equipment, Guardian Spirit */
   --n3-h2: 24px;
@@ -21,24 +37,44 @@
   /* Nested titles under Filters: Styles, Equipment, Show / Hide */
   --n3-h2-sub: 16px;
 
-  /* Slot labels: Head, Chest, Arms, … */
+  /* Slot labels: HEAD / CHEST / ARMS / … */
   --n3-slot-label: 12.5px;
 
-  /* Round icons next to slots */
+  /* Round icons next to those slot labels */
   --n3-icon-slot: 22px;
 
   /* Round icons next to Constitution / Heart / … (Levels drawer) */
   --n3-icon-stat: 24px;
 
-  /* Tiny icons inside a dropdown row */
+  /* Tiny icons inside an open dropdown row */
   --n3-icon-drop: 18px;
 
-  /* + / − buttons in the Levels drawer */
+  /* + and − buttons in the Levels drawer */
   --n3-pm: 28px;
 
   /* Filter checkboxes */
   --n3-check: 16px;
 
-  /* Banner max height */
+  /* Banner image height cap */
   --n3-banner-max: 168px;
+
+  /* Space inside each section card */
+  --n3-card-pad: 14px;
+
+  /* Padding inside a dropdown button */
+  --n3-drop-pad: 8px;
+
+  /* Padding inside Copy / Reset / Save / Load */
+  --n3-btn-pad: 8px;
+
+  /* How wide the Levels drawer is on phones */
+  --n3-drawer-w: 380px;
 }
+
+/* Optional extra rules. Examples (uncomment to use):
+
+.dd-btn { min-height: 44px; }
+.tools button { min-height: 40px; }
+.slot { margin-bottom: 12px; }
+
+*/
