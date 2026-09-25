@@ -1,6 +1,6 @@
 /* ============================================================
    TUNE.CSS  —  the only file you should edit for sizes
-   v0.11.0
+   v0.12.0
 
    How to use (on your phone or computer)
    1. Open https://github.com/RealCitizenSnips/nioh3-builder
@@ -22,7 +22,7 @@
   /* Dropdown list + the closed dropdown button */
   --n3-drop: 16px;
 
-  /* Copy / Reset / Save / Load / Levels buttons */
+  /* Copy / Reset / Save / Load buttons */
   --n3-btn: 16px;
 
   /* Overall Stats bonus lines */
@@ -43,14 +43,8 @@
   /* Round icons next to those slot labels */
   --n3-icon-slot: 22px;
 
-  /* Round icons next to Constitution / Heart / … (Levels drawer) */
-  --n3-icon-stat: 24px;
-
   /* Tiny icons inside an open dropdown row */
   --n3-icon-drop: 18px;
-
-  /* + and − buttons in the Levels drawer */
-  --n3-pm: 28px;
 
   /* Filter checkboxes */
   --n3-check: 16px;
@@ -66,9 +60,6 @@
 
   /* Padding inside Copy / Reset / Save / Load */
   --n3-btn-pad: 8px;
-
-  /* How wide the Levels drawer is on phones */
-  --n3-drawer-w: 380px;
 }
 
 /* Optional extra rules. Examples (uncomment to use):
