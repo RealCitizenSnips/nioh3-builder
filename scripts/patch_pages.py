@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v0.11.0 UI overlay: set-builder focus, Levels drawer, tune.css hooks.
+"""v0.12.0 UI overlay: set builder only. Character Level is removed from the published page.
 Expects title-banner.png already written by scripts/make_banner.py.
 Expects scripts/overlay_v010.js (composed on CI if missing).
 """
@@ -120,26 +120,13 @@ input[type=checkbox]{accent-color:#e8c56a!important}
 .tools-card{padding:10px 12px 8px!important;border-top:1px solid rgba(212,168,80,.16)!important}
 .tools-card .tools{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
 .tools-card .tools button{border:0!important;border-radius:8px!important}
-.levels-scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:45}
-body.levels-open .levels-scrim{display:block}
-#char-card.char-drawer{
-  position:fixed!important;z-index:50!important;top:0!important;right:0!important;bottom:0!important;left:auto!important;
-  width:min(var(--n3-drawer-w,380px),94vw)!important;overflow:auto!important;
-  transform:translateX(110%)!important;transition:transform .2s ease!important;
-  background:#160808!important;border-left:1px solid rgba(212,168,80,.28)!important;
-  padding:calc(12px + env(safe-area-inset-top,0px)) 14px 24px!important;margin:0!important
-}
-body.levels-open #char-card.char-drawer{transform:translateX(0)!important}
-.drawer-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin:0 0 10px!important}
-.drawer-head h2{margin:0!important}
-#btn-levels-close{padding:6px 10px!important;border:0!important;border-radius:8px!important;background:#1a0e0e!important;color:#e8c56a!important;font-size:var(--n3-btn,var(--n3-text,16px))!important}
 """ + set_block
 
 if "</style>" not in t:
     sys.exit("no style tag")
 t = t.replace("</style>", "/* n3-chrome */" + css + "/* /n3-chrome */\n</style>", 1)
 if 'href="tune.css' not in t:
-    t = t.replace("</style>", '</style>\n<link rel="stylesheet" href="tune.css?v=011">', 1)
+    t = t.replace("</style>", '</style>\n<link rel="stylesheet" href="tune.css?v=012">', 1)
 
 t = t.replace(
     'content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"',
@@ -156,8 +143,8 @@ if 'name="theme-color" content="#160808"' in t and "prefers-color-scheme" not in
     )
 
 hero = """<header class="hero">
-  <img src="title-banner.png?v=011" alt="Nioh 3 Equipment Builder" width="442" height="253">
-  <span class="ver">v0.11.0</span>
+  <img src="title-banner.png?v=012" alt="Nioh 3 Equipment Builder" width="442" height="253">
+  <span class="ver">v0.12.0</span>
 </header>"""
 
 if re.search(r'<header class="hero">', t):
@@ -168,18 +155,19 @@ else:
     t = t.replace("<body>", "<body>\n" + hero, 1)
 
 t = t.replace("title-banner.svg", "title-banner.png")
-t = re.sub(r"v0\.9\.[0-9]\b", "v0.11.0", t)
-t = t.replace("v0.8.1", "v0.11.0")
-t = t.replace("v0.9.9", "v0.11.0")
-t = t.replace("v0.10.0", "v0.11.0")
+t = re.sub(r"v0\.9\.[0-9]\b", "v0.12.0", t)
+t = t.replace("v0.8.1", "v0.12.0")
+t = t.replace("v0.9.9", "v0.12.0")
+t = t.replace("v0.10.0", "v0.12.0")
+t = t.replace("v0.11.0", "v0.12.0")
 
 t = t.replace(">Empty all gear<", ">Reset All<")
-t = t.replace("Empty all gear?", "Reset All? This clears gear, levels, sliders, and filters.")
+t = t.replace("Empty all gear?", "Reset All? This clears gear and filters.")
 t = t.replace(
     "Switching Form will reset all selections below, continue?",
     "Switching Style will clear all Equipment. Continue?",
 )
-# Move loadout buttons above Overall Stats; park Character Level in a right drawer.
+# Move loadout buttons above Overall Stats. Cut Character Level out of the published page.
 old_tools = (
     '  <div class="tools">\n'
     '    <button type="button" id="btn-copy">Copy summary</button>\n'
@@ -191,14 +179,19 @@ old_tools = (
 if old_tools not in t:
     sys.exit("tools block not found after Reset All rename")
 t = t.replace(old_tools, "", 1)
-if "char-drawer" not in t:
-    t = t.replace('<div class="card" id="char-card">', '<div class="card char-drawer" id="char-card">', 1)
-if 'id="btn-levels-close"' not in t:
-    t = t.replace(
-        '<h2>Character Level</h2>',
-        '<div class="drawer-head"><h2>Character Level</h2><button type="button" id="btn-levels-close">Close</button></div>',
-        1,
-    )
+# Remove the entire Character Level card (source keeps it for a later restore).
+start = t.find('<div class="card" id="char-card">')
+if start < 0:
+    start = t.find('id="char-card"')
+    if start >= 0:
+        start = t.rfind("<div", 0, start)
+if start < 0:
+    sys.exit("Character Level card not found to remove")
+if start >= 0:
+    end = t.find('<div class="sticky">', start)
+    if end < 0:
+        sys.exit("sticky Overall Stats wrapper not found after Character Level")
+    t = t[:start] + t[end:]
 bar = (
     '<div class="card tools-card" id="loadout-bar">\n'
     '  <div class="tools">\n'
@@ -206,40 +199,16 @@ bar = (
     '    <button type="button" id="btn-clear">Reset All</button>\n'
     '    <button type="button" id="btn-save">Save loadout</button>\n'
     '    <button type="button" id="btn-load">Load Loadout</button>\n'
-    '    <button type="button" id="btn-levels">Levels</button>\n'
     '  </div>\n'
     '</div>\n'
-    '<div class="levels-scrim" id="levels-scrim" hidden></div>\n'
 )
 if 'id="loadout-bar"' not in t:
     if '<div class="sticky">' not in t:
         sys.exit("sticky Overall Stats wrapper not found")
     t = t.replace('<div class="sticky">', bar + '<div class="sticky">', 1)
-drawer_js = (
-    'function n3CloseLevels(){\n'
-    '  document.body.classList.remove("levels-open");\n'
-    '  const scrim = document.getElementById("levels-scrim");\n'
-    '  if(scrim) scrim.hidden = true;\n'
-    '}\n'
-    'function n3OpenLevels(){\n'
-    '  document.body.classList.add("levels-open");\n'
-    '  const scrim = document.getElementById("levels-scrim");\n'
-    '  if(scrim) scrim.hidden = false;\n'
-    '}\n'
-    'document.getElementById("btn-levels")?.addEventListener("click", () => {\n'
-    '  if(document.body.classList.contains("levels-open")) n3CloseLevels(); else n3OpenLevels();\n'
-    '});\n'
-    'document.getElementById("btn-levels-close")?.addEventListener("click", n3CloseLevels);\n'
-    'document.getElementById("levels-scrim")?.addEventListener("click", n3CloseLevels);\n'
-    'document.addEventListener("keydown", e => { if(e.key==="Escape") n3CloseLevels(); });\n'
-)
-if "levels-open" not in t:
-    if "function boot(){" not in t:
-        sys.exit("boot() not found for drawer js")
-    t = t.replace("function boot(){", drawer_js + "\nfunction boot(){", 1)
 
 new_reset = """document.getElementById("btn-clear")?.addEventListener("click", () => {
-  if(!confirm("Reset All? This clears gear, levels, sliders, and filters.")) return;
+  if(!confirm("Reset All? This clears gear and filters.")) return;
   clearGear();
   gsState.id=""; gsState.style="";
   STATS.forEach(([k]) => { char[k]=5; });
@@ -336,4 +305,4 @@ if "function boot(){" not in t:
 t = t.replace("function boot(){", ov + "\nfunction boot(){", 1)
 
 INDEX.write_text(t, encoding="utf-8")
-print("patched v0.11.0", INDEX.stat().st_size, "banner", len(png))
+print("patched v0.12.0", INDEX.stat().st_size, "banner", len(png))
