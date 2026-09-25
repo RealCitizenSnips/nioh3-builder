@@ -1,4 +1,4 @@
-const CACHE = "nioh3-builder-v0.11.0";
+const CACHE = "nioh3-builder-v0.12.0";
 const ASSETS = ["./","index.html","manifest.json","title-banner.png","tune.css","icon.svg","icons/placeholder.svg"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
