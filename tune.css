@@ -1,0 +1,44 @@
+/* ============================================================
+   TUNE.CSS  —  the only file you should edit to change sizes
+   v0.11.0
+
+   How to use
+   1. Open this file on GitHub.
+   2. Click the pencil (Edit).
+   3. Change a number. Keep the unit (px).
+   4. Commit to main. Wait ~1 min. Refresh the live app.
+
+   Do not delete the --name: part. Only change the value after it.
+   ============================================================ */
+
+:root {
+  /* Body / most labels / dropdowns / bonuses / buttons */
+  --n3-text: 16px;
+
+  /* Big card titles: Filters, Overall Stats, Equipment, Guardian Spirit */
+  --n3-h2: 24px;
+
+  /* Nested titles under Filters: Styles, Equipment, Show / Hide */
+  --n3-h2-sub: 16px;
+
+  /* Slot labels: Head, Chest, Arms, … */
+  --n3-slot-label: 12.5px;
+
+  /* Round icons next to slots */
+  --n3-icon-slot: 22px;
+
+  /* Round icons next to Constitution / Heart / … (Levels drawer) */
+  --n3-icon-stat: 24px;
+
+  /* Tiny icons inside a dropdown row */
+  --n3-icon-drop: 18px;
+
+  /* + / − buttons in the Levels drawer */
+  --n3-pm: 28px;
+
+  /* Filter checkboxes */
+  --n3-check: 16px;
+
+  /* Banner max height */
+  --n3-banner-max: 168px;
+}
