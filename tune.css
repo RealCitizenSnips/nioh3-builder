@@ -38,10 +38,10 @@
   --n3-h2-sub: 16px;
 
   /* Slot labels: HEAD / CHEST / ARMS / … */
-  --n3-slot-label: 20px;
+  --n3-slot-label: 16px;
 
   /* Round icons next to those slot labels */
-  --n3-icon-slot: 44px;
+  --n3-icon-slot: 30px;
 
   /* Tiny icons inside an open dropdown row */
   --n3-icon-drop: 18px;
