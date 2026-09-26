@@ -38,7 +38,7 @@
   --n3-h2-sub: 16px;
 
   /* Slot labels: HEAD / CHEST / ARMS / … */
-  --n3-slot-label: 12.5px;
+  --n3-slot-label: 20px;
 
   /* Round icons next to those slot labels */
   --n3-icon-slot: 44px;
