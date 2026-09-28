@@ -1,3 +1,4 @@
+
 /* n3-v010 overlay: Level-tab lookups, sheet names/weights/reqs, icon files */
 const N3_ICON_VER = "010";
 const N3_STAT_ICON = {con:"stat-constitution",hrt:"stat-heart",sta:"stat-stamina",str:"stat-strength",skl:"stat-skill",int:"stat-intellect",mag:"stat-magic"};
@@ -19,27 +20,33 @@ function n3icon(id, title){
 }
 
 const N3_KEYS = ["conLife","hrtLife","hrtKi","hrtKiRec","staLife","staSamWt","staNinWt","strLife","strKiDmg","sklLife","sklArts","sklNin","intLife","intKiRec","intDur","magLife","magOnmyo"];
-function n3row(n){
-  n = Math.max(1, Math.round(+n||1));
-  if(N3_LEVEL[n]) return N3_LEVEL[n];
-  const last = 94;
-  const prev = 93;
-  const a = N3_LEVEL[last], b = N3_LEVEL[prev];
-  if(!a || !b) return N3_LEVEL[last];
-  const out = a.slice();
-  const steps = n - last;
-  for(let i=0;i<a.length;i++) out[i] = +(a[i] + (a[i]-b[i])*steps).toFixed(4);
-  return out;
+const N3_DEFAULTS = Object.assign({
+  life:0, ki:0, kiRec:0, kiDmg:0, onmyo:0, dur:0, arts:0, samWt:0, ninWt:0, ninPow:0
+}, (typeof N3_START==="object" && N3_START) || {});
+function n3assigned(stat){
+  return Math.max(0, Math.min(94, Math.round(+stat||5) - 5));
 }
-function n3val(n, key){
+function n3row(assigned){
+  assigned = Math.max(0, Math.round(+assigned||0));
+  if(assigned<=0) return null;
+  if(N3_LEVEL[assigned]) return N3_LEVEL[assigned];
+  if(N3_LEVEL[String(assigned)]) return N3_LEVEL[String(assigned)];
+  return null;
+}
+function n3val(stat, key){
   const i = N3_KEYS.indexOf(key);
   if(i<0) return 0;
-  const v = n3row(n)[i];
+  const row = n3row(n3assigned(stat));
+  if(!row) return 0;
+  const v = row[i];
   return v==null ? 0 : v;
 }
-function n3delta(n, key){
-  if(n<=1) return n3val(1, key);
-  return +(n3val(n, key) - n3val(n-1, key)).toFixed(4);
+function n3delta(stat, key){
+  const a = n3assigned(stat);
+  if(a<=0) return 0;
+  const cur = n3val(5+a, key);
+  const prev = a===1 ? 0 : n3val(5+a-1, key);
+  return +(cur - prev).toFixed(4);
 }
 function n3soft(stat, n){
   const map = {
@@ -106,25 +113,27 @@ function applySheetTruth(){
 function coreFromLevels(){
   const ninja = stylesOn().includes("ninja") && !stylesOn().includes("samurai");
   const sam = stylesOn().includes("samurai") && !stylesOn().includes("ninja");
-  const life = n3val(char.con,"conLife")+n3val(char.hrt,"hrtLife")+n3val(char.sta,"staLife")+n3val(char.str,"strLife")+n3val(char.skl,"sklLife")+n3val(char.int,"intLife")+n3val(char.mag,"magLife");
-  const ki = n3val(char.hrt,"hrtKi");
-  const kiRec = +(n3val(char.hrt,"hrtKiRec")+n3val(char.int,"intKiRec")).toFixed(1);
-  const meleeKi = +n3val(char.str,"strKiDmg").toFixed(1);
-  const arts = n3val(char.skl,"sklArts");
-  const ninPow = n3val(char.skl,"sklNin");
-  const onmyo = n3val(char.mag,"magOnmyo");
-  const dur = +n3val(char.int,"intDur").toFixed(1);
+  const life = (+N3_DEFAULTS.life||0)+n3val(char.con,"conLife")+n3val(char.hrt,"hrtLife")+n3val(char.sta,"staLife")+n3val(char.str,"strLife")+n3val(char.skl,"sklLife")+n3val(char.int,"intLife")+n3val(char.mag,"magLife");
+  const ki = (+N3_DEFAULTS.ki||0)+n3val(char.hrt,"hrtKi");
+  const kiRec = +((+N3_DEFAULTS.kiRec||0)+n3val(char.hrt,"hrtKiRec")+n3val(char.int,"intKiRec")).toFixed(1);
+  const meleeKi = +((+N3_DEFAULTS.kiDmg||0)+n3val(char.str,"strKiDmg")).toFixed(1);
+  const arts = (+N3_DEFAULTS.arts||0)+n3val(char.skl,"sklArts");
+  const ninPow = (+N3_DEFAULTS.ninPow||0)+n3val(char.skl,"sklNin");
+  const onmyo = (+N3_DEFAULTS.onmyo||0)+n3val(char.mag,"magOnmyo");
+  const dur = +((+N3_DEFAULTS.dur||0)+n3val(char.int,"intDur")).toFixed(1);
   let melee = 0;
   if(sam) melee = char.hrt*2 + char.str*2 + char.int*2;
   else if(ninja) melee = char.hrt*1 + char.str*1 + char.mag*1;
   else melee = null;
-  const wlim = ninja ? +(15 + n3val(char.sta,"staNinWt")).toFixed(1) : (sam ? +(20 + n3val(char.sta,"staSamWt")).toFixed(1) : null);
+  const wlim = ninja
+    ? +((+N3_DEFAULTS.ninWt||0)+n3val(char.sta,"staNinWt")).toFixed(1)
+    : (sam ? +((+N3_DEFAULTS.samWt||0)+n3val(char.sta,"staSamWt")).toFixed(1) : null);
   return {life, ki, kiRec, meleeKi, arts, ninPow, onmyo, dur, melee, wlim, ninja, sam};
 }
 function maxWeight(){
   const ninja = stylesOn().includes("ninja") && !stylesOn().includes("samurai");
   const bonus = ninja ? n3val(char.sta,"staNinWt") : n3val(char.sta,"staSamWt");
-  const base = ninja ? 15 : 20;
+  const base = ninja ? (+N3_DEFAULTS.ninWt||0) : (+N3_DEFAULTS.samWt||0);
   return +(base + bonus).toFixed(1);
 }
 function softNote(v, stat){
@@ -144,26 +153,38 @@ function wIcon(type){
 applySheetTruth();
 
 function paintStatHints(){
-  const {need, names} = equippedReqs();
-  STATS.forEach(([k,lab]) => {
-    const el = document.querySelector('[data-need="'+k+'"]');
-    if(!el) return;
-    const bits = [softNote(char[k], k)];
-    if(need[k]){
-      const ok = char[k] >= need[k];
-      bits.push((ok?"meets ":"needs ")+lab+" "+need[k]+" ("+names[k]+")");
-      el.classList.toggle("bad", !ok);
-    } else el.classList.remove("bad");
-    el.textContent = bits.join(" · ");
-    el.style.fontSize="16px";
-    el.style.webkitTextSizeAdjust="100%";
+  /* Character Level is parked. Do not print "needs Constitution 16" lines. */
+  document.querySelectorAll(".needhint").forEach(el => { el.textContent = ""; el.classList.remove("bad"); });
+}
+
+function n3relabelSlots(){
+  const sam = typeof stylesOn === "function" && stylesOn().includes("samurai");
+  const lab = sam ? "Legs" : "Waist";
+  if(typeof SLOTS !== "undefined"){
+    SLOTS.forEach(s => { if(s && s[0]==="waist") s[1] = lab; });
+  }
+  document.querySelectorAll("#slots .slot > span").forEach(span => {
+    const nodes = Array.from(span.childNodes);
+    const text = nodes.find(n => n.nodeType === 3);
+    const cur = ((text && text.textContent) || span.textContent || "").trim();
+    if(cur === "Waist" || cur === "Legs"){
+      if(text) text.textContent = lab;
+      else span.appendChild(document.createTextNode(lab));
+    }
   });
+}
+
+/* Set bonuses stay active without Level allocations. Weight still uses defaults. */
+if(typeof reqMet === "function"){
+  reqMet = function(){ return true; };
 }
 
 (function n3wrapDraw(){
   const _drawChar = drawChar;
   drawChar = function(){
-    const first = !document.getElementById("char-stats")?.dataset.ready;
+    const box = document.getElementById("char-stats");
+    if(!box){ _drawChar(); return; }
+    const first = !box.dataset.ready;
     _drawChar();
     if(first){
       document.querySelectorAll("#char-stats .statrow").forEach(row => {
@@ -177,7 +198,9 @@ function paintStatHints(){
   };
   const _fill = fillSelects;
   fillSelects = function(){
+    n3relabelSlots();
     _fill();
+    n3relabelSlots();
     document.querySelectorAll("#slots .slot > span").forEach((span, idx) => {
       if(span.querySelector(".ico")) return;
       const id = (SLOTS[idx]||[])[0];
@@ -185,6 +208,23 @@ function paintStatHints(){
       span.insertAdjacentHTML("afterbegin", n3icon(N3_SLOT_ICON[id]||"placeholder", span.textContent)+" ");
     });
   };
+  if(typeof render === "function"){
+    const _render = render;
+    render = function(){
+      _render();
+      const box = document.getElementById("warns");
+      if(box){
+        box.querySelectorAll(".warn").forEach(el => {
+          const t = el.textContent || "";
+          if(/needs |requirement|allocations|inactive/i.test(t)) el.remove();
+        });
+      }
+      document.querySelectorAll("#bonuses .bonus").forEach(el => {
+        const t = el.textContent || "";
+        if(/Constitution: Life|Heart: Life|Stamina: Life|Strength: Life|Skill: Life|Intellect: Life|Magic: Life|Level: Life/.test(t)) el.remove();
+      });
+    };
+  }
 })();
 
 (function n3wrapItems(){
