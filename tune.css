@@ -1,6 +1,6 @@
 /* ============================================================
    TUNE.CSS  —  the only file you should edit for sizes
-   v0.12.0
+   v0.12.1
 
    How to use (on your phone or computer)
    1. Open https://github.com/RealCitizenSnips/nioh3-builder
@@ -16,11 +16,23 @@
    ============================================================ */
 
 :root {
-  /* Almost all reading text: dropdowns, bonuses, buttons, filters */
+  /* Almost all reading text: bonuses, buttons, filters */
   --n3-text: 16px;
 
-  /* Dropdown list + the closed dropdown button */
+  /* Closed dropdown button */
   --n3-drop: 16px;
+
+  /* Text inside an OPEN dropdown window (names, set lines, tiers) */
+  --n3-dd-text: 16px;
+
+  /* How tall the open dropdown list can get before it scrolls */
+  --n3-drop-max: 340px;
+
+  /* Weapon filter bubble text (All / Odachi / Dual Swords / …) */
+  --n3-wchip: 13px;
+
+  /* Padding inside those weapon filter bubbles */
+  --n3-wchip-pad: 7px 12px;
 
   /* Copy / Reset / Save / Load buttons */
   --n3-btn: 16px;
@@ -38,13 +50,13 @@
   --n3-h2-sub: 16px;
 
   /* Slot labels: HEAD / CHEST / ARMS / … */
-  --n3-slot-label: 16px;
+  --n3-slot-label: 12.5px;
 
   /* Round icons next to those slot labels */
-  --n3-icon-slot: 35px;
+  --n3-icon-slot: 22px;
 
   /* Tiny icons inside an open dropdown row */
-  --n3-icon-drop: 35px;
+  --n3-icon-drop: 18px;
 
   /* Filter checkboxes */
   --n3-check: 16px;
