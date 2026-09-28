@@ -4,7 +4,7 @@ Live app: https://realcitizensnips.github.io/nioh3-builder/
 
 You do **not** need to touch `scripts/patch_pages.py` for sizing or button names.
 
-Current published version: **v0.12.0** (set builder). Character Level is removed from the live app. Frozen copies: `archive/v0.10.0` (full page) and `archive/v0.11.0` (drawer).
+Current published version: **v0.12.1** (set builder). Character Level is removed from the live app. Frozen copies: `archive/v0.10.0` (full page), `archive/v0.11.0` (drawer), `archive/v0.12.0` (first set-only build).
 
 ---
 
@@ -21,7 +21,11 @@ File: **`tune.css`** at the repo root.
 | Variable | What it changes | Start value |
 |---|---|---|
 | `--n3-text` | Fallback for most reading text | 16px |
-| `--n3-drop` | Closed dropdown + open list rows | 16px |
+| `--n3-drop` | Closed dropdown button | 16px |
+| `--n3-dd-text` | Text inside an open dropdown window | 16px |
+| `--n3-drop-max` | How tall the open dropdown can get before it scrolls | 340px |
+| `--n3-wchip` | Weapon filter bubble text size | 13px |
+| `--n3-wchip-pad` | Padding inside those weapon filter bubbles | 7px 12px |
 | `--n3-btn` | Copy / Reset / Save / Load | 16px |
 | `--n3-bonus` | Overall Stats bonus lines | 16px |
 | `--n3-filter` | Filter check labels | 16px |
@@ -55,7 +59,7 @@ Those strings live in **`index.html`**. GitHub → Find file → `index.html` �
 | Filters / Styles / Equipment / Show / Hide | `<h2>Filters</h2>` etc. |
 | Overall Stats | `<h2>Overall Stats</h2>` |
 | Guardian Spirit | `<h2>Guardian Spirit</h2>` |
-| Head / Chest / Arms / … | `<span>Head</span>` |
+| Head / Chest / Arms / Legs / Feet | `<span>Head</span>` |
 
 Change only the words between the tags. Do not delete `id="btn-copy"` and friends — the buttons break if those ids go away.
 
