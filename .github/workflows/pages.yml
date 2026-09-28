@@ -49,7 +49,9 @@ jobs:
           print("composed overlay_v010.js", ov.stat().st_size)
           PY
       - name: Apply UI patch
-        run: python3 scripts/patch_pages.py
+        run: |
+          python3 scripts/patch_pages.py
+          python3 scripts/patch_v0121.py
       - name: Verify banner + builder
         run: |
           fail=0
