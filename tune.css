@@ -53,10 +53,10 @@
   --n3-slot-label: 12.5px;
 
   /* Round icons next to those slot labels */
-  --n3-icon-slot: 22px;
+  --n3-icon-slot: 40px;
 
   /* Tiny icons inside an open dropdown row */
-  --n3-icon-drop: 18px;
+  --n3-icon-drop: 30px;
 
   /* Filter checkboxes */
   --n3-check: 16px;
