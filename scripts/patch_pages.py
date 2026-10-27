@@ -48,5 +48,71 @@ for name, color in SET_COLORS.items():
 set_block = "\n".join(set_css)
 set_block += "\n.set-eoj-grace,.dd-name.set-eoj-grace,.dd-btn.set-eoj-grace,.pill.set-eoj-grace{color:#c4f5b8!important}"
 
-# ... rest of original logic continues (truncated in this call for safety; full file will be pushed next)
-print("partial")
+css = r"""
+html{color-scheme:only dark;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{max-width:none!important;color:#e8c56a!important;background-color:#160808!important}
+html,body,body.form-ninja,body.form-samurai,.sheet,#app{
+  background-color:#160808!important;
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(170,18,18,.42),transparent 58%),linear-gradient(180deg,#160808 0%,#070707 100%)!important;
+  background-attachment:fixed!important;
+}
+body{margin:0!important;padding:0!important;font-size:var(--n3-text,16px)!important;line-height:1.35!important;color:#e8c56a!important}
+#boot-msg{display:none!important}
+.card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;margin:0!important;padding:var(--n3-card-pad,14px) 12px 12px!important}
+.card + .card{border-top:1px solid rgba(212,168,80,.16)!important}
+h1,.brush-title,.brush-title .n,.brush-title .s{display:none!important}
+.hero{margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) 8px 2px!important;text-align:center!important;background:transparent!important;border:0!important}
+.hero::after{display:none!important}
+.hero img{display:block!important;width:92%!important;max-width:520px!important;height:auto!important;max-height:var(--n3-banner-max,168px)!important;object-fit:contain!important;object-position:center center!important;margin:0 auto!important;border:0!important;background:transparent!important}
+.hero .ver,.ver{display:block!important;margin:4px auto 8px!important;font-size:.68rem!important;font-weight:600!important;letter-spacing:.16em!important;color:#c4a050!important}
+.card > h2{
+  font-size:var(--n3-h2,24px)!important;letter-spacing:.08em!important;text-transform:uppercase!important;
+  color:#e8c56a!important;font-weight:700!important;line-height:1.2!important;margin:0 0 10px!important
+}
+.filter-grid h2{
+  font-size:var(--n3-h2-sub,16px)!important;letter-spacing:.06em!important;text-transform:uppercase!important;
+  color:#e8c56a!important;font-weight:600!important;line-height:1.2!important;margin:0 0 8px!important
+}
+.slot>span{font-size:var(--n3-slot-label,12.5px)!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#c4a050!important;font-weight:600!important;display:flex!important;align-items:center!important;gap:8px!important}
+.statrow{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important}
+.statrow .lab{display:inline-flex!important;align-items:center!important;gap:8px!important}
+img.ico{width:var(--n3-icon-slot,22px)!important;height:var(--n3-icon-slot,22px)!important;border-radius:50%!important;object-fit:cover!important;background:#2a2a2a!important;flex:0 0 var(--n3-icon-slot,22px)!important;display:inline-block!important;vertical-align:middle!important}
+.statrow img.ico{width:var(--n3-icon-stat,24px)!important;height:var(--n3-icon-stat,24px)!important;flex-basis:var(--n3-icon-stat,24px)!important}
+.wchip img.ico,.dd-name img.ico{width:var(--n3-icon-drop,18px)!important;height:var(--n3-icon-drop,18px)!important;flex-basis:var(--n3-icon-drop,18px)!important}
+.dd-name{display:flex!important;align-items:center!important;gap:6px!important}
+.dd-btn,.dd-name,.dd-item{font-size:var(--n3-drop,var(--n3-text,16px))!important}
+.dd-btn{padding:var(--n3-drop-pad,8px) 10px!important}
+.bonus,.bmain,.live{font-size:var(--n3-bonus,var(--n3-text,16px))!important}
+.filters label{font-size:var(--n3-filter,var(--n3-text,16px))!important}
+.tools button{font-size:var(--n3-btn,var(--n3-text,16px))!important;padding:var(--n3-btn-pad,8px) 12px!important}
+input[type=tel],.lvrow input,#lv-in,.locked,.note,.mini label{font-size:var(--n3-text,16px)!important}
+.filters label,.tools button,.bonus,.bmain,.locked,.live,.note,.mini label{color:#e8c56a!important}
+.statrow .lab{color:#e8c56a!important;font-size:var(--n3-text,16px)!important;font-weight:700!important;text-align:right!important}
+.lvrow,.needhint,.needhint.bad{font-size:var(--n3-text,16px)!important;line-height:1.35!important;font-weight:400!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
+.lvrow,.needhint{color:#c4a050!important}
+.needhint.bad{color:#e07070!important}
+.pm{width:var(--n3-pm,28px)!important;height:var(--n3-pm,28px)!important;border:0!important;border-radius:8px!important;background:#1a0e0e!important;color:#e8c56a!important;box-shadow:none!important}
+body.form-ninja .pm,body.form-samurai .pm{border:0!important;background:#1a0e0e!important;color:#e8c56a!important}
+.filters label,.pill,.tools button,.dd-btn{background:#1a0e0e!important}
+.dd-btn,.dd-list{border:0 solid transparent!important}
+body.form-ninja .dd-btn,body.form-ninja .dd-list{border:2px solid #3d7eff!important}
+body.form-samurai .dd-btn,body.form-samurai .dd-list{border:2px solid #c43a3a!important}
+input[type=tel],.lvrow input,#lv-in{background:#1a0e0e!important;color:#e8c56a!important;border:0!important}
+input[type=range]{-webkit-appearance:none!important;appearance:none;height:4px;background:#4a3a28;border-radius:4px;accent-color:#e8c56a}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#e8c56a;border:0}
+body.form-ninja input[type=range]{background:#1d3a6e;accent-color:#4d8dff}
+body.form-ninja input[type=range]::-webkit-slider-thumb{background:#4d8dff}
+body.form-samurai input[type=range]{background:#5a1c1c;accent-color:#e04a4a}
+body.form-samurai input[type=range]::-webkit-slider-thumb{background:#e04a4a}
+input[type=checkbox]{accent-color:#e8c56a!important}
+.filters input[type=checkbox]{
+  -webkit-appearance:none!important;appearance:none!important;
+  width:var(--n3-check,16px)!important;height:var(--n3-check,16px)!important;margin:0!important;
+  border:2px solid #c4a050!important;border-radius:4px!important;
+  background-color:#1a0e0e!important;accent-color:#e8c56a!important;
+  display:inline-block!important;flex:0 0 var(--n3-check,16px)!important;
+  background-repeat:no-repeat!important;background-position:center!important;background-size:12px 12px!important
+}
+.filters input[type=checkbox]:checked{
+  background-color:#e8c56a!important;border-color:#e8c56a!important;
+  background-image:url(\
