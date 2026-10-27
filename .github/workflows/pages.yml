@@ -61,7 +61,7 @@ jobs:
           check 'test -f tune.css' 'tune.css exists'
           check 'python3 -c "p=open(\"title-banner.png\",\"rb\").read(); assert p[:8]==b\"\\x89PNG\\r\\n\\x1a\\n\" and len(p)>8000"' 'banner is a real PNG >8KB'
           check 'test -f icons/placeholder.svg' 'placeholder icon exists'
-          check 'grep -q "v0.12.1" index.html' 'version v0.12.1'
+          check 'grep -q "v0.12.2" index.html' 'version v0.12.2'
           check 'grep -q "title-banner.png?v=0121" index.html' 'html points at PNG banner'
           check 'grep -q "tune.css?v=0121" index.html' 'tune.css linked'
           check 'grep -q "Reset All" index.html' 'Reset All label'
