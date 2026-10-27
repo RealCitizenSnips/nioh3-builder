@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v0.12.1 follow-up: park Level stats, bump version, add dropdown knobs."""
+"""v0.12.2 follow-up: park Level stats, bump version, add dropdown knobs."""
 from pathlib import Path
 
 p = Path("index.html")
@@ -7,7 +7,7 @@ if not p.exists():
     raise SystemExit("index.html missing")
 t = p.read_text(encoding="utf-8")
 
-t = t.replace("v0.12.0", "v0.12.1")
+t = t.replace("v0.12.0", "v0.12.2")
 t = t.replace('tune.css?v=012"', 'tune.css?v=0121"')
 t = t.replace("title-banner.png?v=012", "title-banner.png?v=0121")
 
@@ -60,10 +60,10 @@ if "--n3-drop-max" not in t:
     t = t.replace("/* /n3-chrome */", extra + "/* /n3-chrome */", 1)
 
 p.write_text(t, encoding="utf-8")
-print("postpatched v0.12.1", p.stat().st_size, "parked", parked)
+print("postpatched v0.12.2", p.stat().st_size, "parked", parked)
 if "level-derived core stats parked" not in t:
     raise SystemExit("failed to park Level Life lines")
 if "--n3-drop-max" not in t:
     raise SystemExit("dropdown knobs missing")
-if "v0.12.1" not in t:
+if "v0.12.2" not in t:
     raise SystemExit("version bump missing")
