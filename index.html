@@ -50,7 +50,7 @@ h1{font-size:1.45rem;font-weight:700;letter-spacing:-.03em;margin:0 0 12px}
 h2{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
 .slot{display:flex;flex-direction:column;gap:6px;margin:0;padding:10px 0;border-bottom:1px solid var(--line)}
 .slot:last-child{border-bottom:0}
-.slot>span{color:var(--muted);font-size:.30rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.slot>span{color:var(--muted);font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .slot .ctrls{display:flex;flex-direction:column;gap:8px}
 button,select{font:inherit}
 .mini{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -188,12 +188,16 @@ th{color:var(--muted);font-weight:600}
 .set-brother{color:#d0a080}
 .set-swallow{color:#e8c07a}
 .set-grace{color:#8ee08a}
+.set-eoj-grace,.dd-name.set-eoj-grace,.dd-btn.set-eoj-grace,.pill.set-eoj-grace{color:#c4f5b8!important}
+.grace-filters{display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid #333;position:sticky;top:0;background:#1a1a1a;z-index:2}
+.grace-filters button{font-size:12px;padding:4px 8px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#ccc;cursor:pointer}
+.grace-filters button.on{background:#2d4a28;color:#c4f5b8;border-color:#6a9}
 .set-none{color:var(--ink)}
 
 </style>
 </head>
 <body>
-<h1>Nioh 3 Equipment Builder <span class="ver">v0.8.1</span></h1>
+<h1>Nioh 3 Equipment Builder <span class="ver">v0.12.2</span></h1>
 <p id="boot-msg" class="note">Gear lists work in Files. For live Overall Stats on iPhone: Mail this file to yourself → open the attachment → Share → Safari. No Mac needed.</p>
 <noscript><p class="warn">JavaScript is required. Open this .html file in Safari or Chrome.</p></noscript>
 
@@ -293,8 +297,7 @@ th{color:var(--muted);font-weight:600}
 </div>
 </div>
 <div class="card equip" id="equip-card"><h2>Equipment</h2><div id="slots">
-<div class="slot"><span>Head
-</span><div class="ctrls"><select class="dd-btn" data-static="head"><option>— empty —</option>
+<div class="slot"><span>Head</span><div class="ctrls"><select class="dd-btn" data-static="head"><option>— empty —</option>
 <option>Flying Kato's Mask</option>
 <option>Iga Jonin Headband</option>
 <option>Fuma Chief's Mask</option>
@@ -1702,7 +1705,18 @@ const GRACES = {
   inari:{name:"Inari",tiers:{2:["Life +234",""],3:["Effect Duration +3",""],4:["Damage Taken −4%",""],5:["Elemental Weapon Damage +10%","dead"],6:["Faster Ki Recovery (Onmyo)",""],7:["Elemental Weapon Damage +18%","dead"]}},
   jurojin:{name:"Jurojin",tiers:{2:["Life +237",""],3:["Life Drain (Onmyo Magic Hit) C+",""],4:["Damage Taken −4%",""],5:["Onmyo Magic Power +50",""],6:["Auto Life Recovery (Onmyo Magic)",""],7:["Attack Bonus (Magic) A−",""]}},
   kuzuryu:{name:"Kuzuryu",tiers:{2:["Life +237",""],3:["Archspirit (Summoning Seal Hit)",""],4:["Poison Resistance +30",""],5:["Melee Damage vs Poisoned +10%",""],6:["Poison Status Ailment Augmentation A+",""],7:["Untouched Summoning Seals +15%",""]}},
-  vais:{name:"Vaisravana",tiers:{2:["Life +238",""],3:["Gold Earned +5%",""],4:["Damage Taken −4%",""],5:["Martial Art Damage +6%","dead"],6:["Martial Art Ki Damage +7%","dead"],7:["Attack Bonus (Strength) A−",""]}}
+  vais:{name:"Vaisravana",tiers:{2:["Life +238",""],3:["Gold Earned +5%",""],4:["Damage Taken −4%",""],5:["Martial Art Damage +6%","dead"],6:["Martial Art Ki Damage +7%","dead"],7:["Attack Bonus (Strength) A−",""]}},
+  susano:{eoj:true,name:"Susano",tiers:{2:["Life +320",""],3:["Break +10",""],4:["Martial Art Ki Damage +6.0%",""],5:["Ki Recovery Speed +15.0%",""],6:["Ki Damage Bonus (Consecutive Attacks) B+",""],7:["Versatile Core",""]}},
+  tsukuyomi:{eoj:true,name:"Tsukuyomi",tiers:{2:["Life +419",""],3:["Increased Damage Taken (Onmyo Magic Hit)",""],4:["Onmyo Magic Power +70",""],5:["Onmyo Magic Damage (Unscathed) +40.0%",""],6:["Untouched Onmyo Magic (Except Summoning Seals) +15.0%",""],7:["Empowered Onmyo Magic A−",""]}},
+  kagutsuchi:{eoj:true,name:"Kagutsuchi",tiers:{2:["Life +416",""],3:["Auto Life Recovery (Deflect and Evade)",""],4:["Ki Damage vs. Scorched Enemy +15.0%",""],5:["Burn Accumulation (Enemy) +20.0%",""],6:["Fire Damage +30.0%",""],7:["Melee Damage vs. Scorched Enemy +35.0%",""]}},
+  takemikazuchi:{eoj:true,name:"Takemikazuchi",tiers:{2:["Life +422",""],3:["Faster Movement (Deflect and Evade)",""],4:["Ki Damage vs. Electrified Enemy +15.0%",""],5:["Shock Accumulation (Enemy) +20.0%",""],6:["Lightning Damage +30.0%",""],7:["Melee Damage vs. Electrified Enemy +35.0%",""]}},
+  amaterasu:{eoj:true,name:"Amaterasu",tiers:{2:["Life +316",""],3:["Life Recovery (Curing Life Corrosion)",""],4:["Life Drain (Martial Arts) +6.0%",""],5:["Ki Recovery Speed (Unscathed) +25.0%",""],6:["Melee Damage (Unscathed) +28.0%",""],7:["Damage Taken Halved (Unscathed) 50.0%",""]}},
+  marici:{eoj:true,name:"Marici",tiers:{2:["Life +419",""],3:["Living Artifact Durability +16.0%",""],4:["Living Artifact Duration +18.0%",""],5:["Elemental Damage (Living Artifact) +14.0%",""],6:["Amrita Gauge Charge +25.0%",""],7:["Artifact Reincarnate",""]}},
+  amenouzume:{eoj:true,name:"Ame-no-Uzume",tiers:{2:["Life +418",""],3:["Faster Movement (Dodge Attack)",""],4:["Faster Ki Recovery (Dodge Attack)",""],5:["Dodge Range Up",""],6:["Dodge Ki Consumption −25.0%",""],7:["Death Dancer",""]}},
+  magatsuhi:{eoj:true,name:"Magatsuhi",tiers:{2:["Life +420",""],3:["Damage Reduced (Negative Effects) −15%",""],4:["Amrita Gauge Charge (Ailing) +20.0%",""],5:["Ki Consumption for Movement (Negative Effects) −24.0%",""],6:["Extended Negative Effects",""],7:["Damage Bonus (Negative Effects) AAA",""]}},
+  acala:{eoj:true,name:"Acala",tiers:{2:["Life +418",""],3:["Defense +100",""],4:["Auto Life Recovery (Deflect and Evade)",""],5:["Decreased Elemental Damage Taken (Guarding) +60",""],6:["Guard Ki Consumption −15.0%",""],7:["Rock Solid",""]}},
+  shinatsuhiko:{eoj:true,name:"Shinatsuhiko",tiers:{2:["Life +416",""],3:["Faster Ki Recovery (Deflect and Evade)",""],4:["Ki Damage vs. Blustered Enemy +15.0%",""],5:["Bluster Accumulation (Enemy) +20.0%",""],6:["Wind Damage +30.0%",""],7:["Melee Damage vs. Blustered Enemy +35.0%",""]}},
+  owatatsumi:{eoj:true,name:"Owatatsumi",tiers:{2:["Life +421",""],3:["Increased Damage Dealt (Deflect and Evade)",""],4:["Ki Damage vs. Saturated Enemy +15.0%",""],5:["Saturation Accumulation (Enemy) +20.0%",""],6:["Water Damage +30.0%",""],7:["Melee Damage vs. Saturated Enemy +35.0%",""]}}
 };
 
 
@@ -2710,10 +2724,20 @@ function pieceItems(id, wt){
     return `<div class="dd-item" data-i="${i}"><div class="${nameCls}">${WEAPON_SLOTS.has(id)?wIcon(weaponType(p)):""}${p.name}${wtLabel(id,p)}</div>${extra}</div>`;
   }).join("");
 }
-function graceItems(sel){
-  return Object.entries(GRACES).sort((a,b)=>a[1].name.localeCompare(b[1].name)).map(([gid,g]) =>
-    `<div class="dd-item" data-g="${gid}"><div class="dd-name set-grace">Grace of ${g.name}</div>${tiersHtml(g, equippedGraceCount(gid))}</div>`
-  ).join("");
+function graceItems(sel, filter){
+  filter = filter || "all";
+  return Object.entries(GRACES).sort((a,b)=>a[1].name.localeCompare(b[1].name)).filter(([gid,g]) => {
+    if(filter==="shogun") return !g.eoj;
+    if(filter==="enlightened") return !!g.eoj;
+    return true;
+  }).map(([gid,g]) => {
+    const cls = g.eoj ? "dd-name set-eoj-grace" : "dd-name set-grace";
+    return `<div class="dd-item" data-g="${gid}"><div class="${cls}">Grace of ${g.name}</div>${tiersHtml(g, equippedGraceCount(gid))}</div>`;
+  }).join("");
+}
+function graceFilterHtml(current){
+  const opts = [["all","All"],["shogun","Shogun's"],["enlightened","Enlightened"]];
+  return `<div class="grace-filters">${opts.map(([k,lab]) => `<button type="button" data-gf="${k}" class="${current===k?"on":""}">${lab}</button>`).join("")}</div>`;
 }
 function syncSlot(id){
   const p = PIECES[id][state[id].i];
@@ -2757,18 +2781,31 @@ function syncSlot(id){
     }
     gwrap.hidden = false;
     gbtn.disabled = false;
-    gbtn.className = "dd-btn set-grace";
+    const gObj = state[id].grace ? GRACES[state[id].grace] : null;
+    gbtn.className = "dd-btn " + (gObj && gObj.eoj ? "set-eoj-grace" : "set-grace");
     gbtn.textContent = state[id].grace ? ("Grace of " + GRACES[state[id].grace].name) : "Choose Grace";
-    glist.innerHTML = `<div class="dd-item" data-g=""><div class="dd-name">No Grace</div></div>` + graceItems(state[id].grace);
-    glist.querySelectorAll(".dd-item").forEach(it=>{
-      it.onclick = e => {
-        e.stopPropagation();
-        state[id].grace = it.dataset.g || "";
-        closeAll();
-        syncSlot(id);
-        render();
-      };
-    });
+    const curFilter = glist.dataset.gf || "all";
+    function paintGraceList(){
+      const f = glist.dataset.gf || "all";
+      glist.innerHTML = graceFilterHtml(f) + `<div class="dd-item" data-g=""><div class="dd-name">No Grace</div></div>` + graceItems(state[id].grace, f);
+      glist.querySelectorAll(".grace-filters button").forEach(b=>{
+        b.onclick = e => {
+          e.stopPropagation();
+          glist.dataset.gf = b.dataset.gf;
+          paintGraceList();
+        };
+      });
+      glist.querySelectorAll(".dd-item").forEach(it=>{
+        it.onclick = e => {
+          e.stopPropagation();
+          state[id].grace = it.dataset.g || "";
+          closeAll();
+          syncSlot(id);
+          render();
+        };
+      });
+    }
+    paintGraceList();
   });
   if(empty || namedSet(p) || !graceEligible(p,id)) state[id].grace = empty || namedSet(p) ? "" : state[id].grace;
   if(canCrucible(id,p) && state[id].cruOnly) state[id].crucible = true;
@@ -2826,7 +2863,8 @@ function render(){
       : "—";
     const lock = lockedAffix(p);
     const lockTxt = lock && lock.cat!=="grace" ? lock.name : "—";
-    const sg = g ? `<span class="set-grace">Grace of ${GRACES[g].name}</span>` : (namedSet(p) ? `<span class="${setClass(p.set)}">${bonusName(SETS[p.set])}</span>` : "—");
+    const gObj2 = g ? GRACES[g] : null;
+    const sg = g ? `<span class="${gObj2 && gObj2.eoj ? "set-eoj-grace" : "set-grace"}">Grace of ${GRACES[g].name}</span>` : (namedSet(p) ? `<span class="${setClass(p.set)}">${bonusName(SETS[p.set])}</span>` : "—");
     rows.push(`<tr>
       <td>${label}</td>
       <td>${sg}</td>

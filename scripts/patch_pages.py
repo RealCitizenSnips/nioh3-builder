@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """v0.12.2 UI overlay: set builder only. Character Level is removed from the published page.
 Expects title-banner.png already written by scripts/make_banner.py.
-Composes overlay from logic + sheet truth on CI.
+Composes overlay from overlay_logic.js + level_table.json + sheet_truth.json.
 """
 from pathlib import Path
 import re
@@ -80,8 +80,14 @@ img.ico{width:var(--n3-icon-slot,22px)!important;height:var(--n3-icon-slot,22px)
 .statrow img.ico{width:var(--n3-icon-stat,24px)!important;height:var(--n3-icon-stat,24px)!important;flex-basis:var(--n3-icon-stat,24px)!important}
 .wchip img.ico,.dd-name img.ico{width:var(--n3-icon-drop,18px)!important;height:var(--n3-icon-drop,18px)!important;flex-basis:var(--n3-icon-drop,18px)!important}
 .dd-name{display:flex!important;align-items:center!important;gap:6px!important}
-.dd-btn,.dd-name,.dd-item{font-size:var(--n3-drop,var(--n3-text,16px))!important}
+.dd-btn{font-size:var(--n3-drop,var(--n3-text,16px))!important}
 .dd-btn{padding:var(--n3-drop-pad,8px) 10px!important}
+.dd-list{max-height:var(--n3-drop-max,340px)!important}
+.dd-list,.dd-list .dd-item,.dd-list .dd-name,.dd-list .dd-set,.dd-list .dd-tiers,.dd-list .dd-tiers li,.dd-list .wt{
+  font-size:var(--n3-dd-text,var(--n3-drop,var(--n3-text,16px)))!important
+}
+.wchip{font-size:var(--n3-wchip,13px)!important;padding:var(--n3-wchip-pad,7px 12px)!important;line-height:1.2!important}
+.needhint,.needhint.bad{display:none!important}
 .bonus,.bmain,.live{font-size:var(--n3-bonus,var(--n3-text,16px))!important}
 .filters label{font-size:var(--n3-filter,var(--n3-text,16px))!important}
 .tools button{font-size:var(--n3-btn,var(--n3-text,16px))!important;padding:var(--n3-btn-pad,8px) 12px!important}
@@ -115,4 +121,172 @@ input[type=checkbox]{accent-color:#e8c56a!important}
 }
 .filters input[type=checkbox]:checked{
   background-color:#e8c56a!important;border-color:#e8c56a!important;
-  background-image:url(\
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%231a0e0e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.2 8.2l3.1 3.1 6.5-6.6'/></svg>")!important
+}
+.legal{display:block!important;font-size:.62rem!important;color:#a88848!important;text-align:center;padding:16px 8px 24px;line-height:1.4}
+.tools-card{padding:10px 12px 8px!important;border-top:1px solid rgba(212,168,80,.16)!important}
+.tools-card .tools{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.tools-card .tools button{border:0!important;border-radius:8px!important}
+""" + set_block
+
+if "</style>" not in t:
+    sys.exit("no style tag")
+t = t.replace("</style>", "/* n3-chrome */" + css + "/* /n3-chrome */\n</style>", 1)
+if 'href="tune.css' not in t:
+    t = t.replace("</style>", '</style>\n<link rel="stylesheet" href="tune.css?v=0121">', 1)
+
+t = t.replace(
+    'content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"',
+    'content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"',
+)
+t = t.replace('content="#0d2b4a"', 'content="#160808"')
+if 'name="theme-color" content="#160808"' in t and "prefers-color-scheme" not in t:
+    t = t.replace(
+        '<meta name="theme-color" content="#160808">',
+        '<meta name="theme-color" content="#160808">\n'
+        '<meta name="theme-color" content="#160808" media="(prefers-color-scheme: light)">\n'
+        '<meta name="theme-color" content="#160808" media="(prefers-color-scheme: dark)">\n'
+        '<meta name="color-scheme" content="dark">',
+    )
+
+hero = """<header class="hero">
+  <img src="title-banner.png?v=0121" alt="Nioh 3 Equipment Builder" width="442" height="253">
+  <span class="ver">v0.12.2</span>
+</header>"""
+
+if re.search(r'<header class="hero">', t):
+    t = re.sub(r'<header class="hero">.*?</header>', hero, t, count=1, flags=re.S)
+elif re.search(r"<h1>.*?</h1>", t, flags=re.S):
+    t = re.sub(r"<h1>.*?</h1>", hero, t, count=1, flags=re.S)
+else:
+    t = t.replace("<body>", "<body>\n" + hero, 1)
+
+t = t.replace("title-banner.svg", "title-banner.png")
+t = re.sub(r"v0\.9\.[0-9]\b", "v0.12.2", t)
+t = t.replace("v0.8.1", "v0.12.2")
+t = t.replace("v0.9.9", "v0.12.2")
+t = t.replace("v0.10.0", "v0.12.2")
+t = t.replace("v0.11.0", "v0.12.2")
+t = t.replace("v0.12.0", "v0.12.2")
+
+t = t.replace(">Empty all gear<", ">Reset All<")
+t = t.replace("Empty all gear?", "Reset All? This clears gear and filters.")
+t = t.replace(
+    "Switching Form will reset all selections below, continue?",
+    "Switching Style will clear all Equipment. Continue?",
+)
+# Move loadout buttons above Overall Stats. Cut Character Level out of the published page.
+old_tools = (
+    '  <div class="tools">\n'
+    '    <button type="button" id="btn-copy">Copy summary</button>\n'
+    '    <button type="button" id="btn-clear">Reset All</button>\n'
+    '    <button type="button" id="btn-save">Save loadout</button>\n'
+    '    <button type="button" id="btn-load">Load Loadout</button>\n'
+    '  </div>\n'
+)
+if old_tools not in t:
+    sys.exit("tools block not found after Reset All rename")
+t = t.replace(old_tools, "", 1)
+# Remove the entire Character Level card (source keeps it for a later restore).
+start = t.find('<div class="card" id="char-card">')
+if start < 0:
+    start = t.find('id="char-card"')
+    if start >= 0:
+        start = t.rfind("<div", 0, start)
+if start < 0:
+    sys.exit("Character Level card not found to remove")
+if start >= 0:
+    end = t.find('<div class="sticky">', start)
+    if end < 0:
+        sys.exit("sticky Overall Stats wrapper not found after Character Level")
+    t = t[:start] + t[end:]
+bar = (
+    '<div class="card tools-card" id="loadout-bar">\n'
+    '  <div class="tools">\n'
+    '    <button type="button" id="btn-copy">Copy summary</button>\n'
+    '    <button type="button" id="btn-clear">Reset All</button>\n'
+    '    <button type="button" id="btn-save">Save loadout</button>\n'
+    '    <button type="button" id="btn-load">Load Loadout</button>\n'
+    '  </div>\n'
+    '</div>\n'
+)
+if 'id="loadout-bar"' not in t:
+    if '<div class="sticky">' not in t:
+        sys.exit("sticky Overall Stats wrapper not found")
+    t = t.replace('<div class="sticky">', bar + '<div class="sticky">', 1)
+
+new_reset = """document.getElementById("btn-clear")?.addEventListener("click", () => {
+  if(!confirm("Reset All? This clears gear and filters.")) return;
+  clearGear();
+  gsState.id=""; gsState.style="";
+  STATS.forEach(([k]) => { char[k]=5; });
+  char.cap = 200;
+  document.querySelectorAll(".flt-style").forEach(el => { el.checked=false; });
+  document.querySelectorAll(".flt-kind").forEach(el => { el.checked=true; });
+  const cmb=document.getElementById("flt-combine"); if(cmb) cmb.checked=false;
+  const gs=document.getElementById("flt-gs"); if(gs) gs.checked=true;
+  SLOTS.forEach(([id]) => { state[id].wtype="all"; state[id].cruOnly=false; });
+  fillSelects(); drawGS(); drawChar(); syncCharFields(); render();
+});"""
+m = re.search(
+    r'document\.getElementById\("btn-clear"\)\?\.addEventListener\("click", \(\) => \{.*?\n\}\);',
+    t,
+    flags=re.S,
+)
+if not m:
+    sys.exit("reset handler not found")
+t = t[:m.start()] + new_reset + t[m.end():]
+
+legal = (
+    '<p class="legal">Unofficial fan-made tool. Not affiliated with Team Ninja, '
+    "Koei Tecmo, or Nioh 3. All game names and terms belong to their owners.</p>"
+)
+if "Unofficial fan-made tool" not in t:
+    if "<script>" in t:
+        t = t.replace("<script>", legal + "\n<script>", 1)
+    else:
+        t = t.replace("</body>", legal + "\n</body>")
+
+old_core_push = '''    pushStat("Life", "Constitution: Life +"+(char.con*40));
+    pushStat("Life", "Level: Life +"+core.life);
+    if(sOn) pushStat("Melee", "Heart / Strength / Intellect: Melee Attack +"+(char.hrt*2+char.str*2+char.int*2));
+    if(nOn) pushStat("Melee", "Heart / Strength / Magic: Melee Attack +"+(char.hrt+char.str+char.mag));
+    pushStat("Ki", "Heart: Ki +"+core.ki);
+    pushStat("Ki", "Heart & Intellect: Ki Recovery Speed +"+core.kiRec);
+    pushStat("Ki Damage", "Strength: Melee Ki Damage +"+core.meleeKi);
+    if(nOn) pushStat("Ninjutsu", "Skill: Ninjutsu Power +"+core.ninPow);
+    if(sOn) pushStat("Arts", "Skill: Arts Proficiency Power +"+core.arts);
+    pushStat("Onmyo", "Magic: Onmyo Magic Power +"+core.onmyo);
+    pushStat("Elemental", "Intellect: Effect Duration +"+core.dur);
+    if(nOn) pushStat("Utility", "Stamina: Weight Limit "+(15+char.sta*0.3).toFixed(1));
+    if(sOn) pushStat("Utility", "Stamina: Weight Limit "+(20+char.sta*1.1).toFixed(1));'''
+if old_core_push not in t:
+    sys.exit("core pushStat block not found")
+# Park Level-derived Life / Ki / Melee / Power lines. Weight stays on the pills.
+t = t.replace(old_core_push, "    /* level-derived core stats parked */")
+
+logic = ROOT / "scripts" / "overlay_logic.js"
+levelp = ROOT / "scripts" / "level_table.json"
+truthp = ROOT / "scripts" / "sheet_truth.json"
+startp = ROOT / "scripts" / "start_defaults.json"
+if not (logic.exists() and levelp.exists() and truthp.exists()):
+    sys.exit("need overlay_logic.js + level_table.json + sheet_truth.json")
+start = startp.read_text(encoding="utf-8").strip() if startp.exists() else "{}"
+ov = (
+    "const N3_LEVEL = "
+    + levelp.read_text(encoding="utf-8").strip()
+    + ";\nconst N3_TRUTH = "
+    + truthp.read_text(encoding="utf-8").strip()
+    + ";\nconst N3_START = "
+    + start
+    + ";\n"
+    + logic.read_text(encoding="utf-8")
+)
+if "n3val" not in ov:
+    sys.exit("overlay missing n3val")
+if "function boot(){" not in t:
+    sys.exit("boot() not found")
+t = t.replace("function boot(){", ov + "\nfunction boot(){", 1)
+
+INDEX.write_text(t, encoding="utf-8")
+print("patched v0.12.2", INDEX.stat().st_size, "banner", len(png))
