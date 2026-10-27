@@ -12,6 +12,6 @@ Every published look is frozen as a git branch **before** the next jump.
 | v0.10.0 | `archive/v0.10.0` | Character Level lookups, icons, Moonprayer |
 | v0.11.0 | `archive/v0.11.0` | Levels drawer + loadout bar. Last build that still showed Character Level. |
 | v0.12.0 | `archive/v0.12.0` | Set builder only. Character Level removed from the published app. |
-| v0.12.1 | `main` | No Level Life lines. Samurai Legs slot. Req messages off. New dropdown / bubble knobs. |
+| v0.12.2 | `main` | EOJ Graces (lighter green), Shogun/Enlightened Grace filter. |
 
 To inspect an old version: GitHub → Code → branch dropdown → `archive/v0.11.0`.
